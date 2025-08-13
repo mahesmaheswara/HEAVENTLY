@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HeaVenTly - Pricing & Role Views</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+    :root{
+      --primary:#6c63ff;
+      --secondary:#00e0ff;
+      --dark:#0d0d1a;
+      --light:#f5f7ff;
+      --glass: rgba(255,255,255,0.06);
+      --glass-strong: rgba(255,255,255,0.10);
+      --radius: 14px;
+      --pad: 1.25rem;
+      --card-shadow: 0 10px 40px rgba(0,224,255,0.06);
+      --transition: 280ms cubic-bezier(.2,.9,.2,1);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family:"Poppins",system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background: linear-gradient(180deg,#060612 0%, #071025 40%);
+      color:var(--light);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      min-height:100vh;
+      line-height:1.4;
+    }
+
+    /* ---------------- NAVBAR (pakem seperti contoh) ---------------- */
+    header{
+      position:fixed;left:0;right:0;top:0;
+      height:72px;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 28px;
+      background: rgba(13,13,26,0.80);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 6px 28px rgba(0,0,0,0.5), 0 0 18px rgba(0,224,255,0.06);
+      z-index:1200;
+    }
+    .logo{
+      font-weight:700;
+      font-size:20px;
+      background: linear-gradient(135deg,var(--primary),var(--secondary));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      cursor:pointer;
+      letter-spacing:1px;
+    }
+    nav{
+      display:flex;align-items:center;gap:14px;
+    }
+    nav a{
+      color:var(--light); text-decoration:none; font-weight:500; padding:6px 8px; border-radius:8px;
+      position:relative; transition:all .18s ease;
+    }
+    nav a::after{
+      content:''; position:absolute; left:0; bottom:-6px; height:2px; width:0; background:var(--secondary); transition:width .25s;
+    }
+    nav a:hover{ color:var(--secondary) }
+    nav a:hover::after{ width:100% }
+
+    .search-icon{ font-size:18px; cursor:pointer; margin-left:6px; }
+
+    .btn-primary{
+      background: linear-gradient(90deg,var(--primary),var(--secondary));
+      color:var(--light);
+      padding:8px 14px;border-radius:999px;border:none;font-weight:700;cursor:pointer;
+      box-shadow: 0 10px 30px rgba(108,99,255,0.12);
+    }
+    .btn-secondary{
+      background:transparent;color:var(--secondary);border:1.5px solid rgba(0,224,255,0.18);
+      padding:7px 12px;border-radius:999px;font-weight:700;cursor:pointer;
+    }
+
+    /* search float */
+    .search-bar{
+      position:fixed; top:82px; right:22px; display:none; align-items:center;
+      background: rgba(255,255,255,0.06); padding:10px 14px; border-radius:999px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    }
+    .search-bar input{
+      background:transparent; border:none; outline:none; color:var(--light); font-size:14px; width:220px;
+    }
+
+    /* main wrapper */
+    main{ max-width:1200px; margin:0 auto; padding:110px 20px 60px; }
+
+    /* ---------------- Tabs ---------------- */
+    .tabs{
+      display:flex; gap:12px; justify-content:center; align-items:center; margin-bottom:18px;
+    }
+    .tab-btn{
+      padding:10px 18px; border-radius:999px; background:transparent; color:rgba(245,247,255,0.85);
+      border:1px solid rgba(255,255,255,0.03); cursor:pointer; font-weight:700; transition:var(--transition);
+    }
+    .tab-btn:hover{ transform: translateY(-3px) }
+    .tab-btn.active{
+      background: linear-gradient(90deg,var(--primary),var(--secondary));
+      color:#060610; box-shadow: 0 10px 30px rgba(108,99,255,0.14);
+      transform: translateY(-3px);
+    }
+
+    /* panels */
+    .panel{ display:none; opacity:0; transform: translateY(12px); transition:all .45s ease; }
+    .panel.active{ display:block; opacity:1; transform:none; }
+
+    /* ---------------- Vendor / Client grid (3 per row desktop) ---------------- */
+    .vendor-grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:20px;
+    }
+
+    .vendor-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
+      border-radius:14px;
+      padding:14px;
+      border:1px solid rgba(255,255,255,0.035);
+      box-shadow: var(--card-shadow);
+      transition: transform .28s ease, box-shadow .28s ease, backdrop-filter .28s ease;
+      overflow:hidden;
+      position:relative;
+      will-change: transform;
+      opacity:0; transform: translateY(20px);
+    }
+    .vendor-card.visible{ opacity:1; transform:none; }
+
+    /* blur-glow hover */
+    .vendor-card:hover{
+      transform: translateY(-8px) scale(1.01);
+      box-shadow: 0 18px 60px rgba(108,99,255,0.16), 0 0 36px rgba(0,224,255,0.06);
+      backdrop-filter: blur(6px);
+    }
+
+    .vendor-thumb{
+      width:100%; height:180px; object-fit:cover; border-radius:10px; display:block;
+      border:2px solid rgba(255,255,255,0.02);
+    }
+    .vendor-name{ margin-top:12px; font-weight:700; font-size:16px; }
+    .vendor-role{ color:rgba(245,247,255,0.85); font-size:13px; margin-top:6px; }
+    .vendor-meta{ display:flex; justify-content:space-between; align-items:center; margin-top:10px; gap:8px; }
+    .vendor-rating{ color:#ffd54a; font-weight:700; letter-spacing:1px }
+    .vendor-cta{ background: linear-gradient(90deg,var(--primary),var(--secondary)); border:none; padding:8px 12px; border-radius:10px; font-weight:800; color:#06060a; cursor:pointer; }
+
+    /* ---------------- Pricing cards (Vendor & EO) premium size ---------------- */
+    .pricing-grid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:20px;
+    }
+    .plan{
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border-radius:14px; padding:26px;
+      border:1px solid rgba(255,255,255,0.035); box-shadow: var(--card-shadow);
+      transition: transform .28s ease, box-shadow .28s ease;
+      opacity:0; transform: translateY(18px);
+    }
+    .plan.visible{ opacity:1; transform:none; }
+    .plan:hover{
+      transform: translateY(-8px);
+      box-shadow: 0 24px 80px rgba(108,99,255,0.14), 0 0 36px rgba(0,224,255,0.06);
+    }
+    .plan h2{ font-size:22px; margin-bottom:8px; background:linear-gradient(90deg,var(--primary),var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .plan .price{ font-size:30px; font-weight:800; color:var(--secondary); margin:12px 0; }
+    .plan ul{ list-style:none; padding:0; margin:10px 0 18px; color:rgba(245,247,255,0.9) }
+    .plan li{ margin:8px 0; font-size:14px }
+    .plan .plan-cta{ background: linear-gradient(90deg,var(--primary),var(--secondary)); border:none; padding:10px 16px; border-radius:12px; font-weight:800; color:#06060a; cursor:pointer; }
+
+    /* helper titles */
+    h1.title{ font-size:28px; margin-bottom:6px; text-align:center }
+    p.lead{ text-align:center; color:rgba(245,247,255,0.8); margin-bottom:14px; }
+
+    /* responsive */
+    @media (max-width:1100px){
+      .vendor-grid{ grid-template-columns: repeat(2, 1fr) }
+      .pricing-grid{ grid-template-columns: repeat(2, 1fr) }
+    }
+    @media (max-width:720px){
+      header{ padding:8px 14px; height:64px }
+      main{ padding-top:96px }
+      .tabs{ gap:8px; flex-wrap:wrap }
+      .vendor-grid{ grid-template-columns: 1fr }
+      .pricing-grid{ grid-template-columns: 1fr }
+      .search-bar{ right:12px; width:calc(100% - 24px); left:12px }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header>
+    <div class="logo" onclick="location.href='landing.html'">HeaVenTly</div>
+    <nav>
+      <a href="landing.html">Home</a>
+      <a href="landing.html#features">Features</a>
+      <a href="howitworks_landing.html">How It Works</a>
+      <a href="pricing_landing.html">Pricing</a>
+      <a href="about_landing.html">About</a>
+      <a href="contact_landing.html">Contact</a>
+      <span class="search-icon" title="Search" onclick="toggleSearch()">🔍</span>
+      <button class="btn-primary" onclick="location.href='signup.html'">Sign Up</button>
+      <button class="btn-secondary" onclick="location.href='signin.html'">Sign In</button>
+    </nav>
+  </header>
+
+  <!-- Search floating -->
+  <div class="search-bar" id="searchBar" role="search" aria-hidden="true">
+    <input id="globalSearch" type="text" placeholder="Search vendors, events, or articles..." aria-label="Search" />
+  </div>
+
+  <!-- MAIN -->
+  <main>
+    <h1 class="title">Pricing & Discover — Role-aware Views</h1>
+    <p class="lead">Switch between Client, Vendor, and EO. Client view includes search + large vendor grid. Vendor/EO show premium pricing cards.</p>
+
+    <!-- Tabs -->
+    <div class="tabs" role="tablist" aria-label="Role tabs">
+      <button class="tab-btn active" role="tab" aria-selected="true" data-target="clientPanel">Client</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-target="vendorPanel">Vendor</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-target="eoPanel">EO</button>
+    </div>
+
+    <!-- CLIENT PANEL -->
+    <section id="clientPanel" class="panel active" aria-hidden="false">
+      <!-- Search block (client) -->
+      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+        <input id="loc" type="text" placeholder="Location (e.g. Semarang)" style="min-width:220px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--light);" />
+        <input id="dateFrom" type="date" style="padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--light);" />
+        <input id="dateTo" type="date" style="padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--light);" />
+        <select id="category" style="padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--light);">
+          <option value="">All categories</option>
+          <option value="wedding">Wedding</option>
+          <option value="photography">Photography</option>
+          <option value="decoration">Decoration</option>
+          <option value="catering">Catering</option>
+        </select>
+        <button id="searchBtn" class="btn-primary">Cari Acara</button>
+      </div>
+
+      <!-- Vendor Grid (3 per row desktop) -->
+      <div class="vendor-grid" id="vendorGrid" aria-live="polite" style="margin-top:22px;">
+        <!-- JS will inject vendor cards here -->
+      </div>
+    </section>
+
+    <!-- VENDOR PANEL -->
+    <section id="vendorPanel" class="panel" aria-hidden="true">
+      <h2 style="text-align:center;margin-top:6px;">Pricing for Vendors</h2>
+      <div class="pricing-grid" id="vendorPlans">
+        <div class="plan">
+          <h2>Starter</h2>
+          <div class="price">$19/mo</div>
+          <ul>
+            <li>Basic Event Listing</li>
+            <li>Access to Leads</li>
+            <li>Standard Support</li>
+          </ul>
+          <button class="plan-cta">Get Started</button>
+        </div>
+        <div class="plan" style="border:2px solid rgba(0,224,255,0.10)">
+          <h2>Pro</h2>
+          <div class="price">$49/mo</div>
+          <ul>
+            <li>Featured Listings</li>
+            <li>AI Matchmaking</li>
+            <li>Priority Support</li>
+          </ul>
+          <button class="plan-cta">Go Pro</button>
+        </div>
+        <div class="plan">
+          <h2>Enterprise</h2>
+          <div class="price">Custom</div>
+          <ul>
+            <li>Enterprise Integrations</li>
+            <li>Dedicated Manager</li>
+            <li>Custom SLAs</li>
+          </ul>
+          <button class="plan-cta">Contact Sales</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- EO PANEL -->
+    <section id="eoPanel" class="panel" aria-hidden="true">
+      <h2 style="text-align:center;margin-top:6px;">Pricing for Event Organizers (EO)</h2>
+      <div class="pricing-grid" id="eoPlans">
+        <div class="plan">
+          <h2>Starter</h2>
+          <div class="price">$29/mo</div>
+          <ul>
+            <li>Basic EO Tools</li>
+            <li>Task Management</li>
+            <li>Standard Support</li>
+          </ul>
+          <button class="plan-cta">Get Started</button>
+        </div>
+        <div class="plan" style="border:2px solid rgba(0,224,255,0.10)">
+          <h2>Pro</h2>
+          <div class="price">$79/mo</div>
+          <ul>
+            <li>Advanced Scheduling</li>
+            <li>Team Collaboration</li>
+            <li>Priority Support</li>
+          </ul>
+          <button class="plan-cta">Go Pro</button>
+        </div>
+        <div class="plan">
+          <h2>Enterprise</h2>
+          <div class="price">Custom</div>
+          <ul>
+            <li>Dedicated Onboarding</li>
+            <li>Custom Integrations</li>
+            <li>SLAs & Reporting</li>
+          </ul>
+          <button class="plan-cta">Contact Sales</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- footer -->
+  <footer style="padding:28px;text-align:center;color:rgba(255,255,255,0.7);">
+    &copy; 2025 HeaVenTly — All rights reserved.
+  </footer>
+
+  <script>
+    // ----- TAB LOGIC -----
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.panel');
+
+    tabButtons.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        // aria and active classes
+        tabButtons.forEach(t=>{
+          t.classList.remove('active');
+          t.setAttribute('aria-selected','false');
+        });
+        panels.forEach(p=>{
+          p.classList.remove('active');
+          p.setAttribute('aria-hidden','true');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected','true');
+        const target = btn.getAttribute('data-target');
+        const panel = document.getElementById(target);
+        panel.classList.add('active');
+        panel.setAttribute('aria-hidden','false');
+
+        // animate visible cards in panel
+        revealCards(panel);
+        // scroll top of main area for UX
+        window.scrollTo({top:110, behavior:'smooth'});
+      });
+    });
+
+    // ----- SEARCH TOGGLE -----
+    function toggleSearch(){
+      const el = document.getElementById('searchBar');
+      const hidden = el.getAttribute('aria-hidden') === 'true';
+      el.style.display = hidden ? 'flex' : 'none';
+      el.setAttribute('aria-hidden', hidden ? 'false' : 'true');
+      if(hidden) document.getElementById('globalSearch').focus();
+    }
+
+    // ----- SAMPLE VENDOR DATA -----
+    const vendorData = [
+      {id:1,name:'Sagittarius', category:'wedding', location:'Semarang', service:'Wedding Organizer', rating:4.8, img:'https://picsum.photos/seed/1/600/400'},
+      {id:2,name:'Pisces Studio', category:'photography', location:'Semarang', service:'Photography', rating:4.6, img:'https://picsum.photos/seed/2/600/400'},
+      {id:3,name:'Libra Decor', category:'decoration', location:'Semarang', service:'Decoration', rating:4.7, img:'https://picsum.photos/seed/3/600/400'},
+      {id:4,name:'Gemini Gifts', category:'souvenir', location:'Semarang', service:'Souvenir', rating:4.5, img:'https://picsum.photos/seed/4/600/400'},
+      {id:5,name:'Aquarius Photo', category:'photography', location:'Semarang', service:'Photography', rating:4.9, img:'https://picsum.photos/seed/5/600/400'},
+      {id:6,name:'Virgo Bloom', category:'decoration', location:'Semarang', service:'Decoration', rating:4.6, img:'https://picsum.photos/seed/6/600/400'},
+      {id:7,name:'Orion Lights', category:'lighting', location:'Semarang', service:'Lighting', rating:4.4, img:'https://picsum.photos/seed/7/600/400'},
+      {id:8,name:'Corona Catering', category:'catering', location:'Semarang', service:'Catering', rating:4.7, img:'https://picsum.photos/seed/8/600/400'},
+      {id:9,name:'Halo Sound', category:'sound', location:'Semarang', service:'Sound & AV', rating:4.5, img:'https://picsum.photos/seed/9/600/400'}
+    ];
+
+    const vendorGrid = document.getElementById('vendorGrid');
+
+    function renderVendors(list){
+      vendorGrid.innerHTML = '';
+      if(!list || list.length === 0){
+        vendorGrid.innerHTML = '<div style="padding:20px;color:rgba(255,255,255,0.85)">Tidak ada vendor ditemukan.</div>';
+        return;
+      }
+      list.forEach((v, idx)=>{
+        const card = document.createElement('article');
+        card.className = 'vendor-card';
+        // add inner HTML
+        card.innerHTML = `
+          <img class="vendor-thumb" src="${v.img}" alt="${v.name}" loading="lazy" />
+          <div class="vendor-name">${v.name}</div>
+          <div class="vendor-role">${v.service} • ${v.location}</div>
+          <div class="vendor-meta">
+            <div class="vendor-rating">${'★'.repeat(Math.round(v.rating))} <span style="opacity:.8">(${v.rating})</span></div>
+            <button class="vendor-cta" data-id="${v.id}">PESAN</button>
+          </div>
+        `;
+        vendorGrid.appendChild(card);
+      });
+      // after injecting, initialize reveal animation
+      revealCards(document.getElementById('clientPanel'));
+    }
+
+    // initial render
+    renderVendors(vendorData.slice(0,9));
+
+    // ----- search/filter (client) -----
+    document.getElementById('searchBtn').addEventListener('click', ()=>{
+      const loc = (document.getElementById('loc').value || '').trim().toLowerCase();
+      const cat = document.getElementById('category').value;
+      let results = vendorData.slice();
+      if(loc) results = results.filter(v => v.location.toLowerCase().includes(loc));
+      if(cat) results = results.filter(v => v.category === cat);
+      renderVendors(results);
+    });
+
+    // ----- book button handler (delegation) -----
+    vendorGrid.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.vendor-cta');
+      if(!btn) return;
+      const id = btn.dataset.id;
+      const vendor = vendorData.find(x=>x.id==id);
+      if(!vendor) return;
+      // demo action: open signup if not logged in
+      alert('Mulai proses booking untuk: ' + vendor.name + '\\n(Nanti diarahkan ke flow booking / auth)');
+    });
+
+    // ----- reveal animation for cards using IntersectionObserver fallback -----
+    function revealCards(panel){
+      // select visible cards inside panel
+      const cards = panel.querySelectorAll('.vendor-card, .plan');
+      if('IntersectionObserver' in window){
+        const obs = new IntersectionObserver((entries, observer)=>{
+          entries.forEach(entry=>{
+            if(entry.isIntersecting){
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, {threshold: 0.12});
+        cards.forEach((c,i)=> obs.observe(c));
+      } else {
+        // fallback: staggered reveal
+        cards.forEach((c,i)=> setTimeout(()=> c.classList.add('visible'), i*80));
+      }
+    }
+
+    // reveal initial panel cards (Vendor and Client)
+    window.addEventListener('load', ()=>{
+      revealCards(document.getElementById('clientPanel'));
+      revealCards(document.getElementById('vendorPanel'));
+      revealCards(document.getElementById('eoPanel'));
+    });
+
+    // keyboard accessibility for tab switching
+    document.addEventListener('keydown', (e)=>{
+      const activeIndex = [...tabButtons].findIndex(t=> t.classList.contains('active'));
+      if(e.key === 'ArrowRight'){ const next = Math.min(tabButtons.length-1, activeIndex+1); tabButtons[next].click(); tabButtons[next].focus(); }
+      if(e.key === 'ArrowLeft'){ const prev = Math.max(0, activeIndex-1); tabButtons[prev].click(); tabButtons[prev].focus(); }
+    });
+
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HeaVenTly - Create New Event</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    :root {
+      --primary: #6c63ff;
+      --secondary: #00e0ff;
+      --dark: #0d0d1a;
+      --light: #f5f7ff;
+      --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+      --glass: rgba(255,255,255,0.06);
+      --neon: 0 8px 40px rgba(108,99,255,0.14), 0 0 36px rgba(0,224,255,0.06);
+      --muted: #a0a0c0;
+      --radius: 14px;
+      --gap: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--light);
+      height: 100vh;
+      overflow-y: auto;
+      position: relative;
+      background: linear-gradient(45deg, #0a0e1b, #1a2a44, #0a0e1b);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .star-field {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .star {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      animation: twinkle 2s infinite alternate;
+    }
+    @keyframes twinkle {
+      0% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { opacity: 0; animation: fadeUp 1s ease forwards; }
+    .delay-1 { animation-delay: 0.2s; }
+    .delay-2 { animation-delay: 0.4s; }
+    .delay-3 { animation-delay: 0.6s; }
+    .glow-hover:hover {
+      box-shadow: var(--neon);
+      transform: scale(1.02);
+      transition: 0.3s;
+    }
+
+    /* HEADER */
+    header {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 1rem;
+      background: rgba(13, 13, 26, 0.8);
+      backdrop-filter: blur(8px);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: var(--neon);
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      /* For compatibility: */
+      color: transparent;
+      cursor: pointer;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      margin-left: auto;
+    }
+    .notification-bell {
+      position: relative;
+      margin-left: 1rem;
+      cursor: pointer;
+    }
+    .notification-count {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #ff4d4d;
+      color: var(--light);
+      border-radius: 50%;
+      padding: 0.1rem 0.4rem;
+      font-size: 0.7rem;
+    }
+    .chatbot-icon {
+      margin-left: 1rem;
+      font-size: 1.5rem;
+      color: var(--secondary);
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .chatbot-icon:hover {
+      color: var(--primary);
+      transform: scale(1.1);
+    }
+
+    /* SIDE NAVIGATION */
+    .side-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(108,99,255,0.22) 0%, rgba(0,224,255,0.18) 100%);
+      backdrop-filter: blur(16px) brightness(1.1);
+      padding: 1rem;
+      transform: translateX(-100%);
+      transition: transform 0.2s cubic-bezier(.77,0,.18,1);
+      z-index: 1001;
+      overflow-y: auto;
+      max-height: 100vh;
+      box-shadow: 0 0 32px 8px rgba(108,99,255,0.22), 0 0 48px 12px rgba(0,224,255,0.18);
+      border-right: 2px solid rgba(108,99,255,0.18);
+      border-top-right-radius: 24px;
+      border-bottom-right-radius: 24px;
+      transition: box-shadow 0.3s, background 0.3s;
+    }
+    .side-nav::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: -8px;
+      width: 8px;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(108,99,255,0.22) 0%, rgba(0,224,255,0.18) 100%);
+      border-top-right-radius: 24px;
+      border-bottom-right-radius: 24px;
+      box-shadow: 0 0 24px 8px rgba(108,99,255,0.22);
+      z-index: 1002;
+    }
+    .side-nav.open {
+      transform: translateX(0);
+      box-shadow: 0 0 48px 16px rgba(108,99,255,0.32), 0 0 64px 24px rgba(0,224,255,0.28);
+    }
+    .side-nav-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(108,99,255,0.18) 0%, rgba(0,224,255,0.14) 100%);
+      backdrop-filter: blur(8px) brightness(1.1);
+      z-index: 1000;
+    }
+    .side-nav.open + .side-nav-overlay {
+      display: block;
+      font-size: 1.2rem;
+      font-weight: bold;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      margin-bottom: 1rem;
+    }
+    .nav-brand {
+      font-size: 1.2rem;
+      font-weight: bold;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      margin-bottom: 1rem;
+    }
+    .nav-group h3 {
+      font-size: 0.95rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem 0.8rem;
+      margin: 0.25rem 0;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.08rem;
+      letter-spacing: 0.5px;
+      background: none;
+      border: none;
+      border-radius: 12px;
+      transition: 0.3s;
+    }
+    .nav-item img {
+      height: 1em;
+      width: auto;
+      margin-right: 0.5rem;
+      background: none;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0;
+      vertical-align: middle;
+      transition: box-shadow 0.3s;
+    }
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(108,99,255,0.18) 0%, rgba(0,224,255,0.14) 100%);
+      border-radius: 14px;
+      box-shadow: 0 0 24px 6px rgba(108,99,255,0.22), 0 0 32px 8px rgba(0,224,255,0.18);
+      color: #fff;
+    }
+    .nav-item:hover {
+      background: linear-gradient(90deg, rgba(108,99,255,0.28) 0%, rgba(0,224,255,0.22) 100%);
+      border-radius: 14px;
+      box-shadow: 0 0 32px 8px rgba(108,99,255,0.32), 0 0 48px 12px rgba(0,224,255,0.28);
+      color: #fff;
+    }
+    .nav-footer {
+      position: absolute;
+      bottom: 1rem;
+      width: 100%;
+      font-size: 0.7rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+    @media (min-width: 768px) {
+      .side-nav {
+        transform: translateX(-100%);
+      }
+      .side-nav.open {
+        transform: translateX(0);
+      }
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+      max-width: 1200px;
+      margin: 80px auto 20px;
+      padding: 1rem;
+      min-height: calc(100vh - 180px); /* Adjust for header and footer */
+    }
+    .event-form {
+      background: rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 32px rgba(108,99,255,0.18), 0 0 36px rgba(0,224,255,0.10);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      animation: fadeUp 1s ease;
+      backdrop-filter: blur(16px);
+    }
+    .event-form h2 {
+      font-size: 2.2rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      margin-bottom: 1.5rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 700;
+      text-align: center;
+    }
+    @media (max-width: 600px) {
+      .event-form {
+        padding: 1rem;
+      }
+      .event-form h2 {
+        font-size: 1.4rem;
+      }
+    }
+    .vendor-section {
+      margin-top: 2rem;
+      animation: fadeUp 1s ease;
+    }
+    .vendor-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+    .vendor-card {
+      background: rgba(255,255,255,0.10);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 24px rgba(108,99,255,0.12), 0 0 24px rgba(0,224,255,0.08);
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+      backdrop-filter: blur(8px);
+    }
+    .vendor-card:hover {
+      transform: scale(1.04);
+      box-shadow: 0 8px 40px rgba(108,99,255,0.22), 0 0 36px rgba(0,224,255,0.16);
+    }
+    .vendor-img {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--primary);
+      margin-bottom: 1rem;
+      box-shadow: 0 0 16px var(--secondary);
+      object-fit: cover;
+    }
+    .vendor-name {
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 0.3rem;
+      color: var(--secondary);
+      text-align: center;
+    }
+    .vendor-rating {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+    .vendor-desc {
+      color: var(--light);
+      font-size: 0.95rem;
+      text-align: center;
+      margin-bottom: 0.7rem;
+    }
+    .btn-view {
+      background: var(--gradient);
+      color: var(--light);
+      padding: 0.5rem 1.2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: 0.3s;
+      box-shadow: var(--neon);
+      border: none;
+      cursor: pointer;
+    }
+    .btn-view:hover {
+      opacity: 0.85;
+      transform: scale(1.08);
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--light);
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+      color: var(--light);
+      font-size: 1rem;
+    }
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(108,99,255,0.3);
+    }
+    .submit-btn {
+      background: var(--gradient);
+      color: var(--light);
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 50px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: var(--neon);
+    }
+    .submit-btn:hover {
+      transform: scale(1.05);
+    }
+    .success-msg {
+      display: none;
+      color: #00ff00;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      background: rgba(13, 13, 26, 0.9);
+      box-shadow: 0 -2px 10px rgba(0,224,255,0.2);
+    }
+
+    /* POPUPS */
+    .popup {
+      display: none;
+      position: fixed;
+      top: 70px;
+      right: 32px;
+      width: 240px;
+      background: rgba(13,13,26,0.85);
+      backdrop-filter: blur(12px);
+      border-radius: 18px;
+      box-shadow: 0 8px 32px rgba(108,99,255,0.18), 0 0 36px rgba(0,224,255,0.10);
+      z-index: 2000;
+      padding: 1rem;
+    }
+    #notifPopup {
+      height: 180px;
+    }
+    #chatbotPopup {
+      height: 320px;
+      display: flex;
+      flex-direction: column;
+    }
+    #chatContent {
+      flex: 1;
+      overflow-y: auto;
+      font-size: 0.95rem;
+      color: var(--light);
+      margin-bottom: 0.5rem;
+    }
+    #chatForm {
+      display: flex;
+      gap: 0.5rem;
+    }
+    #chatInput {
+      flex: 1;
+      padding: 0.5rem;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255,255,255,0.08);
+      color: var(--light);
+    }
+    #chatForm button {
+      background: var(--gradient);
+      color: var(--light);
+      border: none;
+      border-radius: 12px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="star-field" id="starField"></div>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <!-- HEADER -->
+  <header>
+    <div class="logo">HeaVenTly</div>
+    <div class="header-right">
+      <span class="notification-bell" id="notifBell">
+        <img src="notif_icon.png" alt="Notifications" style="width:28px;height:28px;filter:drop-shadow(0 0 8px #fff) brightness(1.2);vertical-align:middle;" />
+        <span class="notification-count" id="unreadCount">3</span>
+      </span>
+      <span class="chatbot-icon" id="chatbotIcon">
+        <img src="chatbot_icon.png" alt="Chatbot" style="width:28px;height:28px;filter:drop-shadow(0 0 8px #fff) brightness(1.2);vertical-align:middle;" />
+      </span>
+    </div>
+  </header>
+
+  <!-- SIDE NAVIGATION -->
+  <nav class="side-nav" id="sideNav" aria-label="Main navigation">
+    <div class="nav-brand">HeaVenTly • Client</div>
+    <div class="nav-group">
+      <h3>Navigation</h3>
+      <a href="events.html" class="nav-item"><img src="myevent_icon.png" alt="My Events icon" /><span>My Events</span></a>
+      <a href="vendors.html" class="nav-item"><img src="vendor_icon.png" alt="Vendors icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #00e0ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Vendors</span></a>
+      <a href="payments.html" class="nav-item"><img src="payment_icon.png" alt="Payments icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #6c63ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Payments</span></a>
+      <a href="profile.html" class="nav-item"><img src="profil_icon.png" alt="Profile icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #fff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Profile</span></a>
+    </div>
+    <div class="nav-group">
+      <h3>PRIMARY</h3>
+      <a href="dashboard_client.html" class="nav-item"><img src="dashboard_icon.png" alt="Dashboard icon" /><span>Homepage</span></a>
+      <a href="events_new.html" class="nav-item active"><img src="buatevent_icon.png" alt="Create Event icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #00e0ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Buat Event</span></a>
+      <a href="#" class="nav-item"><img src="toolbox_icon.png" alt="Toolbox icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #6c63ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Toolbox</span></a>
+      <a href="#" class="nav-item"><img src="savedvendor_icon.png" alt="Saved Vendors icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #fff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Saved Vendors</span></a>
+    </div>
+    <div class="nav-group">
+      <h3>SECONDARY</h3>
+      <a href="#" class="nav-item"><img src="report_icon.png" alt="Reports icon" /><span>Reports</span></a>
+      <a href="#" class="nav-item"><img src="contract_icon.png" alt="Contracts icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #00e0ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Contracts</span></a>
+    </div>
+    <div class="nav-group">
+      <h3>UTILITIES & SUPPORT</h3>
+      <a href="#" class="nav-item"><img src="help_icon.png" alt="Help icon" /><span>Help</span></a>
+      <a href="#" class="nav-item"><img src="notif_icon.png" alt="Notifications icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #ff4d4d) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Notifications</span></a>
+    </div>
+    <div class="nav-group">
+      <h3>Accessibility</h3>
+      <a href="#" class="nav-item" onclick="toggleHighContrast()"><img src="contrast_icon.png" alt="High Contrast icon" /><span>High Contrast</span></a>
+      <a href="#" class="nav-item" onclick="toggleLargeText()"><img src="large_text_icon.png" alt="Large Text icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #00e0ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Large Text</span></a>
+      <a href="#" class="nav-item" onclick="toggleNotifications()"><img src="notifsetting_icon.png" alt="Notification Settings icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #6c63ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Notification Settings</span></a>
+    </div>
+    <div class="nav-group">
+      <h3>Account</h3>
+      <a href="#" class="nav-item" onclick="showLogoutModal()"><img src="logout_icon.png" alt="Logout icon" /><span>Logout</span></a>
+      <a href="account_personal.html" class="nav-item"><img src="P_information_icon.png" alt="Personal Information icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #00e0ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Personal Information</span></a>
+      <a href="account_security.html" class="nav-item"><img src="security_icon.png" alt="Security icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #6c63ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Security</span></a>
+      <a href="account_password.html" class="nav-item"><img src="password_management_icon.png" alt="Password Management icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #fff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Password Management</span></a>
+      <a href="account_devices.html" class="nav-item"><img src="connected_device.png" alt="Connected Devices icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #00e0ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Connected Devices</span></a>
+      <a href="account_privacy.html" class="nav-item"><img src="data_privacy_icon.png" alt="Data & Privacy icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #6c63ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Data & Privacy</span></a>
+      <a href="account_sharing.html" class="nav-item"><img src="chatbot_icon.png" alt="Sharing Preferences icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #fff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Sharing Preferences</span></a>
+      <a href="account_payment.html" class="nav-item"><img src="payment_icon.png" alt="Payment & Subscription icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #00e0ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Payment & Subscription</span></a>
+    </div>
+    <div class="nav-footer">
+      v1.0 (prod) | <a href="#">Terms</a> | <a href="#">Privacy</a>
+    </div>
+  </nav>
+  <div class="side-nav-overlay" id="sideNavOverlay"></div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content fade-up" id="main-content">
+    <div class="event-form">
+      <h2>Create New Event</h2>
+      <form id="eventForm" onsubmit="submitEvent(event)">
+        <div class="form-group">
+          <label for="eventName">Event Name</label>
+          <input type="text" id="eventName" name="eventName" required placeholder="e.g., Wedding Celebration" />
+        </div>
+        <div class="form-group">
+          <label for="eventDate">Event Date</label>
+          <input type="date" id="eventDate" name="eventDate" required />
+        </div>
+        <div class="form-group">
+          <label for="eventCategory">Category</label>
+          <select id="eventCategory" name="eventCategory" required>
+            <option value="">Select a category</option>
+            <option value="wedding">Wedding</option>
+            <option value="corporate">Corporate</option>
+            <option value="party">Party</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="eventLocation">Location</label>
+          <input type="text" id="eventLocation" name="eventLocation" required placeholder="e.g., Jakarta Convention Center" />
+        </div>
+        <div class="form-group">
+          <label for="eventNotes">Additional Notes</label>
+          <textarea id="eventNotes" name="eventNotes" placeholder="e.g., Outdoor setup required"></textarea>
+        </div>
+        <button type="submit" class="submit-btn">Save Event</button>
+      </form>
+      <div class="success-msg" id="successMsg">Event saved successfully!</div>
+    </div>
+    <div class="vendor-section" id="vendorSection" style="display:none;">
+      <h3 style="text-align:center; margin-bottom:1.2rem; color:var(--secondary);">Recommended Vendors & EO</h3>
+      <div class="vendor-list" id="vendorList"></div>
+    </div>
+  </div>
+
+  <!-- Notification Popup -->
+  <div id="notifPopup" style="display:none;position:fixed;top:70px;right:32px;width:240px;height:180px;background:rgba(13,13,26,0.85);backdrop-filter:blur(12px);border-radius:18px;box-shadow:0 8px 32px rgba(108,99,255,0.18),0 0 36px rgba(0,224,255,0.10);z-index:2000;padding:1rem;">
+    <h4 style="margin:0 0 0.5rem 0;color:var(--secondary);font-size:1rem;">Notifikasi</h4>
+    <div style="font-size:0.95rem;color:var(--light);margin-bottom:0.5rem;">🎉 Event "Wedding Celebration" berhasil disimpan!</div>
+    <div style="font-size:0.95rem;color:var(--light);margin-bottom:0.5rem;">🔔 Pembayaran "Venue Booking" jatuh tempo besok.</div>
+    <div style="font-size:0.95rem;color:var(--light);">📢 Vendor baru "Libra Decor" tersedia di Semarang.</div>
+  </div>
+  <!-- Chatbot Popup -->
+  <div id="chatbotPopup" style="display:none;position:fixed;top:70px;right:32px;width:240px;height:320px;background:rgba(13,13,26,0.85);backdrop-filter:blur(12px);border-radius:18px;box-shadow:0 8px 32px rgba(108,99,255,0.18),0 0 36px rgba(0,224,255,0.10);z-index:2000;padding:1rem;display:flex;flex-direction:column;">
+    <h4 style="margin:0 0 0.5rem 0;color:var(--secondary);font-size:1rem;">HeaVenTly Chatbot</h4>
+    <div id="chatContent" style="flex:1;overflow-y:auto;font-size:0.95rem;color:var(--light);margin-bottom:0.5rem;">
+      <div style="margin-bottom:0.5rem;"><b>Bot:</b> Halo! Ada yang bisa dibantu?</div>
+      <div style="margin-bottom:0.5rem;"><b>Anda:</b> Saya ingin cari vendor dekorasi di Semarang.</div>
+      <div style="margin-bottom:0.5rem;"><b>Bot:</b> Berikut rekomendasi: Libra Decor, rating 4.7.</div>
+    </div>
+    <form id="chatForm" style="display:flex;gap:0.5rem;">
+      <input type="text" id="chatInput" placeholder="Ketik pesan..." style="flex:1;padding:0.5rem;border-radius:12px;border:none;background:rgba(255,255,255,0.08);color:var(--light);" />
+      <button type="submit" style="background:var(--gradient);color:var(--light);border:none;border-radius:12px;padding:0.5rem 1rem;cursor:pointer;">Kirim</button>
+    </form>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2025 HeaVenTly. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Mock auth check
+    if (!localStorage.getItem('authenticated')) {
+      alert('Please log in.');
+      location.href = 'signin.html';
+    }
+
+    // Create star field background
+    function createStars() {
+      const starField = document.getElementById('starField');
+      for (let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.width = `${Math.random() * 2 + 1}px`;
+        star.style.height = star.style.width;
+        star.style.left = `${Math.random() * 100}vw`;
+        star.style.top = `${Math.random() * 100}vh`;
+        star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+        starField.appendChild(star);
+      }
+    }
+    createStars();
+
+    // Side Navigation
+    let sideNavOpen = false;
+    function toggleSideNav() {
+      const sideNav = document.getElementById('sideNav');
+      const overlay = document.getElementById('sideNavOverlay');
+      if (sideNav && overlay) {
+        sideNavOpen = !sideNavOpen;
+        sideNav.classList.toggle('open', sideNavOpen);
+        overlay.style.display = sideNavOpen ? 'block' : 'none';
+        document.querySelector('.logo').setAttribute('aria-expanded', sideNavOpen);
+        if (sideNavOpen) {
+          sideNav.querySelector('.nav-item').focus();
+          console.log('ui.hamburger.toggle', { open: sideNavOpen, page: 'events.new' });
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const logo = document.querySelector('.logo');
+      if (logo) {
+        logo.addEventListener('click', toggleSideNav);
+      }
+      const overlay = document.getElementById('sideNavOverlay');
+      if (overlay) {
+        overlay.addEventListener('click', toggleSideNav);
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (sideNavOpen && e.key === 'Escape') toggleSideNav();
+    });
+
+    // Vendor recommendations data
+    const allVendors = [
+      {
+        name: 'Premier EO',
+        rating: '★ 4.8 (120 reviews)',
+        desc: 'Specialized in wedding & corporate events',
+        img: 'poto_mahes.JPG',
+        link: 'vendor_1.html',
+        category: 'wedding',
+        location: 'Jakarta',
+      },
+      {
+        name: 'Elite Vendors',
+        rating: '★ 4.9 (150 reviews)',
+        desc: 'Top-rated party and seminar organizer',
+        img: 'poto_tino.jpg',
+        link: 'vendor_2.html',
+        category: 'party',
+        location: 'Jakarta',
+      },
+      {
+        name: 'Star Events',
+        rating: '★ 4.7 (100 reviews)',
+        desc: 'Creative event solutions for all occasions',
+        img: 'poto_diki.jpg',
+        link: 'vendor_3.html',
+        category: 'corporate',
+        location: 'Bandung',
+      },
+      {
+        name: 'Sagittarius',
+        rating: '★ 4.8 (110 reviews)',
+        desc: 'Wedding Organizer • Semarang',
+        img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+        link: '#',
+        category: 'wedding',
+        location: 'Semarang',
+      },
+      {
+        name: 'Pisces Studio',
+        rating: '★ 4.6 (90 reviews)',
+        desc: 'Photography • Semarang',
+        img: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
+        link: '#',
+        category: 'party',
+        location: 'Semarang',
+      },
+      {
+        name: 'Libra Decor',
+        rating: '★ 4.7 (100 reviews)',
+        desc: 'Decoration • Semarang',
+        img: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
+        link: '#',
+        category: 'corporate',
+        location: 'Semarang',
+      }
+    ];
+
+    function showVendorRecommendations() {
+      const category = document.getElementById('eventCategory').value.toLowerCase();
+      const location = document.getElementById('eventLocation').value.toLowerCase();
+      const vendorSection = document.getElementById('vendorSection');
+      const vendorList = document.getElementById('vendorList');
+
+      // Filter vendors by category or location
+      let filtered = allVendors.filter(v => {
+        let matchCat = category ? v.category.includes(category) : true;
+        let matchLoc = location ? v.location.toLowerCase().includes(location) : true;
+        return matchCat && matchLoc;
+      });
+      if (filtered.length === 0) filtered = allVendors.slice(0, 3); // fallback
+
+      vendorList.innerHTML = filtered.map(v => `
+        <div class="vendor-card">
+          <img src="${v.img}" alt="${v.name}" class="vendor-img" />
+          <div class="vendor-name">${v.name}</div>
+          <div class="vendor-rating">${v.rating}</div>
+          <div class="vendor-desc">${v.desc}</div>
+          <a href="${v.link}" class="btn-view">Pesan</a>
+        </div>
+      `).join('');
+      vendorSection.style.display = 'block';
+    }
+
+    // Show recommendations when any form field changes
+    document.addEventListener('DOMContentLoaded', () => {
+      ['eventCategory', 'eventLocation', 'eventName', 'eventDate', 'eventNotes'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('input', showVendorRecommendations);
+        }
+      });
+    });
+
+    // Form Submission
+    function submitEvent(event) {
+      event.preventDefault();
+      const form = document.getElementById('eventForm');
+      const successMsg = document.getElementById('successMsg');
+      if (form.checkValidity()) {
+        const eventData = {
+          name: document.getElementById('eventName').value,
+          date: document.getElementById('eventDate').value,
+          category: document.getElementById('eventCategory').value,
+          location: document.getElementById('eventLocation').value,
+          notes: document.getElementById('eventNotes').value
+        };
+        let events = JSON.parse(localStorage.getItem('events') || '[]');
+        events.push(eventData);
+        localStorage.setItem('events', JSON.stringify(events));
+        successMsg.style.display = 'block';
+        setTimeout(() => {
+          successMsg.style.display = 'none';
+          form.reset();
+        }, 2000);
+      } else {
+        alert('Please fill in all required fields.');
+      }
+    }
+
+    // Accessibility Functions
+    function toggleHighContrast() {
+      document.body.classList.toggle('high-contrast');
+      if (document.body.classList.contains('high-contrast')) {
+        document.body.style.background = '#000';
+        document.body.style.color = '#fff';
+      } else {
+        document.body.style.background = 'linear-gradient(45deg, #0a0e1b, #1a2a44, #0a0e1b)';
+        document.body.style.color = getComputedStyle(document.documentElement).getPropertyValue('--light').trim();
+      }
+    }
+    function toggleLargeText() {
+      document.body.classList.toggle('large-text');
+      document.body.style.fontSize = document.body.classList.contains('large-text') ? '1.2rem' : '1rem';
+    }
+    function toggleNotifications() {
+      alert('Notification settings toggled! (Feature to be implemented)');
+    }
+
+    // Logout Modal
+    function showLogoutModal() {
+      document.getElementById('logoutModal').style.display = 'flex';
+    }
+    function hideLogoutModal() {
+      document.getElementById('logoutModal').style.display = 'none';
+    }
+
+    // Chatbot Function
+    function openChatbot() {
+      alert('Chatbot opened! (Feature to be implemented)');
+    }
+
+    // Notification Popup
+    const notifBell = document.getElementById('notifBell');
+    const notifPopup = document.getElementById('notifPopup');
+    notifBell.addEventListener('click', function(e) {
+      notifPopup.style.display = notifPopup.style.display === 'none' ? 'block' : 'none';
+      document.getElementById('chatbotPopup').style.display = 'none';
+      e.stopPropagation();
+    });
+    // Chatbot Popup
+    const chatbotIcon = document.getElementById('chatbotIcon');
+    const chatbotPopup = document.getElementById('chatbotPopup');
+    chatbotIcon.addEventListener('click', function(e) {
+      chatbotPopup.style.display = chatbotPopup.style.display === 'none' ? 'flex' : 'none';
+      notifPopup.style.display = 'none';
+      e.stopPropagation();
+    });
+    // Hide popups when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!notifPopup.contains(e.target) && !notifBell.contains(e.target)) notifPopup.style.display = 'none';
+      if (!chatbotPopup.contains(e.target) && !chatbotIcon.contains(e.target)) chatbotPopup.style.display = 'none';
+    });
+    // Fake chat interaction
+    document.getElementById('chatForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      const chatContent = document.getElementById('chatContent');
+      if (input.value.trim()) {
+        chatContent.innerHTML += `<div style='margin-bottom:0.5rem;'><b>Anda:</b> ${input.value}</div>`;
+        setTimeout(() => {
+          chatContent.innerHTML += `<div style='margin-bottom:0.5rem;'><b>Bot:</b> Terima kasih atas pertanyaannya! (simulasi)</div>`;
+          chatContent.scrollTop = chatContent.scrollHeight;
+        }, 700);
+        chatContent.scrollTop = chatContent.scrollHeight;
+        input.value = '';
+      }
+    });
+  </script>
+</body>
+</html>

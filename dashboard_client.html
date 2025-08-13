@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HeaVenTly - Client Dashboard</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    :root {
+      --primary: #6c63ff;
+      --secondary: #00e0ff;
+      --dark: #0d0d1a;
+      --light: #f5f7ff;
+      --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+      --glass: rgba(255,255,255,0.06);
+      --neon: 0 8px 40px rgba(108,99,255,0.14), 0 0 36px rgba(0,224,255,0.06);
+      --muted: #a0a0c0;
+      --radius: 14px;
+      --gap: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--light);
+      height: 100vh;
+      overflow-y: auto;
+      position: relative;
+      background: linear-gradient(45deg, #0a0e1b, #1a2a44, #0a0e1b);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .star-field {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .star {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      animation: twinkle 2s infinite alternate;
+    }
+    @keyframes twinkle {
+      0% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { opacity: 0; animation: fadeUp 1s ease forwards; }
+    .delay-1 { animation-delay: 0.2s; }
+    .delay-2 { animation-delay: 0.4s; }
+    .delay-3 { animation-delay: 0.6s; }
+    .glow-hover:hover {
+      box-shadow: var(--neon);
+      transform: scale(1.02);
+      transition: 0.3s;
+    }
+
+    /* HEADER */
+    header {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 1rem;
+      background: rgba(13, 13, 26, 0.8);
+      backdrop-filter: blur(8px);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: 0 0 20px rgba(0,224,255,0.2);
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      cursor: pointer;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      margin-left: auto;
+    }
+    .notification-bell {
+      position: relative;
+      margin-left: 1rem;
+      cursor: pointer;
+    }
+    .notification-count {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #ff4d4d;
+      color: var(--light);
+      border-radius: 50%;
+      padding: 0.1rem 0.4rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      cursor: pointer;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .chatbot-icon:hover {
+      color: var(--primary);
+      transform: scale(1.1);
+    }
+
+    /* SIDE NAVIGATION */
+    .side-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(108,99,255,0.22) 0%, rgba(0,224,255,0.18) 100%);
+      backdrop-filter: blur(16px) brightness(1.1);
+      padding: 1rem;
+      transform: translateX(-100%);
+      transition: transform 0.2s cubic-bezier(.77,0,.18,1);
+      z-index: 1001;
+      overflow-y: auto;
+      max-height: 100vh;
+      box-shadow: 0 0 32px 8px rgba(108,99,255,0.22), 0 0 48px 12px rgba(0,224,255,0.18);
+      border-right: 2px solid rgba(108,99,255,0.18);
+      border-top-right-radius: 24px;
+      border-bottom-right-radius: 24px;
+      transition: box-shadow 0.3s, background 0.3s;
+    }
+    .side-nav::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: -8px;
+      width: 8px;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(108,99,255,0.22) 0%, rgba(0,224,255,0.18) 100%);
+      border-top-right-radius: 24px;
+      border-bottom-right-radius: 24px;
+      box-shadow: 0 0 24px 8px rgba(108,99,255,0.22);
+      z-index: 1002;
+    }
+    .side-nav.open {
+      transform: translateX(0);
+      box-shadow: 0 0 48px 16px rgba(108,99,255,0.32), 0 0 64px 24px rgba(0,224,255,0.28);
+    }
+    .side-nav-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(108,99,255,0.18) 0%, rgba(0,224,255,0.14) 100%);
+      backdrop-filter: blur(8px) brightness(1.1);
+      z-index: 1000;
+    }
+    .side-nav.open + .side-nav-overlay {
+      display: block;
+      font-size: 1.2rem;
+      font-weight: bold;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      margin-bottom: 1rem;
+    }
+    .nav-brand {
+      font-size: 1.2rem;
+      font-weight: bold;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      margin-bottom: 1rem;
+    }
+    .nav-group h3 {
+      font-size: 0.95rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem 0.8rem;
+      margin: 0.25rem 0;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.08rem;
+      letter-spacing: 0.5px;
+      background: none;
+      border: none;
+      border-radius: 12px;
+      transition: 0.3s;
+    }
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(108,99,255,0.18) 0%, rgba(0,224,255,0.14) 100%);
+      border-radius: 14px;
+      box-shadow: 0 0 24px 6px rgba(108,99,255,0.22), 0 0 32px 8px rgba(0,224,255,0.18);
+      color: #fff;
+    }
+    .nav-item:hover {
+      background: linear-gradient(90deg, rgba(108,99,255,0.28) 0%, rgba(0,224,255,0.22) 100%);
+      border-radius: 14px;
+      box-shadow: 0 0 32px 8px rgba(108,99,255,0.32), 0 0 48px 12px rgba(0,224,255,0.28);
+      color: #fff;
+    }
+    .nav-footer {
+      position: absolute;
+      bottom: 1rem;
+      width: 100%;
+      font-size: 0.7rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+    @media (min-width: 768px) {
+      .side-nav {
+        transform: translateX(-100%);
+      }
+      .side-nav.open {
+        transform: translateX(0);
+      }
+    }
+
+    /* HEADER SUMMARY */
+    .dashboard-header {
+      background: var(--glass);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--neon);
+      margin-top: 80px;
+    }
+    .dashboard-header h1 {
+      font-size: clamp(1.5rem, 5vw, 3rem);
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      position: relative;
+      display: inline-block;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      animation: glow 2s infinite alternate, moveWithCursor 0.1s ease-out;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 10px var(--primary), 0 0 20px var(--secondary); }
+      to { text-shadow: 0 0 20px var(--primary), 0 0 30px var(--secondary); }
+    }
+    @keyframes moveWithCursor {
+      from { transform: translate(0, 0); }
+      to { transform: translate(var(--cursor-x, 0), var(--cursor-y, 0)); }
+    }
+    .dashboard-header p { color: var(--muted); }
+
+    /* Logout Confirmation */
+    .logout-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+    .logout-content {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius);
+      padding: 2rem;
+      text-align: center;
+      box-shadow: var(--neon);
+      width: 90%;
+      max-width: 400px;
+    }
+    .logout-content h2 {
+      color: var(--light);
+      margin-bottom: 1rem;
+    }
+    .logout-content p {
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+    .logout-btns .btn-secondary, .logout-btns .btn-primary {
+      margin: 0 0.5rem;
+      padding: 0.6rem 1.2rem;
+    }
+
+    /* DASHBOARD CONTAINER */
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 80px auto 20px;
+      padding: 1rem;
+      display: grid;
+      gap: var(--gap);
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    @media (min-width: 768px) {
+      .dashboard-container {
+        grid-template-areas:
+          "header header header header"
+          "search search search search"
+          "categories categories categories categories"
+          "bundling bundling recommendations recommendations"
+          "vendor vendor events payments"
+          "toolbox toolbox toolbox toolbox"
+          "stats stats stats stats"
+          "plan plan plan plan";
+      }
+      .dashboard-header { grid-area: header; }
+      .search { grid-area: search; }
+      .categories { grid-area: categories; }
+      .bundling-list { grid-area: bundling; }
+      .card { grid-area: recommendations; }
+      .vendor-list { grid-area: vendor; }
+      .events-card { grid-area: events; }
+      .payments-card { grid-area: payments; }
+      .toolbox-section { grid-area: toolbox; }
+      .stats { grid-area: stats; }
+      .plan-btn { grid-area: plan; }
+    }
+
+    /* PLAN BUTTON (FAB on mobile) */
+    .plan-btn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--gradient);
+      color: var(--light);
+      padding: 1rem;
+      border-radius: 50px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: var(--neon);
+      transition: 0.3s;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .plan-btn:hover { transform: scale(1.1); }
+    @media (min-width: 768px) {
+      .plan-btn {
+        position: static;
+        grid-column: span 1 / -1;
+        border-radius: var(--radius);
+      }
+    }
+
+    /* SEARCH */
+    .search {
+      position: relative;
+    }
+    .search input {
+      width: 100%;
+      padding: 1rem;
+      border-radius: var(--radius);
+      background: var(--glass);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--light);
+      font-size: 1rem;
+      backdrop-filter: blur(12px);
+    }
+    .search input::placeholder { color: var(--muted); }
+
+    /* CATEGORIES (filter chips) */
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--gap);
+    }
+    .cat {
+      flex: 1 0 calc(50% - var(--gap));
+      background: var(--glass);
+      border-radius: var(--radius);
+      padding: 0.8rem;
+      text-align: center;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      transition: 0.3s;
+    }
+    .cat:hover { background: rgba(255,255,255,0.1); box-shadow: var(--neon); }
+    @media (min-width: 768px) {
+      .cat { flex: 1 0 calc(25% - var(--gap)); }
+    }
+
+    /* RECOMMENDATIONS, EVENTS, PAYMENTS CARD */
+    .card {
+      background: var(--glass);
+      border-radius: var(--radius);
+      padding: 1rem;
+      box-shadow: var(--neon);
+      backdrop-filter: blur(12px);
+      transition: 0.3s;
+    }
+    .card h3 { color: var(--secondary); margin-bottom: 0.5rem; }
+    .recommend-card img { width: 100%; border-radius: var(--radius); margin-bottom: 0.5rem; }
+    .rec-title { font-weight: bold; }
+    .rec-sub, .event-item p, .payment-item { color: var(--muted); }
+    .rec-price { color: var(--secondary); font-weight: bold; }
+    .event-item, .payment-item { margin-bottom: 0.5rem; }
+    .status-ongoing { color: var(--secondary); }
+    .status-completed { color: #00ff00; }
+    .due { color: #ff4d4d; }
+
+    /* BUNDLING PACKAGES */
+    .bundling-list {
+      background: var(--glass);
+      border-radius: var(--radius);
+      padding: 1rem;
+      box-shadow: var(--neon);
+      backdrop-filter: blur(12px);
+      margin-top: var(--gap);
+    }
+    .bundling-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.05);
+      transition: 0.3s;
+    }
+    .bundling-item:hover { background: rgba(255,255,255,0.1); box-shadow: var(--neon); }
+    .bundling-img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+    .bundling-info { flex: 1; }
+    .bundling-name { font-weight: bold; }
+    .bundling-desc { color: var(--muted); font-size: 0.8rem; }
+    .btn-bundle {
+      background: var(--gradient);
+      color: var(--light);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-size: 0.8rem;
+      transition: 0.3s;
+    }
+    .btn-bundle:hover { opacity: 0.85; }
+
+    /* VENDOR RECOMMENDATION LIST */
+    .vendor-list {
+      background: var(--glass);
+      border-radius: var(--radius);
+      padding: 1rem;
+      box-shadow: var(--neon);
+      backdrop-filter: blur(12px);
+      margin-top: var(--gap);
+    }
+    .vendor-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.05);
+      transition: 0.3s;
+    }
+    .vendor-item:hover { background: rgba(255,255,255,0.1); box-shadow: var(--neon); }
+    .vendor-img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--secondary);
+    }
+    .vendor-info { flex: 1; }
+    .vendor-name { font-weight: bold; }
+    .vendor-rating { color: var(--muted); font-size: 0.8rem; }
+    .btn-view {
+      background: var(--gradient);
+      color: var(--light);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-size: 0.8rem;
+      transition: 0.3s;
+    }
+    .btn-view:hover { opacity: 0.85; }
+
+    /* TOOLBOX */
+    .toolbox-section {
+      background: var(--glass);
+      border-radius: var(--radius);
+      padding: 1rem;
+      box-shadow: var(--neon);
+      backdrop-filter: blur(12px);
+    }
+    .toolbox-tabs {
+      display: flex;
+      gap: var(--gap);
+      margin-bottom: var(--gap);
+    }
+    .toolbox-tab {
+      flex: 1;
+      padding: 0.5rem;
+      text-align: center;
+      background: var(--glass);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .toolbox-tab.active { background: var(--gradient); }
+    .toolbox-content { display: none; }
+    .toolbox-content.active { display: block; }
+    .rundown-list, .checklist-list { list-style: none; }
+    .rundown-item, .checklist-item {
+      background: rgba(255,255,255,0.05);
+      padding: 0.5rem;
+      border-radius: var(--radius);
+      margin-bottom: 0.5rem;
+      cursor: grab;
+    }
+    .budget-pie { width: 100%; height: 200px; margin-bottom: 1rem; }
+    .budget-table { width: 100%; border-collapse: collapse; }
+    .budget-table th, .budget-table td {
+      padding: 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid var(--glass);
+    }
+    .budget-table input {
+      background: transparent;
+      border: none;
+      color: var(--light);
+      width: 100%;
+    }
+
+    /* STATS */
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--gap);
+    }
+    .stat {
+      flex: 1 0 calc(33.33% - var(--gap));
+      background: var(--glass);
+      border-radius: var(--radius);
+      padding: 1rem;
+      text-align: center;
+      backdrop-filter: blur(12px);
+    }
+    .stat .num { font-weight: bold; color: var(--secondary); }
+    .stat .muted { color: var(--muted); font-size: 0.8rem; }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      background: rgba(13, 13, 26, 0.9);
+      box-shadow: 0 -2px 10px rgba(0,224,255,0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="star-field" id="starField"></div>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <!-- HEADER -->
+  <header>
+    <div class="logo">HeaVenTly</div>
+    <div class="header-right">
+      <span class="notification-bell" id="notifBell">
+        <img src="notif_icon.png" alt="Notifications" style="width:28px;height:28px;filter:drop-shadow(0 0 8px #fff) brightness(1.2);vertical-align:middle;" />
+        <span class="notification-count" id="unreadCount">3</span>
+      </span>
+      <span class="chatbot-icon" id="chatbotIcon">
+        <img src="chatbot_icon.png" alt="Chatbot" style="width:28px;height:28px;filter:drop-shadow(0 0 8px #fff) brightness(1.2);vertical-align:middle;" />
+      </span>
+    </div>
+  </header>
+
+  <!-- SIDE NAVIGATION -->
+  <nav class="side-nav" id="sideNav" aria-label="Main navigation">
+    <div class="nav-brand">HeaVenTly • Client</div>
+    <div class="nav-group">
+      <h3>Navigation</h3>
+      <a href="events.html" class="nav-item"><img src="myevent_icon.png" alt="My Events icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #fff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>My Events</span></a>
+      <a href="vendors.html" class="nav-item"><img src="vendor_icon.png" alt="Vendors icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #00e0ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Vendors</span></a>
+      <a href="payments.html" class="nav-item"><img src="payment_icon.png" alt="Payments icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #6c63ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Payments</span></a>
+      <a href="profile.html" class="nav-item"><img src="profil_icon.png" alt="Profile icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #fff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Profile</span></a>
+    </div>
+    <div class="nav-group">
+      <h3>PRIMARY</h3>
+      <a href="dashboard_client.html" class="nav-item"><img src="dashboard_icon.png" alt="Dashboard icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #fff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Homepage</span></a>
+      <a href="events_new.html" class="nav-item"><img src="buatevent_icon.png" alt="Create Event icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #00e0ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Buat Event</span></a>
+      <a href="#" class="nav-item"><img src="toolbox_icon.png" alt="Toolbox icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #6c63ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Toolbox</span></a>
+      <a href="#" class="nav-item"><img src="savedvendor_icon.png" alt="Saved Vendors icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #fff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Saved Vendors</span></a>
+    </div>
+    <div class="nav-group">
+      <h3>SECONDARY</h3>
+      <a href="#" class="nav-item"><img src="report_icon.png" alt="Reports icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #fff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Reports</span></a>
+      <a href="#" class="nav-item"><img src="contract_icon.png" alt="Contracts icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #00e0ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Contracts</span></a>
+    </div>
+    <div class="nav-group">
+      <h3>UTILITIES & SUPPORT</h3>
+      <a href="#" class="nav-item"><img src="help_icon.png" alt="Help icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #fff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Help</span></a>
+      <a href="#" class="nav-item"><img src="notif_icon.png" alt="Notifications icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #ff4d4d) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Notifications</span></a>
+    </div>
+    <div class="nav-group">
+      <h3>Accessibility</h3>
+      <a href="#" class="nav-item" onclick="toggleHighContrast()"><img src="contrast_icon.png" alt="High Contrast icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #fff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>High Contrast</span></a>
+      <a href="#" class="nav-item" onclick="toggleLargeText()"><img src="large_text_icon.png" alt="Large Text icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #00e0ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Large Text</span></a>
+      <a href="#" class="nav-item" onclick="toggleNotifications()"><img src="notifsetting_icon.png" alt="Notification Settings icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #6c63ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Notification Settings</span></a>
+    </div>
+    <div class="nav-group">
+      <h3>Account</h3>
+      <a href="#" class="nav-item" onclick="showLogoutModal()"><img src="logout_icon.png" alt="Logout icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #fff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Logout</span></a>
+      <a href="account_personal.html" class="nav-item"><img src="P_information_icon.png" alt="Personal Information icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #00e0ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Personal Information</span></a>
+      <a href="account_security.html" class="nav-item"><img src="security_icon.png" alt="Security icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #6c63ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Security</span></a>
+      <a href="account_password.html" class="nav-item"><img src="password_management_icon.png" alt="Password Management icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #fff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Password Management</span></a>
+      <a href="account_devices.html" class="nav-item"><img src="connected_device.png" alt="Connected Devices icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #00e0ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Connected Devices</span></a>
+      <a href="account_privacy.html" class="nav-item"><img src="data_privacy_icon.png" alt="Data & Privacy icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #6c63ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Data & Privacy</span></a>
+      <a href="account_sharing.html" class="nav-item"><img src="chatbot_icon.png" alt="Sharing Preferences icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #fff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Sharing Preferences</span></a>
+      <a href="account_payment.html" class="nav-item"><img src="payment_icon.png" alt="Payment & Subscription icon" style="width:1.2em;height:1.2em;filter:drop-shadow(0 0 6px #00e0ff) brightness(1.1);margin-right:0.5rem;vertical-align:middle;" /><span>Payment & Subscription</span></a>
+    </div>
+    <div class="nav-footer">
+      v1.0 (prod) | <a href="#">Terms</a> | <a href="#">Privacy</a>
+    </div>
+  </nav>
+  <div class="side-nav-overlay" id="sideNavOverlay"></div>
+
+  <!-- DASHBOARD CONTAINER -->
+  <div class="dashboard-container fade-up" id="main-content">
+    <!-- HEADER SUMMARY -->
+    <div class="dashboard-header">
+      <h1>Welcome to HeaVenTly</h1>
+      <p>Manage your events, vendors, and payments seamlessly.</p>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="search delay-1">
+      <input type="search" placeholder="Search vendors, services, or locations" />
+    </div>
+
+    <!-- CATEGORIES (filter chips) -->
+    <div class="categories delay-2">
+      <div class="cat glow-hover">Catering</div>
+      <div class="cat glow-hover">Decoration</div>
+      <div class="cat glow-hover">Photography</div>
+      <div class="cat glow-hover">Event Organizer</div>
+    </div>
+
+    <!-- BUNDLING PACKAGES -->
+    <div class="bundling-list glow-hover delay-3">
+      <h3>Paket Bundling Acara</h3>
+      <div class="bundling-item">
+        <div class="bundling-img"></div>
+        <div class="bundling-info">
+          <div class="bundling-name">Wedding Starter Pack</div>
+          <div class="bundling-desc">Venue + Catering + Dekorasi (Rp 15,000,000)</div>
+        </div>
+        <a class="btn-bundle" href="bundle_1.html">Detail</a>
+      </div>
+      <div class="bundling-item">
+        <div class="bundling-img"></div>
+        <div class="bundling-info">
+          <div class="bundling-name">Seminar Pro Pack</div>
+          <div class="bundling-desc">Ruang Seminar + MC + Sound System (Rp 10,000,000)</div>
+        </div>
+        <a class="btn-bundle" href="bundle_2.html">Detail</a>
+      </div>
+      <div class="bundling-item">
+        <div class="bundling-img"></div>
+        <div class="bundling-info">
+          <div class="bundling-name">Party Ultimate Pack</div>
+          <div class="bundling-desc">DJ + Lighting + Food Truck (Rp 20,000,000)</div>
+        </div>
+        <a class="btn-bundle" href="bundle_3.html">Detail</a>
+      </div>
+    </div>
+
+    <!-- RECOMMENDATIONS CARD -->
+    <div class="card glow-hover delay-3">
+      <h3>Recommendations</h3>
+      <div class="recommend-card">
+        <img src="https://picsum.photos/seed/wedding/300/200" alt="Wedding Reception" />
+        <div class="rec-body">
+          <div class="rec-title">Wedding Reception</div>
+          <div class="rec-sub">Venue, decoration, catering</div>
+          <div class="rec-price">Rp 25,000,000</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VENDOR RECOMMENDATION LIST -->
+    <div class="vendor-list glow-hover delay-3">
+      <h3>EO Vendor Recommendations</h3>
+      <div class="vendor-item">
+        <div class="vendor-img"></div>
+        <div class="vendor-info">
+          <div class="vendor-name">Premier EO</div>
+          <div class="vendor-rating">★ 4.8 (120 reviews)</div>
+        </div>
+        <a class="btn-view" href="vendor_1.html">View</a>
+      </div>
+      <div class="vendor-item">
+        <div class="vendor-img"></div>
+        <div class="vendor-info">
+          <div class="vendor-name">Elite Vendors</div>
+          <div class="vendor-rating">★ 4.9 (150 reviews)</div>
+        </div>
+        <a class="btn-view" href="vendor_2.html">View</a>
+      </div>
+      <div class="vendor-item">
+        <div class="vendor-img"></div>
+        <div class="vendor-info">
+          <div class="vendor-name">Star Events</div>
+          <div class="vendor-rating">★ 4.7 (100 reviews)</div>
+        </div>
+        <a class="btn-view" href="vendor_3.html">View</a>
+      </div>
+    </div>
+
+    <!-- EVENTS CARD -->
+    <div class="card events-card glow-hover delay-3">
+      <h3>Your Events</h3>
+      <div class="event-item">
+        <p><strong>Wedding Celebration</strong> - 2025-09-15</p>
+        <p class="status-ongoing">Ongoing</p>
+      </div>
+      <div class="event-item">
+        <p><strong>Corporate Seminar</strong> - 2025-08-20</p>
+        <p class="status-completed">Completed</p>
+      </div>
+    </div>
+
+    <!-- PAYMENTS SNAPSHOT CARD -->
+    <div class="card payments-card glow-hover delay-3">
+      <h3>Payments Snapshot</h3>
+      <div class="payment-item">
+        <span>Wedding Catering</span>
+        <span>Rp 8,000,000 (Paid)</span>
+      </div>
+      <div class="payment-item">
+        <span>Venue Booking</span>
+        <span class="due">Rp 12,000,000 (Due)</span>
+      </div>
+    </div>
+
+    <!-- TOOLBOX SECTION -->
+    <div class="toolbox-section delay-3">
+      <div class="toolbox-tabs">
+        <div class="toolbox-tab active" data-tab="rundown">Rundown</div>
+        <div class="toolbox-tab" data-tab="budget">Budget</div>
+        <div class="toolbox-tab" data-tab="checklist">Checklist</div>
+      </div>
+      <div id="rundown" class="toolbox-content active">
+        <ul class="rundown-list">
+          <li class="rundown-item">08:00 - Opening (MC)</li>
+          <li class="rundown-item">09:00 - Talkshow (EO)</li>
+        </ul>
+      </div>
+      <div id="budget" class="toolbox-content">
+        <svg id="budget-pie" class="budget-pie" viewBox="0 0 200 200"></svg>
+        <table class="budget-table">
+          <thead>
+            <tr><th>Category</th><th>Estimate</th><th>Actual</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Catering</td><td><input value="5000000" /></td><td><input value="4500000" /></td></tr>
+            <tr><td>Decor</td><td><input value="3000000" /></td><td><input value="3200000" /></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="checklist" class="toolbox-content">
+        <ul class="checklist-list">
+          <li class="checklist-item"><input type="checkbox" /> Confirm seats</li>
+          <li class="checklist-item"><input type="checkbox" checked /> Sound check</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats delay-3">
+      <div class="stat glow-hover">
+        <div class="num">10</div>
+        <div class="muted">Active Events</div>
+      </div>
+      <div class="stat glow-hover">
+        <div class="num">25</div>
+        <div class="muted">Connected Vendors</div>
+      </div>
+      <div class="stat glow-hover">
+        <div class="num">98%</div>
+        <div class="muted">Satisfaction</div>
+      </div>
+    </div>
+
+    <!-- PLAN CTA BUTTON -->
+    <div class="plan-btn glow-hover delay-3" onclick="location.href='events_new.html'">
+      <span>Plan New Event</span>
+      <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2025 HeaVenTly. All rights reserved.</p>
+  </footer>
+
+  <!-- LOGOUT MODAL -->
+  <div class="logout-modal" id="logoutModal">
+    <div class="logout-content">
+      <h2>Confirm Logout</h2>
+      <p>Are you sure you want to log out? This will end your current session.</p>
+      <div class="logout-btns">
+        <button class="btn-secondary" onclick="hideLogoutModal()">Cancel</button>
+        <button class="btn-primary" onclick="location.href='landing.html'">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Popup -->
+  <div id="notifPopup" style="display:none;position:fixed;top:70px;right:32px;width:240px;height:180px;background:rgba(13,13,26,0.85);backdrop-filter:blur(12px);border-radius:18px;box-shadow:0 8px 32px rgba(108,99,255,0.18),0 0 36px rgba(0,224,255,0.10);z-index:2000;padding:1rem;">
+    <h4 style="margin:0 0 0.5rem 0;color:var(--secondary);font-size:1rem;">Notifikasi</h4>
+    <div style="font-size:0.95rem;color:var(--light);margin-bottom:0.5rem;">🎉 Event "Wedding Celebration" berhasil disimpan!</div>
+    <div style="font-size:0.95rem;color:var(--light);margin-bottom:0.5rem;">🔔 Pembayaran "Venue Booking" jatuh tempo besok.</div>
+    <div style="font-size:0.95rem;color:var(--light);">📢 Vendor baru "Libra Decor" tersedia di Semarang.</div>
+  </div>
+  <!-- Chatbot Popup -->
+  <div id="chatbotPopup" style="display:none;position:fixed;top:70px;right:32px;width:240px;height:320px;background:rgba(13,13,26,0.85);backdrop-filter:blur(12px);border-radius:18px;box-shadow:0 8px 32px rgba(108,99,255,0.18),0 0 36px rgba(0,224,255,0.10);z-index:2000;padding:1rem;display:flex;flex-direction:column;">
+    <h4 style="margin:0 0 0.5rem 0;color:var(--secondary);font-size:1rem;">HeaVenTly Chatbot</h4>
+    <div id="chatContent" style="flex:1;overflow-y:auto;font-size:0.95rem;color:var(--light);margin-bottom:0.5rem;">
+      <div style="margin-bottom:0.5rem;"><b>Bot:</b> Halo! Ada yang bisa dibantu?</div>
+      <div style="margin-bottom:0.5rem;"><b>Anda:</b> Saya ingin cari vendor dekorasi di Semarang.</div>
+      <div style="margin-bottom:0.5rem;"><b>Bot:</b> Berikut rekomendasi: Libra Decor, rating 4.7.</div>
+    </div>
+    <form id="chatForm" style="display:flex;gap:0.5rem;">
+      <input type="text" id="chatInput" placeholder="Ketik pesan..." style="flex:1;padding:0.5rem;border-radius:12px;border:none;background:rgba(255,255,255,0.08);color:var(--light);" />
+      <button type="submit" style="background:var(--gradient);color:var(--light);border:none;border-radius:12px;padding:0.5rem 1rem;cursor:pointer;">Kirim</button>
+    </form>
+  </div>
+
+  <script>
+    // Mock auth check
+    if (!localStorage.getItem('authenticated')) {
+      alert('Please log in.');
+      location.href = 'signin.html';
+    }
+
+    // Create star field background
+    function createStars() {
+      const starField = document.getElementById('starField');
+      for (let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.width = `${Math.random() * 2 + 1}px`;
+        star.style.height = star.style.width;
+        star.style.left = `${Math.random() * 100}vw`;
+        star.style.top = `${Math.random() * 100}vh`;
+        star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+        starField.appendChild(star);
+      }
+    }
+    createStars();
+
+    // Side Navigation
+    let sideNavOpen = false;
+    function toggleSideNav() {
+      const sideNav = document.getElementById('sideNav');
+      const overlay = document.getElementById('sideNavOverlay');
+      if (sideNav && overlay) {
+        sideNavOpen = !sideNavOpen;
+        sideNav.classList.toggle('open', sideNavOpen);
+        overlay.style.display = sideNavOpen ? 'block' : 'none';
+        document.querySelector('.logo').setAttribute('aria-expanded', sideNavOpen);
+        if (sideNavOpen) {
+          sideNav.querySelector('.nav-item').focus();
+          console.log('ui.hamburger.toggle', { open: sideNavOpen, page: 'client.dashboard' });
+        }
+      }
+    }
+
+    // Attach event listener to logo after DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      const logo = document.querySelector('.logo');
+      if (logo) {
+        logo.addEventListener('click', toggleSideNav);
+      } else {
+        console.error('Logo element not found!');
+      }
+
+      const overlay = document.getElementById('sideNavOverlay');
+      if (overlay) {
+        overlay.addEventListener('click', toggleSideNav);
+      } else {
+        console.error('Side nav overlay not found!');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (sideNavOpen && e.key === 'Escape') toggleSideNav();
+    });
+
+    // Simulasi Data
+    const dashboardData = {
+      events: [{ time: '08:00', title: 'Opening', role: 'MC' }, { time: '09:00', title: 'Talkshow', role: 'EO' }],
+      recos: [{ name: 'Wedding Reception', desc: 'Venue & catering', price: 'Rp 25,000,000', img: 'https://picsum.photos/seed/wedding/300/200' }],
+      payments: [{ name: 'Catering', amount: 'Rp 8,000,000', status: 'paid' }, { name: 'Venue', amount: 'Rp 12,000,000', status: 'due' }],
+      unread: 3,
+      rundown: [{ time: '08:00', title: 'Pembukaan', role: 'MC' }, { time: '09:00', title: 'Demo', role: 'Vendor' }],
+      categories: [{ id: 'catering', name: 'Catering', estimate: 5000000, actual: 4500000, color: '#00e0ff' }, { id: 'decor', name: 'Decor', estimate: 3000000, actual: 3200000, color: '#6c63ff' }],
+      checklist: [{ text: 'Confirm seats', done: false }, { text: 'Sound check', done: true }]
+    };
+
+    // Update unread count
+    document.getElementById('unreadCount').textContent = dashboardData.unread;
+
+    // Toolbox Tabs
+    document.querySelectorAll('.toolbox-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.toolbox-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        document.querySelectorAll('.toolbox-content').forEach(c => c.classList.remove('active'));
+        document.getElementById(tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Rundown drag/drop
+    const rundownList = document.querySelector('.rundown-list');
+    rundownList.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text', e.target.outerHTML);
+      e.target.classList.add('dragging');
+    });
+    rundownList.addEventListener('dragend', e => e.target.classList.remove('dragging'));
+    rundownList.addEventListener('dragover', e => e.preventDefault());
+    rundownList.addEventListener('drop', e => {
+      e.preventDefault();
+      const dragged = document.querySelector('.dragging');
+      const target = e.target.closest('.rundown-item');
+      if (target) rundownList.insertBefore(dragged, target.nextSibling);
+    });
+
+    // Budget pie (simplified for demo)
+    const budgetPie = document.getElementById('budget-pie');
+    const total = dashboardData.categories.reduce((sum, d) => sum + d.estimate, 0);
+    let currentAngle = -Math.PI / 2; // Deklarasi di luar loop
+    dashboardData.categories.forEach((d, index) => {
+      const angle = (d.estimate / total) * 2 * Math.PI;
+      const endAngle = currentAngle + angle;
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', `M 100 100 L ${100 + 90 * Math.cos(currentAngle)} ${100 + 90 * Math.sin(currentAngle)} A 90 90 0 ${angle > Math.PI ? 1 : 0} 1 ${100 + 90 * Math.cos(endAngle)} ${100 + 90 * Math.sin(endAngle)} Z`);
+      path.setAttribute('fill', d.color);
+      budgetPie.appendChild(path);
+      currentAngle = endAngle; // Update di dalam loop
+    });
+
+    // Editable budget table
+    document.querySelectorAll('.budget-table input').forEach(input => {
+      input.addEventListener('blur', () => {
+        console.log('Budget updated:', input.value);
+      });
+    });
+
+    // Checklist sortable (similar to rundown)
+    const checklistList = document.querySelector('.checklist-list');
+    checklistList.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text', e.target.outerHTML);
+      e.target.classList.add('dragging');
+    });
+    checklistList.addEventListener('dragend', e => e.target.classList.remove('dragging'));
+    checklistList.addEventListener('dragover', e => e.preventDefault());
+    checklistList.addEventListener('drop', e => {
+      e.preventDefault();
+      const dragged = document.querySelector('.dragging');
+      const target = e.target.closest('.checklist-item');
+      if (target) checklistList.insertBefore(dragged, target.nextSibling);
+    });
+
+    // Checklist toggle
+    document.querySelectorAll('.checklist-item input').forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        console.log('Checklist updated:', checkbox.checked);
+      });
+    });
+
+    // Accessibility Functions (Placeholder)
+    function toggleHighContrast() {
+      document.body.classList.toggle('high-contrast');
+      if (document.body.classList.contains('high-contrast')) {
+        document.body.style.background = '#000';
+        document.body.style.color = '#fff';
+      } else {
+        document.body.style.background = 'linear-gradient(45deg, #0a0e1b, #1a2a44, #0a0e1b)';
+        document.body.style.color = '#f5f7ff'; // Perbaikan dari var(--light)
+      }
+    }
+    function toggleLargeText() {
+      document.body.classList.toggle('large-text');
+      document.body.style.fontSize = document.body.classList.contains('large-text') ? '1.2rem' : '1rem';
+    }
+    function toggleNotifications() {
+      alert('Notification settings toggled! (Feature to be implemented)');
+    }
+
+    // Logout Modal
+    function showLogoutModal() {
+      document.getElementById('logoutModal').style.display = 'flex';
+    }
+    function hideLogoutModal() {
+      document.getElementById('logoutModal').style.display = 'none';
+    }
+
+    // Chatbot Function (Placeholder)
+    function openChatbot() {
+      alert('Chatbot opened! (Feature to be implemented)');
+    }
+
+    // Cursor Tracking for Header Animation
+    document.addEventListener('mousemove', (e) => {
+      const headerText = document.querySelector('.dashboard-header h1');
+      const rect = headerText.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const maxMove = 20;
+      const moveX = ((e.clientX - centerX) / window.innerWidth) * maxMove;
+      const moveY = ((e.clientY - centerY) / window.innerHeight) * maxMove;
+      headerText.style.setProperty('--cursor-x', `${moveX}px`);
+      headerText.style.setProperty('--cursor-y', `${moveY}px`);
+    });
+
+    // Notification Popup
+    const notifBell = document.getElementById('notifBell');
+    const notifPopup = document.getElementById('notifPopup');
+    notifBell.addEventListener('click', function(e) {
+      notifPopup.style.display = notifPopup.style.display === 'none' ? 'block' : 'none';
+      document.getElementById('chatbotPopup').style.display = 'none';
+      e.stopPropagation();
+    });
+    // Chatbot Popup
+    const chatbotIcon = document.getElementById('chatbotIcon');
+    const chatbotPopup = document.getElementById('chatbotPopup');
+    chatbotIcon.addEventListener('click', function(e) {
+      chatbotPopup.style.display = chatbotPopup.style.display === 'none' ? 'flex' : 'none';
+      notifPopup.style.display = 'none';
+      e.stopPropagation();
+    });
+    // Hide popups when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!notifPopup.contains(e.target) && !notifBell.contains(e.target)) notifPopup.style.display = 'none';
+      if (!chatbotPopup.contains(e.target) && !chatbotIcon.contains(e.target)) chatbotPopup.style.display = 'none';
+    });
+    // Fake chat interaction
+    document.getElementById('chatForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      const chatContent = document.getElementById('chatContent');
+      if (input.value.trim()) {
+        chatContent.innerHTML += `<div style='margin-bottom:0.5rem;'><b>Anda:</b> ${input.value}</div>`;
+        setTimeout(() => {
+          chatContent.innerHTML += `<div style='margin-bottom:0.5rem;'><b>Bot:</b> Terima kasih atas pertanyaannya! (simulasi)</div>`;
+          chatContent.scrollTop = chatContent.scrollHeight;
+        }, 700);
+        chatContent.scrollTop = chatContent.scrollHeight;
+        input.value = '';
+      }
+    });
+  </script>
+</body>
+</html>

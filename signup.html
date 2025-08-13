@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HeaVenTly - Sign Up (Vendor / EO / Client)</title>
+  <style>
+    /* ---------- Fonts & base ---------- */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    :root{
+      --primary:#6c63ff;
+      --secondary:#00e0ff;
+      --dark:#0d0d1a;
+      --light:#f5f7ff;
+      --glass: rgba(255,255,255,0.06);
+      --card-bg: rgba(255,255,255,0.04);
+      --radius: 12px;
+      --neon: 0 8px 40px rgba(108,99,255,0.14), 0 0 36px rgba(0,224,255,0.06);
+      --google-blue: #4285F4;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family:"Poppins",system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background: linear-gradient(180deg,#060612 0%, #071025 40%);
+      color:var(--light);
+      -webkit-font-smoothing:antialiased;
+      min-height:100vh;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ---------- NAVBAR (consistent) ---------- */
+    header{
+      position:fixed;left:0;right:0;top:0;height:72px;z-index:1200;
+      display:flex;align-items:center;justify-content:space-between;padding:0 28px;
+      background: rgba(13,13,26,0.80);backdrop-filter: blur(10px);
+      box-shadow: 0 6px 28px rgba(0,0,0,0.5), 0 0 18px rgba(0,224,255,0.06);
+    }
+    .logo{
+      font-weight:700; font-size:20px;
+      background: linear-gradient(135deg,var(--primary),var(--secondary));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; cursor:pointer;
+    }
+    nav{ display:flex; align-items:center; gap:14px; }
+    nav a{ color:var(--light); text-decoration:none; font-weight:500; padding:6px 8px; border-radius:8px; position:relative; }
+    nav a::after{ content:''; position:absolute; left:0; bottom:-6px; height:2px; width:0; background:var(--secondary); transition:width .25s;}
+    nav a:hover{ color:var(--secondary); } nav a:hover::after{ width:100%;}
+    .btn-primary{ background: linear-gradient(90deg,var(--primary),var(--secondary)); color:#06060a; padding:8px 14px; border-radius:999px; border:none; font-weight:700; cursor:pointer; }
+    .btn-secondary{ background:transparent; color:var(--secondary); border:1.5px solid rgba(0,224,255,0.14); padding:7px 12px; border-radius:999px; cursor:pointer; }
+
+    /* ---------- Layout ---------- */
+    main{ max-width:1200px; margin:0 auto; padding:120px 20px 80px; }
+    .signup-grid{ display:grid; grid-template-columns: 1fr 420px; gap:26px; align-items:start; }
+    @media (max-width:1100px){ .signup-grid{ grid-template-columns: 1fr 360px; } }
+    @media (max-width:980px){ .signup-grid{ grid-template-columns: 1fr; } }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:var(--radius);
+      padding:20px;
+      border:1px solid rgba(255,255,255,0.03);
+      box-shadow: 0 10px 40px rgba(0,224,255,0.04);
+      backdrop-filter: blur(6px);
+    }
+
+    /* glow for title */
+    h1.page-title{
+      font-size:24px; margin-bottom:8px;
+      background: linear-gradient(90deg,var(--primary),var(--secondary));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      text-shadow:
+        0 0 10px rgba(108,99,255,0.45),
+        0 0 20px rgba(0,224,255,0.18),
+        0 2px 20px rgba(12,12,20,0.6);
+      filter: drop-shadow(0 0 6px rgba(108,99,255,0.15));
+    }
+    p.lead{ color:rgba(245,247,255,0.85); margin-bottom:18px; }
+
+    /* ---------- Form basics (preserve original) ---------- */
+    form label{ display:block; font-weight:600; margin:10px 0 6px; font-size:13px; color:rgba(245,247,255,0.92); }
+    input[type="text"], input[type="email"], input[type="password"], select, textarea, input[type="date"], input[type="tel"]{
+      width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:var(--light); font-size:14px;
+    }
+    textarea{ min-height:120px; resize:vertical; }
+
+    .row{ display:flex; gap:12px; }
+    .row .col{ flex:1; }
+    @media (max-width:720px){ .row{ flex-direction:column; } }
+
+    .small-note{ font-size:12px; color:rgba(245,247,255,0.7); margin-top:6px; }
+
+    .file-input{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .file-input input[type="file"]{ background:transparent; color:var(--light); }
+
+    .btn-submit{ margin-top:16px; background: linear-gradient(90deg,var(--primary),var(--secondary)); color:#06060a; padding:12px 16px; border-radius:12px; border:none; font-weight:800; cursor:pointer; }
+
+    /* Google button */
+    .google-btn{
+      display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:10px; background:var(--google-blue); color:white; border:none; cursor:pointer; font-weight:700;
+      box-shadow: 0 8px 30px rgba(66,133,244,0.16), inset 0 -2px 0 rgba(0,0,0,0.05);
+    }
+    .google-btn img{ width:18px; height:18px; }
+
+    /* ---------- Side preview (keep same) ---------- */
+    .side-hero{ display:flex; flex-direction:column; gap:12px; align-items:stretch; position:relative; }
+    .preview-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,0.04);
+      box-shadow: var(--neon); min-height:360px; display:flex; flex-direction:column;
+      transition: transform .6s cubic-bezier(.2,.9,.2,1), opacity .45s ease, filter .45s ease;
+      opacity:0; transform: translateY(20px) scale(.995);
+      will-change: transform, opacity;
+    }
+    .preview-card.show{ opacity:1; transform:none; }
+    .preview-image{ width:100%; height:220px; object-fit:cover; display:block; filter: saturate(1.05) contrast(1.02); transition: transform .8s ease, filter .6s ease; }
+    .preview-content{ padding:16px; display:flex; flex-direction:column; gap:10px; flex:1; }
+    .badge{ display:inline-block;padding:6px 10px;border-radius:999px;background:linear-gradient(90deg,var(--primary),var(--secondary)); color:#06060a; font-weight:700; font-size:13px; width:max-content; }
+    .preview-title{ font-size:18px; font-weight:800; margin-top:6px; }
+    .preview-desc{ color:rgba(245,247,255,0.87); font-size:14px; line-height:1.45; }
+    .preview-cta{ margin-top:auto; display:flex; gap:8px; }
+    .ghost-btn{ padding:8px 12px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--light);cursor:pointer; }
+    .solid-btn{ padding:8px 12px;border-radius:10px;background:linear-gradient(90deg,var(--primary),var(--secondary));border:none;color:#06060a;font-weight:700;cursor:pointer; }
+
+    .side-hero .box{ width:100%; padding:12px; border-radius:12px; background:var(--card-bg); border:1px solid rgba(255,255,255,0.03); }
+    .tip{ font-size:13px; color:rgba(245,247,255,0.9); }
+
+    /* animation helpers */
+    .fade-up{ opacity:0; transform:translateY(12px); transition: all .6s cubic-bezier(.2,.9,.2,1); }
+    .fade-up.show{ opacity:1; transform:none; }
+    .fade-slide-in{ opacity:0; transform: translateY(20px); transition: all .5s cubic-bezier(.2,.9,.2,1); }
+    .fade-slide-in.active{ opacity:1; transform:none; }
+
+    .error{ color:#ff8b8b; font-size:13px; margin-top:6px; display:none; }
+
+    /* ---------- Neon glass datepicker styles ---------- */
+    .neon-date-wrap{ position:relative; }
+    .neon-input{
+      width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(0,224,255,0.22);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      color:var(--light); font-size:14px; box-shadow:0 6px 30px rgba(0,224,255,0.06), inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+    .neon-input:focus{ outline:none; box-shadow: 0 0 18px rgba(0,224,255,0.18); border-color: rgba(0,224,255,0.5); cursor:pointer; }
+
+    .calendar-pop{
+      position:absolute; z-index:1500; right:0; top:calc(100% + 10px);
+      width:320px; max-width:calc(100vw - 40px);
+      background: linear-gradient(180deg, rgba(8,10,20,0.95), rgba(6,8,16,0.92));
+      border-radius:12px; padding:12px; border:1px solid rgba(0,224,255,0.06);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 30px rgba(0,224,255,0.04);
+      transform-origin: top right; opacity:0; transform: translateY(-8px) scale(.98); transition: all .18s ease;
+    }
+    .calendar-pop.show{ opacity:1; transform: translateY(0) scale(1); }
+
+    .cal-header{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
+    .cal-title{ font-weight:700; color:var(--light); }
+    .cal-nav button{ background:transparent; border:none; color:var(--light); padding:6px; cursor:pointer; border-radius:8px; }
+    .cal-grid{ display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; }
+    .cal-cell{ width:100%; padding:10px; text-align:center; border-radius:8px; color:rgba(255,255,255,0.8); cursor:pointer; }
+    .cal-cell:hover{ background: rgba(0,224,255,0.06); box-shadow: 0 6px 18px rgba(0,224,255,0.03); }
+    .cal-cell.disabled{ opacity:0.25; cursor:default; }
+    .cal-cell.selected{ background: linear-gradient(90deg,var(--primary),var(--secondary)); color:#06060a; font-weight:700; box-shadow: 0 6px 20px rgba(108,99,255,0.12); }
+
+    .cal-controls{ display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+    .cal-controls select, .cal-controls button{ background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--light); padding:8px; border-radius:8px; cursor:pointer; }
+
+    @media (max-width:720px){
+      .calendar-pop{ right:8px; left:8px; width:auto; }
+    }
+
+    /* bottom signin text */
+    .already{ margin-top:14px; text-align:center; color:rgba(245,247,255,0.85); }
+    .already a{ color:var(--secondary); text-decoration:none; font-weight:700; margin-left:6px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo" onclick="location.href='landing.html'">HeaVenTly</div>
+    <nav>
+      <a href="landing.html">Home</a>
+      <a href="howitworks_landing.html">How It Works</a>
+      <a href="pricing_landing.html">Pricing</a>
+      <a href="about_landing.html">About</a>
+      <a href="contact_landing.html">Contact</a>
+      <button class="btn-secondary" onclick="location.href='signin.html'">Sign In</button>
+    </nav>
+  </header>
+
+  <main>
+    <div class="card">
+      <h1 class="page-title">Create Account — Vendor / EO / Client</h1>
+      <p class="lead">Join HeaVenTly as a Vendor, Event Organizer (EO), or Client. Lengkapi informasi dasar dulu, lalu upload dokumen untuk verifikasi.</p>
+
+      <div class="signup-grid">
+        <!-- LEFT: FORM -->
+        <div>
+          <!-- Google sign up (shortcut) -->
+          <div style="margin-bottom:12px;">
+            <button id="googleBtn" class="google-btn" type="button">
+              <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE5LjM3IDExLjg1Yy4wMy4zNS4wNy43MS4wNyAxLjA5IDAgMi40Mi0uODI0IDQuMTI4LTIuMzYgNS40Mjh2Mi4yNDZoMy44N2MuMi0xLjQ2LjM1LTIuNzEuMzUtNC4yNTkgMC0uNDEtLjAxLS43OC0uMDMtMS4xNS0uMDEtLjAyLS4wMS0uMDQtLjAyLS4wNS4wLS4wMi0uMDItLjAzLS4wMy0uMDUuMDItLjA1LjA0LS4xLjA3LS4xOC4yLS41OS42Ni0xLjMyIDEuNzYtMi4xMjQuMTEtLjA5LjI0LS4yMi40LS4zNS4xMy0uMTQuMjctLjI4LjQzLS40MS0uMDMtLjAzLS4wNS0uMDctLjA4LS4wOS0uMDUtLjAyLS4wOC0uMDQtLjExLS4wNi0uMDctLjA1LS4xNC0uMDgtLjIxLS4xLS4wMy0uMDItLjA3LS4wNi0uMDgtLjA4LS4wMy0uMDYtLjA3LS4xMi0uMTEtLjE4LS4wNy0uMTEtLjEtLjI0LS4xNC0uMzYtLjAzLS4wOC0uMDktLjE3LS4xNC0uMjYtLjA1LS4xMS0uMTEtLjIyLS4xNi0uMzMtLjAxLS4wMy0uMDItLjA2LS4wMy0uMDktLjA0LS4xMy0uMDktLjI3LS4xMy0uNDF6IiBmaWxsPSIjZmZmIi8+Cjwvc3ZnPg==" alt="G" />
+              Continue with Google
+            </button>
+          </div>
+
+          <form id="partnerForm" class="fade-up" onsubmit="return handleSubmit(event)">
+            <!-- core account -->
+            <label for="fullName">Full name (owner / lead) *</label>
+            <input id="fullName" name="fullName" type="text" required placeholder="e.g. Agus Pratama" />
+
+            <label for="email">Email *</label>
+            <input id="email" name="email" type="email" required placeholder="you@domain.com" />
+
+            <label for="password">Password *</label>
+            <input id="password" name="password" type="password" required placeholder="min. 8 characters" />
+
+            <label for="role">Register as *</label>
+            <select id="role" name="role" required>
+              <option value="">-- Select Role --</option>
+              <option value="vendor">Vendor</option>
+              <option value="eo">Event Organizer (EO)</option>
+              <option value="client">Client - Make a Event</option>
+            </select>
+
+            <hr style="margin:18px 0;border:none;border-top:1px solid rgba(255,255,255,0.04)" />
+
+            <!-- VENDOR FIELDS -->
+            <div id="vendorFields" class="fade-up" style="display:none;">
+              <label for="businessName">Nama usaha *</label>
+              <input id="businessName" name="businessName" type="text" placeholder="Nama usaha" />
+
+              <label for="serviceType">Jenis layanan (kategori) *</label>
+              <select id="serviceType" name="serviceType">
+                <option value="">Pilih kategori</option>
+                <option value="catering">Katering</option>
+                <option value="decoration">Dekor</option>
+                <option value="photography">Fotografi</option>
+                <option value="sound">Sound & AV</option>
+                <option value="other">Lainnya</option>
+              </select>
+
+              <label for="bizDesc">Deskripsi bisnis (minimal 50 karakter) *</label>
+              <textarea id="bizDesc" name="bizDesc" placeholder="Deskripsikan usaha, pengalaman, keunggulan..." minlength="50"></textarea>
+              <div id="descError" class="error">Deskripsi minimal 50 karakter.</div>
+
+              <label for="address">Alamat usaha + daerah jangkauan *</label>
+              <input id="address" name="address" type="text" placeholder="Alamat lengkap & area jangkauan (kota/region)" />
+
+              <label>Paket & price range (direkomendasikan minimal 1)</label>
+              <div class="packages" id="packages">
+                <div class="package-row">
+                  <input name="packages[]" placeholder="Paket A — Harga / deskripsi (contoh: Paket A — Rp 5.000.000)" />
+                  <button type="button" class="remove-btn" onclick="removePackage(this)">✕</button>
+                </div>
+              </div>
+              <div style="margin-top:8px;">
+                <button type="button" onclick="addPackage()" class="btn-secondary">Tambah Paket</button>
+              </div>
+
+              <label for="contactPhone">Contact person (phone) *</label>
+              <input id="contactPhone" name="contactPhone" type="tel" placeholder="+62 8xx xxxx xxxx" />
+
+              <label for="contactEmail">Contact email *</label>
+              <input id="contactEmail" name="contactEmail" type="email" placeholder="contact@usaha.com" />
+
+              <label>Dokumen (upload) — KTP (owner) *</label>
+              <div class="file-input">
+                <input id="ktp" name="ktp" type="file" accept="image/*,application/pdf" />
+              </div>
+
+              <label>NPWP (jika ada)</label>
+              <div class="file-input">
+                <input id="npwp" name="npwp" type="file" accept="application/pdf,image/*" />
+              </div>
+
+              <label>Portofolio (images / pdf) — minimal 1 file *</label>
+              <div class="file-input">
+                <input id="portfolio" name="portfolio" type="file" accept="image/*,application/pdf" multiple />
+              </div>
+
+              <label>Contoh kontrak / Proposal (pdf preferred)</label>
+              <div class="file-input">
+                <input id="proposal" name="proposal" type="file" accept="application/pdf" />
+              </div>
+
+              <label>Bank account info (untuk payout) — required for activation</label>
+              <div class="row">
+                <div class="col">
+                  <input id="bankName" name="bankName" type="text" placeholder="Nama bank (contoh: BCA)" />
+                </div>
+                <div class="col">
+                  <input id="bankAccount" name="bankAccount" type="text" placeholder="No. Rekening / Nama pemilik" />
+                </div>
+              </div>
+            </div>
+
+            <!-- EO FIELDS -->
+            <div id="eoFields" class="fade-up" style="display:none;">
+              <label for="eoName">Nama EO / entitas legal *</label>
+              <input id="eoName" name="eoName" type="text" placeholder="Nama EO / legal entity" />
+
+              <label for="eoPhone">Nomor Handphone EO *</label>
+              <input id="eoPhone" name="eoPhone" type="tel" placeholder="+62 8xx xxxx xxxx" />
+
+              <label for="teamStructure">Tim & struktur (jumlah crew, roles) *</label>
+              <textarea id="teamStructure" name="teamStructure" placeholder="Contoh: 6 orang — project lead, 2 event staff, 1 stage, 1 lighting..." ></textarea>
+
+              <label for="leadCV">CV / profile lead EO (upload) *</label>
+              <div class="file-input">
+                <input id="leadCV" name="leadCV" type="file" accept="application/pdf,application/msword,image/*" />
+              </div>
+
+              <label>Portfolio acara (links / uploads) — minimal 1 *</label>
+              <div style="display:flex;gap:8px;flex-direction:column;">
+                <input id="portfolioLinks" name="portfolioLinks" type="text" placeholder="Link portfolio (youtube, drive, website) — pisahkan koma" />
+                <input id="portfolioUploads" name="portfolioUploads" type="file" accept="image/*,application/pdf" multiple />
+              </div>
+
+              <label>SOP / safety / insurance docs (optional)</label>
+              <div class="file-input">
+                <input id="sopDocs" name="sopDocs" type="file" accept="application/pdf,image/*" />
+              </div>
+
+              <label>Bank account / payment info *</label>
+              <div class="row">
+                <div class="col"><input id="eoBankName" name="eoBankName" type="text" placeholder="Nama bank" /></div>
+                <div class="col"><input id="eoBankAccount" name="eoBankAccount" type="text" placeholder="No. Rekening / Nama pemilik" /></div>
+              </div>
+            </div>
+
+            <!-- CLIENT FIELDS -->
+            <div id="clientFields" class="fade-up" style="display:none;">
+              <label for="clientPhone">Nomor Handphone *</label>
+              <input id="clientPhone" name="clientPhone" type="tel" placeholder="+62 8xx xxxx xxxx" />
+
+              <!-- DOB neon datepicker -->
+              <label for="clientDob">Tanggal Lahir *</label>
+              <div class="neon-date-wrap" style="margin-bottom:10px;">
+                <input id="clientDob" name="clientDob" type="text" readonly class="neon-input" placeholder="Pilih tanggal lahir" />
+                <div id="calendarPop" class="calendar-pop" aria-hidden="true" style="display:none;">
+                  <!-- calendar UI injected by JS -->
+                </div>
+              </div>
+            </div>
+
+            <div id="formErrors" class="error" style="display:none;"></div>
+
+            <button type="submit" class="btn-submit">sign up</button>
+
+            <div class="already">
+              <span>Already have an account?</span>
+              <a href="signin.html">Sign In</a>
+            </div>
+
+            <p class="small-note" style="margin-top:12px;">Setelah submit, tim kami akan meninjau dokumen & mengaktifkan akun payout jika semua lengkap.</p>
+          </form>
+        </div>
+
+        <!-- RIGHT: SIDE INFO (Preview + tips) -->
+        <aside class="side-hero">
+          <!-- Preview Card: dynamic -->
+          <div id="previewCard" class="preview-card" aria-hidden="true">
+            <img id="previewImage" class="preview-image" src="https://picsum.photos/seed/event1/800/600" alt="Event documentation aesthetic" />
+            <div id="previewContent" class="preview-content">
+              <span id="previewBadge" class="badge">Partner Highlight</span>
+              <div id="previewTitle" class="preview-title">HeaVenTly Marketplace</div>
+              <div id="previewDesc" class="preview-desc">
+                Profesional. Terverifikasi. Siap mendukung acara skala apa pun — dari intimate gathering sampai konser besar. Upload portofolio dan proposal untuk mempercepat verifikasi.
+              </div>
+              <div class="preview-cta">
+                <button id="previewInfoBtn" class="ghost-btn">Learn more</button>
+                <button id="previewActBtn" class="solid-btn">Complete Profile</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="box fade-slide-in" id="reqDocsBox">
+            <strong>Required documents</strong>
+            <ul style="margin-top:8px;color:rgba(245,247,255,0.9);line-height:1.6">
+              <li>KTP (owner)</li>
+              <li>NPWP (jika tersedia)</li>
+              <li>Portofolio (image/pdf) — minimal 1</li>
+              <li>Proposal / contoh kontrak (vendor) / CV lead (EO)</li>
+              <li>Informasi rekening bank</li>
+            </ul>
+          </div>
+
+          <div class="box fade-slide-in" id="tipsBox">
+            <strong>Tips</strong>
+            <p class="tip">Gunakan foto portofolio berkualitas. Di proposal, cantumkan paket harga & scope kerja agar approval lebih cepat.</p>
+          </div>
+
+          <div class="box fade-slide-in" id="privacyBox">
+            <strong>Privacy</strong>
+            <p class="tip">Data & dokumen hanya digunakan untuk verifikasi, komunikasi dan pembayaran. Kamu dapat menghapus akun kapan saja.</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    /* ---------------- DOM refs ---------------- */
+    const roleSelect = document.getElementById('role');
+    const vendorFields = document.getElementById('vendorFields');
+    const eoFields = document.getElementById('eoFields');
+    const clientFields = document.getElementById('clientFields');
+    const form = document.getElementById('partnerForm');
+    const formErrors = document.getElementById('formErrors');
+
+    // preview
+    const previewCard = document.getElementById('previewCard');
+    const previewImage = document.getElementById('previewImage');
+    const previewBadge = document.getElementById('previewBadge');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewDesc = document.getElementById('previewDesc');
+    const previewContent = document.getElementById('previewContent');
+    const previewInfoBtn = document.getElementById('previewInfoBtn');
+    const previewActBtn = document.getElementById('previewActBtn');
+
+    const reqDocsBox = document.getElementById('reqDocsBox');
+    const tipsBox = document.getElementById('tipsBox');
+
+    // datepicker elements
+    const dobInput = document.getElementById('clientDob');
+    const calendarPop = document.getElementById('calendarPop');
+
+    /* -------------- Initialization -------------- */
+    document.addEventListener('DOMContentLoaded', ()=>{
+      setTimeout(()=> document.querySelectorAll('.fade-up').forEach(el => el.classList.add('show')), 80);
+      previewCard.classList.remove('show');
+      document.querySelectorAll('.fade-slide-in').forEach(el => el.classList.remove('active'));
+    });
+
+    /* -------------- Role logic & preview -------------- */
+    roleSelect.addEventListener('change', (e)=>{
+      const v = e.target.value;
+      if(v === 'vendor'){
+        vendorFields.style.display = 'block';
+        eoFields.style.display = 'none';
+        clientFields.style.display = 'none';
+        reqDocsBox.style.display = '';
+        tipsBox.style.display = '';
+        showPreview('vendor');
+      } else if(v === 'eo'){
+        eoFields.style.display = 'block';
+        vendorFields.style.display = 'none';
+        clientFields.style.display = 'none';
+        reqDocsBox.style.display = '';
+        tipsBox.style.display = '';
+        showPreview('eo');
+      } else if(v === 'client'){
+        clientFields.style.display = 'block';
+        vendorFields.style.display = 'none';
+        eoFields.style.display = 'none';
+        // hide tips & required docs for client
+        reqDocsBox.style.display = 'none';
+        tipsBox.style.display = 'none';
+        showPreview('client');
+      } else {
+        vendorFields.style.display = 'none';
+        eoFields.style.display = 'none';
+        clientFields.style.display = 'none';
+        reqDocsBox.style.display = '';
+        tipsBox.style.display = '';
+        hidePreview();
+      }
+      setTimeout(()=> document.querySelectorAll('.fade-up').forEach(el => el.classList.add('show')), 10);
+    });
+
+    function showPreview(role){
+      // restore visibility defaults
+      previewTitle.style.display = '';
+      previewBadge.style.display = '';
+      previewDesc.style.display = '';
+      document.querySelector('.preview-cta').style.display = '';
+
+      if(role === 'vendor'){
+        previewImage.src = 'https://picsum.photos/seed/event-vendor/900/600';
+        previewBadge.textContent = 'For Vendors';
+        previewTitle.textContent = 'Tampilkan Karyamu ke Ribuan Klien';
+        previewDesc.innerHTML = 'Unggah portofolio & proposal — tampilkan foto dokumentasi event estetik, testimoni, dan rincian paket. Tim kami akan membantu verifikasi agar kamu bisa terima pembayaran cepat.';
+      } else if(role === 'eo'){
+        previewImage.src = 'https://picsum.photos/seed/event-eo/900/600';
+        previewBadge.textContent = 'For Event Organizers';
+        previewTitle.textContent = 'Kelola Event, Skala Besar & Kecil';
+        previewDesc.innerHTML = 'Sistem manajemen EO lengkap: team profiles, SOP, dan integrasi pembayaran. Upload CV lead & portfolio untuk mempercepat aktivasi.';
+      } else if(role === 'client'){
+        previewImage.src = 'https://picsum.photos/seed/event-client-bts/900/600';
+        // hide textual content for client
+        previewTitle.style.display = 'none';
+        previewBadge.style.display = 'none';
+        previewDesc.style.display = 'none';
+        document.querySelector('.preview-cta').style.display = 'none';
+      }
+
+      previewCard.setAttribute('aria-hidden', 'false');
+      requestAnimationFrame(()=> {
+        previewCard.classList.add('show');
+        previewImage.style.transform = 'scale(1.03)';
+        previewImage.style.filter = 'saturate(1.06) contrast(1.03)';
+      });
+      document.querySelectorAll('.fade-slide-in').forEach(el => el.classList.add('active'));
+    }
+
+    function hidePreview(){
+      previewCard.classList.remove('show');
+      previewCard.setAttribute('aria-hidden', 'true');
+      previewImage.style.transform = '';
+      previewImage.style.filter = '';
+      document.querySelectorAll('.fade-slide-in').forEach(el => el.classList.remove('active'));
+      previewTitle.style.display = '';
+      previewBadge.style.display = '';
+      previewDesc.style.display = '';
+      document.querySelector('.preview-cta').style.display = '';
+    }
+
+    previewInfoBtn.addEventListener('click', ()=> {
+      alert('Panduan singkat: lengkapi portofolio, proposal, dan informasi bank untuk proses verifikasi.');
+    });
+    previewActBtn.addEventListener('click', ()=> {
+      document.getElementById('partnerForm').scrollIntoView({behavior:'smooth', block:'center'});
+      const el = document.getElementById('businessName') || document.getElementById('eoName');
+      if(el) el.focus();
+    });
+
+    /* -------------- Packages add/remove (original) -------------- */
+    const packagesEl = document.getElementById('packages');
+    function addPackage(){
+      const row = document.createElement('div');
+      row.className = 'package-row';
+      row.style.display='flex';
+      row.style.gap='8px';
+      row.innerHTML = `<input name="packages[]" placeholder="Paket — Price / Deskripsi (contoh: Paket B — Rp 8.000.000)" /><button type="button" class="remove-btn" onclick="removePackage(this)">✕</button>`;
+      packagesEl.appendChild(row);
+    }
+    function removePackage(btn){
+      const row = btn.closest('.package-row');
+      if(row) row.remove();
+    }
+
+    /* -------------- Datepicker (neon glass) with shortcuts -------------- */
+    function pad(n){ return n < 10 ? '0'+n : n; }
+    function formatDate(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+    function parseDateISO(s){ if(!s) return null; const parts = s.split('-').map(Number); if(parts.length!==3) return null; return new Date(parts[0], parts[1]-1, parts[2]); }
+
+    let calState = { year: null, month: null, selected: null };
+
+    function buildCalendar(year, month){
+      calendarPop.innerHTML = '';
+      const header = document.createElement('div'); header.className='cal-header';
+      const title = document.createElement('div'); title.className='cal-title';
+      const nav = document.createElement('div'); nav.className='cal-nav';
+
+      const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      title.textContent = `${monthNames[month]} ${year}`;
+
+      // controls: prev/next
+      const prevBtn = document.createElement('button'); prevBtn.type='button'; prevBtn.innerHTML='◀';
+      const nextBtn = document.createElement('button'); nextBtn.type='button'; nextBtn.innerHTML='▶';
+      nav.appendChild(prevBtn); nav.appendChild(nextBtn);
+      header.appendChild(title); header.appendChild(nav);
+      calendarPop.appendChild(header);
+
+      // quick controls: month select, year select, today button
+      const controls = document.createElement('div'); controls.className='cal-controls';
+      const monthSelect = document.createElement('select');
+      monthNames.forEach((mn, idx) => {
+        const opt = document.createElement('option'); opt.value = idx; opt.textContent = mn; if(idx===month) opt.selected=true;
+        monthSelect.appendChild(opt);
+      });
+      const yearSelect = document.createElement('select');
+      const currentYear = (new Date()).getFullYear();
+      for(let y = currentYear - 80; y <= currentYear + 5; y++){
+        const opt = document.createElement('option'); opt.value = y; opt.textContent = y; if(y===year) opt.selected=true;
+        yearSelect.appendChild(opt);
+      }
+      const todayBtn = document.createElement('button'); todayBtn.type='button'; todayBtn.textContent='Today';
+
+      controls.appendChild(monthSelect); controls.appendChild(yearSelect); controls.appendChild(todayBtn);
+      calendarPop.appendChild(controls);
+
+      // weekday labels
+      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const gridHead = document.createElement('div'); gridHead.className='cal-grid';
+      for(const d of days){
+        const h = document.createElement('div');
+        h.className='cal-cell'; h.style.fontWeight='700'; h.style.opacity='0.7';
+        h.textContent = d;
+        gridHead.appendChild(h);
+      }
+      calendarPop.appendChild(gridHead);
+
+      // dates grid
+      const grid = document.createElement('div'); grid.className='cal-grid';
+      const firstDay = new Date(year, month, 1);
+      const startOffset = firstDay.getDay(); // 0..6
+      const daysInMonth = new Date(year, month+1, 0).getDate();
+
+      for(let i=0;i<startOffset;i++){
+        const empty = document.createElement('div'); empty.className='cal-cell disabled'; empty.textContent='';
+        grid.appendChild(empty);
+      }
+
+      for(let d=1; d<=daysInMonth; d++){
+        const cell = document.createElement('div'); cell.className='cal-cell';
+        cell.textContent = d;
+        const cellDate = new Date(year, month, d);
+        if(calState.selected && (new Date(calState.selected).toDateString() === cellDate.toDateString())){
+          cell.classList.add('selected');
+        }
+        cell.addEventListener('click', ()=>{
+          dobInput.value = formatDate(cellDate);
+          calState.selected = new Date(cellDate);
+          hideCalendar();
+        });
+        grid.appendChild(cell);
+      }
+      calendarPop.appendChild(grid);
+
+      // events
+      prevBtn.addEventListener('click', ()=>{
+        let m = month-1; let y = year;
+        if(m<0){ m=11; y=year-1; }
+        calState.year = y; calState.month = m;
+        buildCalendar(y,m);
+      });
+      nextBtn.addEventListener('click', ()=>{
+        let m = month+1; let y = year;
+        if(m>11){ m=0; y=year+1; }
+        calState.year = y; calState.month = m;
+        buildCalendar(y,m);
+      });
+      monthSelect.addEventListener('change', (ev)=>{
+        calState.month = Number(ev.target.value);
+        buildCalendar(calState.year, calState.month);
+      });
+      yearSelect.addEventListener('change', (ev)=>{
+        calState.year = Number(ev.target.value);
+        buildCalendar(calState.year, calState.month);
+      });
+      todayBtn.addEventListener('click', ()=>{
+        const t = new Date();
+        calState.year = t.getFullYear(); calState.month = t.getMonth(); calState.selected = t;
+        dobInput.value = formatDate(t);
+        buildCalendar(calState.year, calState.month);
+        hideCalendar();
+      });
+    }
+
+    function showCalendar(){
+      const sel = parseDateISO(dobInput.value);
+      const now = sel || new Date();
+      calState.year = now.getFullYear(); calState.month = now.getMonth();
+      buildCalendar(calState.year, calState.month);
+      calendarPop.style.display='block';
+      setTimeout(()=> calendarPop.classList.add('show'), 10);
+      calendarPop.setAttribute('aria-hidden', 'false');
+    }
+    function hideCalendar(){
+      calendarPop.classList.remove('show');
+      setTimeout(()=> {
+        calendarPop.style.display='none';
+        calendarPop.setAttribute('aria-hidden','true');
+      }, 160);
+    }
+
+    dobInput.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      if(calendarPop.style.display==='block') hideCalendar(); else showCalendar();
+    });
+
+    document.addEventListener('click', (e)=>{
+      if(!calendarPop.contains(e.target) && e.target !== dobInput){
+        if(calendarPop.style.display==='block') hideCalendar();
+      }
+    });
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape' && calendarPop.style.display==='block') hideCalendar();
+    });
+
+    /* -------------- Validation & submit (preserve logic) -------------- */
+    function showError(msg){
+      formErrors.style.display = 'block';
+      formErrors.textContent = msg;
+      formErrors.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+
+    function handleSubmit(e){
+      e.preventDefault();
+      formErrors.style.display = 'none'; formErrors.textContent='';
+
+      const fd = new FormData(form);
+      const role = fd.get('role');
+
+      if(!fd.get('fullName') || !fd.get('email') || !fd.get('password') || !role){
+        showError('Lengkapi nama, email, password, dan pilih role.');
+        return false;
+      }
+      if(role === 'vendor'){
+        if(!fd.get('businessName') || !fd.get('serviceType') || !fd.get('bizDesc') || fd.get('bizDesc').length < 50){
+          showError('Untuk Vendor: isikan Nama usaha, Jenis layanan, dan Deskripsi bisnis minimal 50 karakter.');
+          return false;
+        }
+        const packages = fd.getAll('packages[]').filter(p => p && p.trim().length > 0);
+        if(packages.length < 1){
+          showError('Mohon tambahkan minimal 1 paket & price range.');
+          return false;
+        }
+        if(!fd.get('contactPhone') || !fd.get('contactEmail')){
+          showError('Mohon lengkapi contact person (telepon) dan email kontak.');
+          return false;
+        }
+        if(!document.getElementById('ktp').files.length){
+          showError('Upload KTP owner diperlukan.');
+          return false;
+        }
+        if(!document.getElementById('portfolio').files.length){
+          showError('Upload minimal 1 file portofolio diperlukan.');
+          return false;
+        }
+        if(!fd.get('bankName') || !fd.get('bankAccount')){
+          showError('Mohon lengkapi informasi bank untuk payout.');
+          return false;
+        }
+      } else if(role === 'eo'){
+        if(!fd.get('eoName') || !fd.get('teamStructure') || !fd.get('leadCV')){
+          showError('Untuk EO: isi nama EO, struktur tim, dan upload CV lead.');
+          return false;
+        }
+        if(!fd.get('eoPhone')){
+          showError('Mohon isi nomor handphone EO.');
+          return false;
+        }
+        const links = (fd.get('portfolioLinks') || '').trim();
+        const uploads = document.getElementById('portfolioUploads').files.length;
+        if(!links && !uploads){
+          showError('Mohon berikan link portfolio atau upload minimal 1 file portfolio.');
+          return false;
+        }
+        if(!fd.get('eoBankName') || !fd.get('eoBankAccount')){
+          showError('Lengkapi informasi rekening bank untuk pembayaran/komisi.');
+          return false;
+        }
+      } else if(role === 'client'){
+        if(!fd.get('clientPhone')){
+          showError('Mohon isi nomor handphone untuk client.');
+          return false;
+        }
+        if(!fd.get('clientDob')){
+          showError('Mohon pilih tanggal lahir.');
+          return false;
+        }
+      } else {
+        showError('Role tidak valid.');
+        return false;
+      }
+
+      // demo submit
+      console.log('--- SUBMIT FORM DATA (demo) ---');
+      for(const pair of fd.entries()){
+        console.log(pair[0]+':', pair[1]);
+      }
+      alert('Form submitted (demo). Tim HeaVenTly akan meninjau aplikasi Anda dan menghubungi via email.');
+      form.reset();
+      vendorFields.style.display='none';
+      eoFields.style.display='none';
+      clientFields.style.display='none';
+      hidePreview();
+      return true;
+    }
+
+    form.addEventListener('submit', handleSubmit);
+
+    /* -------------- Google sign-in mock -------------- */
+    document.getElementById('googleBtn').addEventListener('click', ()=>{
+      // placeholder — integrate real OAuth later
+      alert('Google Sign-In (demo). Integrate OAuth client to enable real sign-in.');
+    });
+
+  </script>
+</body>
+</html>
