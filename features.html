@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HeaVenTly — Features</title>
+  <meta name="description" content="HeaVenTly features — next-gen event platform untuk Client, Vendor, dan Event Organizer." />
+  <meta name="theme-color" content="#08d9ff" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <style>
+    /* =========================================================
+       THEME TOKENS
+       ========================================================= */
+    :root{
+      --c-primary:   #08d9ff;
+      --c-secondary: #7b5cff;
+      --c-tertiary:  #ff4ecd;
+      --c-accent:    #22ffa2;
+      --c-warm:      #ffc857;
+
+      --bg-0: #070b14;
+      --bg-1: #0c1424;
+      --bg-2: #111a2e;
+
+      --txt-1: #e9f1ff;
+      --txt-2: #b5c2e3;
+
+      --ring: rgba(8,217,255,.55);
+      --radius: 18px;
+
+      --shadow:        0 8px 30px rgba(8,217,255,.15), 0 2px 10px rgba(123,92,255,.12);
+      --shadow-strong: 0 24px 80px rgba(255,78,205,.18), 0 10px 30px rgba(8,217,255,.18);
+
+      --grad-1:
+        radial-gradient(1200px 600px at 80% -10%, rgba(123,92,255,.25), transparent 60%),
+        radial-gradient(900px 400px at -10% 20%, rgba(8,217,255,.27), transparent 60%),
+        linear-gradient(135deg, rgba(8,217,255,.08), rgba(255,78,205,.06));
+    }
+
+    /* =========================================================
+       RESET & BASICS
+       ========================================================= */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial;
+      background: var(--bg-0);
+      background-image: var(--grad-1);
+      background-attachment: fixed;
+      color: var(--txt-1);
+      line-height:1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      opacity:0; transition: opacity .36s ease;
+    }
+    body.page-ready{opacity:1}
+
+    img,picture,video,canvas,svg{display:block; max-width:100%}
+    a{color:inherit; text-decoration:none}
+    .container{width:min(1200px, 92vw); margin-inline:auto}
+
+    /* Buttons */
+    .btn{display:inline-flex; align-items:center; gap:.6rem; padding:.72rem 1rem; border:1px solid transparent; border-radius:14px; font-weight:600; cursor:pointer; transition: transform .15s ease, box-shadow .3s ease, background .3s ease, border-color .3s ease}
+    .btn:focus-visible{outline: 3px solid var(--ring); outline-offset: 2px}
+    .btn-primary{background: linear-gradient(135deg, var(--c-primary), var(--c-secondary)); color:#051017; box-shadow: var(--shadow)}
+    .btn-ghost{background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.10)}
+    .badge{display:inline-flex; gap:.5rem; align-items:center; padding:.35rem .7rem; background: rgba(123,92,255,.18); color:#e9e1ff; border:1px solid rgba(123,92,255,.35); border-radius:999px; font-size:.8rem}
+
+    /* =========================================================
+       NAVBAR
+       ========================================================= */
+    .nav{
+      position: sticky; top:0; z-index:50;
+      backdrop-filter: saturate(1.1) blur(12px);
+      background: rgba(7,11,20,.50);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      transition: background .35s ease, transform .25s ease, padding .25s ease, box-shadow .35s ease, border-color .35s ease;
+      will-change: background, transform, padding;
+    }
+    .nav-inner{display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:1rem 0; transition: padding .25s ease}
+    .nav.shrink .nav-inner{padding:.55rem 0}
+    .nav.shrink{background: rgba(7,11,20,.75); border-color: rgba(255,255,255,.12); box-shadow: 0 10px 30px rgba(0,0,0,.25)}
+    .brand{display:flex; align-items:center; gap:.75rem}
+    .brand-logo{
+      width:34px; height:34px; border-radius:10px; position:relative; overflow:hidden; box-shadow: var(--shadow);
+      background: conic-gradient(from 220deg, var(--c-primary), var(--c-secondary), var(--c-tertiary), var(--c-primary));
+    }
+    .nav-links{display:flex; gap:1rem; align-items:center}
+    .nav-links a{padding:.6rem .8rem; border-radius:10px; position:relative; overflow:hidden}
+    .nav-links a::after{content:""; position:absolute; inset:auto 0 0 0; height:2px; background: linear-gradient(90deg, var(--c-primary), var(--c-tertiary)); transform: scaleX(0); transform-origin:right; transition: transform .25s ease}
+    .nav-links a:hover{background: rgba(255,255,255,.06)}
+    .nav-links a:hover::after{transform: scaleX(1); transform-origin:left}
+    .nav-cta{display:flex; gap:.6rem; align-items:center}
+    .mobile-toggle{display:none}
+
+    #mobileMenu{background: rgba(7,11,20,.95); border-top:1px solid rgba(255,255,255,.04)}
+
+    /* =========================================================
+       HERO (image responsive + parallax + overlay)
+       ========================================================= */
+    header.hero{
+      position:relative; overflow:hidden;
+      min-height: 68vh;
+      display:grid; align-items:end;
+      padding: 0; /* hero full bleed image */
+      isolation:isolate; /* overlay layers */
+    }
+
+    /* media wrapper */
+    .hero-media{
+      position:absolute; inset:0; z-index:-1; overflow:hidden;
+      transform: translateZ(0);
+    }
+    .hero-media img{
+      width:100%; height:100%;
+      object-fit:cover; object-position:center;
+      transform: scale(1.06); /* room for parallax zoom */
+      will-change: transform, filter, opacity;
+      filter: saturate(1.05) contrast(1.02);
+    }
+
+    /* gradient overlays for readability */
+    .hero-gradient-top{
+      position:absolute; inset:0 0 40% 0;
+      background: radial-gradient(1200px 400px at 20% 0%, rgba(8,217,255,.25), transparent 55%);
+      pointer-events:none;
+      mix-blend:screen;
+    }
+    .hero-gradient-bottom{
+      position:absolute; inset:auto 0 0 0; height: 46%;
+      background: linear-gradient(180deg, transparent, rgba(7,11,20,.65) 35%, rgba(7,11,20,.92));
+      pointer-events:none;
+    }
+
+    /* content on top of image */
+    .hero-inner{
+      width:min(1200px, 92vw);
+      margin-inline:auto;
+      padding: clamp(72px, 10vw, 120px) 0 clamp(36px, 6vw, 60px);
+      display:grid; grid-template-columns: 1.05fr .95fr; gap: clamp(24px, 4vw, 48px);
+    }
+    .hero-copy{max-width: 680px}
+    .hero-copy .eyebrow{margin-bottom:.75rem}
+    .hero-copy h1{margin:0 0 .7rem; font-size: clamp(2rem, 3.4vw + .5rem, 3.2rem); line-height:1.08}
+    .hero-copy .lead{font-size: clamp(1rem, .9rem + .5vw, 1.05rem); color: var(--txt-2); max-width: 60ch}
+    .hero-actions{margin-top: 18px; display:flex; gap:.6rem; flex-wrap:wrap}
+
+    /* floating decorative device like previous */
+    .device{
+      justify-self:end;
+      align-self:end;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 26px; padding: 18px; box-shadow: var(--shadow-strong);
+      transform-style: preserve-3d; perspective: 900px; will-change: transform;
+      width: min(520px, 44vw);
+    }
+    .screen{aspect-ratio:16/10; background: #060a12; border-radius: 16px; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,.08)}
+    .ui-card{position:absolute; inset:auto 6% 8% 6%; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.12); border-radius: 14px; padding: 14px; backdrop-filter: blur(6px); display:grid; grid-template-columns: 1fr auto; gap:12px; align-items:center; color:#dfe8ff}
+    .ui-input{display:flex; align-items:center; gap:.6rem; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.12); border-radius:10px; padding:.5rem .6rem}
+    .ui-input input{background:transparent; border:0; outline:0}
+
+    /* =========================================================
+       SECTION LAYOUT
+       ========================================================= */
+    main section{padding: 64px 0}
+    .kicker{color: var(--c-accent); font-weight:700; letter-spacing:.12em; text-transform:uppercase; font-size:.8rem}
+    .section-head{display:flex; align-items:end; justify-content:space-between; gap:1rem; margin-bottom: 24px}
+    .section-head h2{font-size: clamp(1.4rem, .9rem + 2vw, 2.2rem); margin: 0}
+
+    .features-grid{display:grid; grid-template-columns: repeat(3,1fr); gap:18px}
+    .feature{
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 16px; padding: 20px; box-shadow: var(--shadow);
+      transform: perspective(800px) translateZ(0) rotateX(0) rotateY(0);
+      transition: transform .25s ease, box-shadow .35s ease, background .35s ease, border-color .35s ease, opacity .6s ease, translate .6s ease;
+      will-change: transform;
+      display:flex; gap:14px; align-items:flex-start;
+      opacity:0; translate: 0 18px;
+    }
+    .feature.visible{opacity:1; translate: 0 0}
+    .feature:hover{transform: translateY(-8px) rotateX(2deg) rotateY(-4deg); box-shadow: var(--shadow-strong)}
+    .feature .f-icon{flex:0 0 54px; width:54px; height:54px; border-radius:12px; display:flex; align-items:center; justify-content:center; background: linear-gradient(135deg, rgba(8,217,255,.12), rgba(123,92,255,.08))}
+    .feature h3{margin:0; font-size:1.05rem}
+    .feature p{margin:6px 0 0; color:var(--txt-2); font-size:.98rem}
+
+    /* Group labels */
+    .group-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px}
+    .group-title{font-weight:700; font-size:1.15rem}
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+    footer{padding: 36px 0 24px; border-top:1px solid rgba(255,255,255,.08); background: rgba(7,11,20,.35); backdrop-filter: blur(6px)}
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+    @media (max-width: 1140px){
+      .hero-inner{grid-template-columns: 1.1fr .9fr}
+    }
+    @media (max-width: 1024px){
+      .hero-inner{grid-template-columns: 1fr}
+      .device{justify-self:start; width: min(560px, 78vw)}
+      .features-grid{grid-template-columns: repeat(2,1fr)}
+    }
+    @media (max-width: 720px){
+      .nav-links{display:none}
+      .mobile-toggle{display:inline-flex}
+      .hero-inner{padding-top: clamp(84px, 14vw, 120px)}
+      .features-grid{grid-template-columns:1fr}
+      header.hero{min-height: 70vh}
+    }
+
+    /* =========================================================
+       GENERIC ANIM HELPERS
+       ========================================================= */
+    .tilt, .tilt-sm{transform:perspective(800px) translateZ(0) rotateX(0) rotateY(0); transition: transform .25s ease, box-shadow .35s ease}
+    .reveal-show{opacity:1!important; translate:0 0!important; transition:opacity .8s ease, translate .8s ease}
+
+    /* Page transitions */
+    .fade-out{animation: fadeOut .18s ease forwards}
+    .fade-in{animation: fadeIn .28s ease forwards}
+    @keyframes fadeOut{from{opacity:1}to{opacity:0}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  </style>
+</head>
+<body>
+  <!-- =======================================================
+       NAVBAR
+       ======================================================= -->
+  <nav class="nav" aria-label="Primary">
+    <div class="container nav-inner">
+      <a href="landing.html" class="brand" data-transition="true" aria-label="HeaVenTly Home">
+        <span aria-hidden="true" class="brand-logo"></span>
+        <b>HeaVenTly</b>
+      </a>
+
+      <div class="nav-links" role="navigation" aria-label="Main Menu">
+        <a href="landing.html#features" data-transition="true">Features</a>
+        <a href="landing.html#how" data-transition="true">How it works</a>
+        <a href="pricing_landing.html" data-transition="true">Pricing</a>
+        <a href="landing.html#faq" data-transition="true">FAQ</a>
+      </div>
+
+      <div class="nav-cta">
+        <a class="btn btn-ghost" href="signin.html" data-transition="true" aria-label="Sign In">Sign In</a>
+        <a class="btn btn-primary" href="signup.html" data-transition="true" aria-label="Create account">Create Account</a>
+        <button class="btn btn-ghost mobile-toggle" aria-controls="mobileMenu" aria-expanded="false" aria-label="Open menu">☰</button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" hidden>
+      <div class="container" style="padding: .6rem 0 1rem; display:grid; gap:.4rem">
+        <a href="landing.html#features" data-transition="true">Features</a>
+        <a href="landing.html#how" data-transition="true">How it works</a>
+        <a href="pricing_landing.html" data-transition="true">Pricing</a>
+        <a href="landing.html#faq" data-transition="true">FAQ</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- =======================================================
+       HERO (full-bleed responsive image + parallax + stopper)
+       ======================================================= -->
+  <header class="hero" id="hero" aria-label="Features Hero">
+    <!-- media -->
+    <figure class="hero-media" aria-hidden="true">
+      <!-- Pakai 1 file (bocahplongor.jpg). Kalau punya versi berbeda size, bisa pakai <source> -->
+      <img id="heroImg" src="bocahplongor.jpg" alt="People collaborating at an event setup with lighting and decor" loading="eager" decoding="async" />
+      <div class="hero-gradient-top"></div>
+      <div class="hero-gradient-bottom"></div>
+    </figure>
+
+    <!-- contents -->
+    <div class="hero-inner container">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="badge">Features</span></div>
+        <h1>Everything you need to craft unforgettable events</h1>
+        <p class="lead">Fitur lengkap untuk <b>Client</b>, <b>Vendor</b>, dan <b>Event Organizer</b>. Hero image responsif + parallax halus dengan stopper scroll supaya fokus saat pertama kali masuk.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#client-features" aria-label="Client features">Explore Client</a>
+          <a class="btn btn-ghost" href="#vendor-features" aria-label="Vendor features">Vendor</a>
+          <a class="btn btn-ghost" href="#eo-features" aria-label="Event Organizer features">Event Organizer</a>
+        </div>
+      </div>
+
+      <!-- decorative device -->
+      <div class="device parallax-item" data-depth="0.06" aria-hidden="true">
+        <div class="screen" style="height:100%; min-height:220px;">
+          <div class="ui-card" aria-hidden="true">
+            <div class="ui-input" role="search" aria-hidden="true">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="width:18px;height:18px"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <input placeholder="Search feature docs…" aria-label="Search features" style="color: #dfe8ff" />
+            </div>
+            <a class="btn btn-primary" href="docs.html" data-transition="true">Docs</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- =======================================================
+       MAIN
+       ======================================================= -->
+  <main>
+    <!-- ===================== CLIENT ===================== -->
+    <section id="client-features" aria-labelledby="client-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="kicker">Client</div>
+            <h2 id="client-title">Powerful tools to discover & book</h2>
+          </div>
+          <a class="btn btn-ghost" href="pricing_landing.html" data-transition="true">See Pricing →</a>
+        </div>
+
+        <div class="features-grid" aria-hidden="false">
+          <article class="feature tilt" data-feature="1">
+            <div class="f-icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--c-primary)"><circle cx="11" cy="11" r="6"/><path d="M21 21l-4.3-4.3"/></svg>
+            </div>
+            <div>
+              <h3>AI Event Matchmaking</h3>
+              <p>Rekomendasi vendor & paket yang cocok berdasarkan preferensi, estimasi tamu, dan budget secara otomatis.</p>
+            </div>
+          </article>
+
+          <article class="feature tilt" data-feature="2">
+            <div class="f-icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--c-secondary)"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            </div>
+            <div>
+              <h3>Smart Scheduling</h3>
+              <p>Kalender pintar yang sinkron dengan vendor—hindari bentrok tanggal, dapatkan reminder & timeline otomatis.</p>
+            </div>
+          </article>
+
+          <article class="feature tilt" data-feature="3">
+            <div class="f-icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--c-accent)"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+            </div>
+            <div>
+              <h3>Side-by-side Comparison</h3>
+              <p>Bandingkan paket vendor, portfolio, rating, dan SLA dalam satu tampilan komparatif.</p>
+            </div>
+          </article>
+
+          <article class="feature tilt" data-feature="4">
+            <div class="f-icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--c-warm)"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M16 3v4M8 3v4"/></svg>
+            </div>
+            <div>
+              <h3>Secure Payments & Escrow</h3>
+              <p>Pembayaran aman dengan opsi escrow, milestone releases, dan refund policy yang jelas.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== VENDOR ===================== -->
+    <section id="vendor-features" aria-labelledby="vendor-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="kicker">Vendor</div>
+            <h2 id="vendor-title">Tools to grow & convert</h2>
+          </div>
+        <a class="btn btn-ghost" href="signup.html" data-transition="true">Get Started →</a>
+        </div>
+
+        <div class="features-grid">
+          <article class="feature tilt" data-feature="5">
+            <div class="f-icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--c-primary)"><path d="M3 13h8V3H3v10z"/><path d="M3 21h8v-6H3v6z"/><path d="M13 21h8V11h-8v10zM13 3v6h8V3h-8z"/></svg>
+            </div>
+            <div>
+              <h3>Vendor Dashboard</h3>
+              <p>Kelola listing, lihat leads, atur availability, dan lihat analytics performa dalam satu tempat.</p>
+            </div>
+          </article>
+
+          <article class="feature tilt" data-feature="6">
+            <div class="f-icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--c-secondary)"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div>
+              <h3>Built-in CRM & Chat</h3>
+              <p>Balas leads cepat dengan chat terintegrasi, simpan history, dan konversi lebih tinggi.</p>
+            </div>
+          </article>
+
+          <article class="feature tilt" data-feature="7">
+            <div class="f-icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--c-accent)"><path d="M12 2l2.5 7.5L22 10l-5 4 1.7 7L12 17l-6.7 4L7 14 2 10l7.5-0.5L12 2z"/></svg>
+            </div>
+            <div>
+              <h3>Featured & Promotions</h3>
+              <p>Tingkatkan visibilitas dengan promoted listings dan seasonal promos untuk dapat lebih banyak leads.</p>
+            </div>
+          </article>
+
+          <article class="feature tilt" data-feature="8">
+            <div class="f-icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--c-warm)"><path d="M7 7h10M7 11h6"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+            </div>
+            <div>
+              <h3>Availability Sync</h3>
+              <p>Sinkronkan kalendermu dengan platform sehingga availability selalu akurat dan mengurangi double-booking.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== EO ===================== -->
+    <section id="eo-features" aria-labelledby="eo-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="kicker">Event Organizer</div>
+            <h2 id="eo-title">Scale events with better operations</h2>
+          </div>
+          <a class="btn btn-ghost" href="contact.html" data-transition="true">Contact Sales →</a>
+        </div>
+
+        <div class="features-grid">
+          <article class="feature tilt" data-feature="9">
+            <div class="f-icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--c-primary)"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            </div>
+            <div>
+              <h3>Task & Team Management</h3>
+              <p>Assign tugas, track progress, dan sinkronisasi tim agar setiap event berjalan rapi.</p>
+            </div>
+          </article>
+
+          <article class="feature tilt" data-feature="10">
+            <div class="f-icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--c-secondary)"><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div>
+              <h3>Live Timeline</h3>
+              <p>Timeline H-30 sampai H+1 yang update real-time, so semua tim tahu apa yang harus dikerjakan.</p>
+            </div>
+          </article>
+
+          <article class="feature tilt" data-feature="11">
+            <div class="f-icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--c-accent)"><path d="M3 3v18h18"/></svg>
+            </div>
+            <div>
+              <h3>Reporting & Dashboards</h3>
+              <p>Insight event: revenue, conversion, vendor performance, dan KPI tim dalam dashboard rapi.</p>
+            </div>
+          </article>
+
+          <article class="feature tilt" data-feature="12">
+            <div class="f-icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--c-warm)"><path d="M12 2v6M12 16v6M4 8h16M4 16h16"/></svg>
+            </div>
+            <div>
+              <h3>Custom Integrations</h3>
+              <p>Integrasi API untuk accounting, CRM, atau tool internal agar alur kerja mulus.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =======================================================
+       FOOTER
+       ======================================================= -->
+  <footer role="contentinfo">
+    <div class="container footgrid" style="display:grid; grid-template-columns:1.4fr repeat(3,1fr); gap:18px">
+      <div>
+        <div class="brand" style="margin-bottom:.5rem"><span class="brand-logo" aria-hidden="true"></span><b>HeaVenTly</b></div>
+        <p style="color:var(--txt-2)">Platform event futuristik dengan palet warna cerah dan UX super responsif.</p>
+      </div>
+      <div>
+        <b>Product</b>
+        <ul style="list-style:none; padding:0; margin:.5rem 0 0; display:grid; gap:.3rem; color:var(--txt-2)">
+          <li><a href="landing.html#features" data-transition="true">Features</a></li>
+          <li><a href="pricing_landing.html" data-transition="true">Pricing</a></li>
+          <li><a href="docs.html" data-transition="true">Docs</a></li>
+        </ul>
+      </div>
+      <div>
+        <b>Company</b>
+        <ul style="list-style:none; padding:0; margin:.5rem 0 0; display:grid; gap:.3rem; color:var(--txt-2)">
+          <li><a href="about.html" data-transition="true">About</a></li>
+          <li><a href="careers.html" data-transition="true">Careers</a></li>
+          <li><a href="contact.html" data-transition="true">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <b>Legal</b>
+        <ul style="list-style:none; padding:0; margin:.5rem 0 0; display:grid; gap:.3rem; color:var(--txt-2)">
+          <li><a href="terms.html" data-transition="true">Terms</a></li>
+          <li><a href="privacy.html" data-transition="true">Privacy</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container" style="margin-top:16px; display:flex; justify-content:space-between; gap:10px; align-items:center">
+      <small style="color:var(--txt-2)">© <span id="y">2025</span> HeaVenTly</small>
+      <div style="display:flex; gap:.6rem">
+        <a class="btn btn-ghost" href="#" aria-label="Twitter">Twitter</a>
+        <a class="btn btn-ghost" href="#" aria-label="Instagram">Instagram</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =======================================================
+       SCRIPTS
+       ======================================================= -->
+  <script>
+    // Page ready + fade-in
+    window.addEventListener('DOMContentLoaded', ()=> {
+      document.body.classList.add('page-ready');
+    });
+
+    // ===== Utility: raf throttle =====
+    const rafThrottle = (fn) => {
+      let ticking = false;
+      return (...args) => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            fn(...args);
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+    };
+
+    // ===== Mobile menu toggle =====
+    const toggle = document.querySelector('.mobile-toggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    if(toggle){
+      toggle.addEventListener('click', () => {
+        const expanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!expanded));
+        mobileMenu.hidden = expanded;
+      });
+    }
+
+    // ===== Year auto update =====
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // ===== Page link transitions (fade-out) for links with data-transition =====
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a[data-transition="true"]');
+      if(!a) return;
+      const href = a.getAttribute('href');
+      if(!href || href.startsWith('#')) return;
+      e.preventDefault();
+      document.body.classList.add('fade-out');
+      setTimeout(()=> location.href = href, 180);
+    });
+
+    // ===== Smooth internal links offset =====
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (ev) => {
+        const id = a.getAttribute('href');
+        if (id.length > 1 && document.querySelector(id)) {
+          ev.preventDefault();
+          const target = document.querySelector(id);
+          const y = target.getBoundingClientRect().top + window.scrollY - 72;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+      });
+    });
+
+    // ===== Navbar shrink on scroll =====
+    const nav = document.querySelector('.nav');
+    const onScrollNav = rafThrottle(() => {
+      if (window.scrollY > 60) nav.classList.add('shrink');
+      else nav.classList.remove('shrink');
+    });
+    window.addEventListener('scroll', onScrollNav);
+    onScrollNav();
+
+    // ===== Reveal on scroll for sections & features =====
+    const revealEls = document.querySelectorAll('header.hero, section, .feature');
+    const reveal = () => {
+      const trigger = window.innerHeight * 0.85;
+      revealEls.forEach(el => {
+        const { top } = el.getBoundingClientRect();
+        if (top < trigger) el.classList.add('reveal-show');
+      });
+    };
+    window.addEventListener('scroll', rafThrottle(reveal));
+    window.addEventListener('load', reveal);
+    reveal();
+
+    // ===== HERO Parallax for image + device + copy =====
+    const hero = document.getElementById('hero');
+    const heroImg = document.getElementById('heroImg');
+    const heroCopy = document.querySelector('.hero-copy');
+    const device = document.querySelector('.device');
+    let stopperArmed = true;
+    let animatingSnap = false;
+
+    const parallax = () => {
+      const sc = window.scrollY || window.pageYOffset;
+      const heroRect = hero.getBoundingClientRect();
+      const heroTop = heroRect.top + (window.scrollY || window.pageYOffset);
+      const progress = Math.min(1, Math.max(0, (sc - heroTop + 1) / (heroRect.height || 1))); // 0..1
+
+      // Image: subtle translate + scale so it feels depthy
+      if (heroImg) heroImg.style.transform = `translate3d(0, ${progress * 26}px, 0) scale(${1.06 + progress * 0.02})`;
+      // Copy moves a little up
+      if (heroCopy) heroCopy.style.transform = `translate3d(0, ${progress * -12}px, 0)`;
+      // Device moves opposite to give parallax depth
+      if (device) device.style.transform = `translate3d(0, ${progress * 10}px, 0)`;
+    };
+    window.addEventListener('scroll', rafThrottle(parallax));
+    window.addEventListener('load', parallax);
+
+    // ===== Stopper: first wheel from top snaps past hero =====
+    const wheelHandler = (e) => {
+      if (!stopperArmed || animatingSnap) return;
+      const atTop = window.scrollY < 8;
+      const delta = e.deltaY || 0;
+      if (atTop && delta > 0) {
+        e.preventDefault();
+        animatingSnap = true;
+        const target = hero.offsetTop + hero.offsetHeight - 68;
+        window.scrollTo({ top: target, behavior: 'smooth' });
+        setTimeout(()=>{ animatingSnap = false; stopperArmed = false; }, 520);
+      }
+    };
+    window.addEventListener('wheel', wheelHandler, { passive:false });
+
+    // Re-arm stopper if user returns to top (optional)
+    window.addEventListener('scroll', rafThrottle(()=> {
+      if(window.scrollY < 10) stopperArmed = true;
+    }));
+
+    // ===== 3D Tilt Hover for .tilt items (cards) =====
+    const prefersNoMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const tiltables = document.querySelectorAll('.tilt, .tilt-sm');
+
+    function handleTilt(e){
+      const el = e.currentTarget;
+      const rect = el.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const rx = ((y / rect.height) - 0.5) * -8; // rotateX
+      const ry = ((x / rect.width) - 0.5) *  8; // rotateY
+      el.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(6px)`;
+      el.style.boxShadow = `0 18px 40px rgba(8,217,255,.12), 0 6px 20px rgba(123,92,255,.12)`;
+    }
+    function exitTilt(e){
+      const el = e.currentTarget;
+      el.style.transform = 'perspective(800px) translateZ(0) rotateX(0) rotateY(0)';
+      el.style.boxShadow = '';
+    }
+    if(!prefersNoMotion){
+      tiltables.forEach(el => {
+        el.addEventListener('mouseenter', ()=> el.style.transition = 'transform .15s ease, box-shadow .25s ease');
+        el.addEventListener('mousemove', handleTilt);
+        el.addEventListener('mouseleave', exitTilt);
+        el.addEventListener('touchstart', ()=> el.style.transform = 'translateY(-3px)', {passive:true});
+        el.addEventListener('touchend', ()=> el.style.transform = '', {passive:true});
+      });
+    }
+
+    // ===== Intersection reveal for feature cards (stagger) =====
+    const featureCards = document.querySelectorAll('.feature');
+    if ('IntersectionObserver' in window) {
+      const obs = new IntersectionObserver((entries, o) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const el = entry.target;
+            el.classList.add('visible');
+            o.unobserve(el);
+          }
+        });
+      }, { threshold: 0.12 });
+      featureCards.forEach((c) => obs.observe(c));
+    } else {
+      featureCards.forEach((c, i) => setTimeout(()=> c.classList.add('visible'), i * 60));
+    }
+
+    // ===== Keyboard focus polish for nav & buttons =====
+    document.querySelectorAll('.nav a, .nav-cta a, .mobile-toggle, .btn').forEach(el=>{
+      el.addEventListener('focus', ()=> el.style.outline = '3px solid var(--ring)');
+      el.addEventListener('blur',  ()=> el.style.outline = '');
+    });
+
+    // ===== Accessibility: enter to navigate with transition =====
+    document.querySelectorAll('a[data-transition="true"]').forEach(a=>{
+      a.addEventListener('keydown', (e)=> {
+        if(e.key === 'Enter') {
+          const href = a.getAttribute('href');
+          if(href && !href.startsWith('#')) {
+            document.body.classList.add('fade-out');
+            setTimeout(()=> location.href = href, 180);
+          }
+        }
+      });
+    });
+
+    // ===== Prefetch some pages (hint) =====
+    (['/signup.html','/signin.html','/pricing_landing.html']).forEach(href => {
+      const l = document.createElement('link'); l.rel = 'prefetch'; l.href = href; l.as = 'document'; document.head.appendChild(l);
+    });
+  </script>
+</body>
+</html>
