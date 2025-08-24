@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HeaVenTly - Register</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    :root {
+      --primary: #6c63ff;
+      --secondary: #00e0ff;
+      --dark: #0d0d1a;
+      --light: #f5f7ff;
+      --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--dark);
+      color: var(--light);
+      overflow-x: hidden;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { opacity: 0; animation: fadeUp 1s ease forwards; }
+    .delay-1 { animation-delay: 0.2s; }
+    .delay-2 { animation-delay: 0.4s; }
+    .delay-3 { animation-delay: 0.6s; }
+
+    /* NAVBAR */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(13, 13, 26, 0.8);
+      backdrop-filter: blur(8px);
+      position: fixed;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: 0 0 20px rgba(0,224,255,0.2);
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      cursor: pointer;
+    }
+    nav {
+      display: flex;
+      align-items: center;
+    }
+    nav a {
+      margin-left: 2rem;
+      text-decoration: none;
+      color: var(--light);
+      font-weight: 500;
+      transition: 0.3s;
+      position: relative;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--secondary);
+      transition: width 0.3s;
+    }
+    nav a:hover::after { width: 100%; }
+    .btn-primary, .btn-secondary {
+      margin-left: 1.5rem;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn-primary {
+      background: var(--gradient);
+      color: var(--light);
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-secondary {
+      background: transparent;
+      border: 2px solid var(--secondary);
+      color: var(--secondary);
+    }
+    .btn-secondary:hover {
+      background: var(--secondary);
+      color: var(--dark);
+    }
+
+    /* REGISTER FORM */
+    .register-section {
+      padding: 8rem 2rem 5rem;
+      max-width: 600px;
+      margin: auto;
+      text-align: center;
+    }
+    .register-section h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .register-section p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin: 1rem 0;
+    }
+    .register-form {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 0 15px rgba(0,224,255,0.1);
+      transition: 0.3s;
+    }
+    .register-form:hover {
+      box-shadow: 0 0 25px rgba(0,224,255,0.4);
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--secondary);
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 0.8rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--secondary);
+      border-radius: 8px;
+      color: var(--light);
+      font-size: 1rem;
+      outline: none;
+      transition: 0.3s;
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(0,224,255,0.3);
+    }
+    .form-group input::placeholder {
+      color: var(--light);
+      opacity: 0.6;
+    }
+    .role-specific {
+      display: none;
+      margin-top: 1rem;
+    }
+    .error-message {
+      color: #ff4d4d;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid var(--secondary);
+      color: var(--light);
+      padding: 0.8rem;
+      border-radius: 50px;
+      margin-top: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .google-btn:hover {
+      background: var(--secondary);
+      color: var(--dark);
+    }
+    .google-btn img {
+      width: 24px;
+      margin-right: 0.5rem;
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      background: rgba(13, 13, 26, 0.9);
+      box-shadow: 0 -2px 10px rgba(0,224,255,0.2);
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <header>
+    <div class="logo" onclick="location.href='landing.html'">HeaVenTly</div>
+    <nav>
+      <a href="landing.html">Home</a>
+      <a href="landing.html#features">Features</a>
+      <a href="howitworks_landing.html">How It Works</a>
+      <a href="pricing_landing.html">Pricing</a>
+      <a href="about_landing.html">About</a>
+      <a href="contact_landing.html">Contact</a>
+      <button class="btn-primary" onclick="location.href='signup.html'">Sign Up</button>
+      <button class="btn-secondary" onclick="location.href='signin.html'">Sign In</button>
+    </nav>
+  </header>
+
+  <!-- REGISTER FORM -->
+  <section class="register-section fade-up">
+    <h1>Create Your HeaVenTly Account</h1>
+    <p>Join as a Client, Vendor, or EO to start planning or providing services.</p>
+    <form id="registerForm" class="register-form fade-up delay-1">
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required />
+        <div class="error-message" id="fullNameError">Full name is required.</div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required />
+        <div class="error-message" id="emailError">Please enter a valid email.</div>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required />
+        <div class="error-message" id="phoneError">Please enter a valid phone number.</div>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Create a password" required />
+        <div class="error-message" id="passwordError">Password must be at least 8 characters long.</div>
+      </div>
+      <div class="form-group">
+        <label for="role">Select Role</label>
+        <select id="role" name="role" required onchange="toggleRoleFields()">
+          <option value="">Choose your role</option>
+          <option value="client">Client</option>
+          <option value="vendor">Vendor</option>
+          <option value="eo">Event Organizer</option>
+        </select>
+        <div class="error-message" id="roleError">Please select a role.</div>
+      </div>
+
+      <!-- Role-specific fields -->
+      <div id="clientFields" class="role-specific">
+        <div class="form-group">
+          <label for="clientDob">Date of Birth</label>
+          <input type="date" id="clientDob" name="clientDob" />
+          <div class="error-message" id="clientDobError">Please select your date of birth.</div>
+        </div>
+      </div>
+      <div id="vendorFields" class="role-specific">
+        <div class="form-group">
+          <label for="businessName">Business Name</label>
+          <input type="text" id="businessName" name="businessName" placeholder="Enter your business name" />
+          <div class="error-message" id="businessNameError">Business name is required for vendors.</div>
+        </div>
+        <div class="form-group">
+          <label for="serviceType">Service Type</label>
+          <select id="serviceType" name="serviceType">
+            <option value="">Select service type</option>
+            <option value="catering">Catering</option>
+            <option value="decoration">Decoration</option>
+            <option value="photography">Photography</option>
+            <option value="other">Other</option>
+          </select>
+          <div class="error-message" id="serviceTypeError">Please select a service type.</div>
+        </div>
+      </div>
+      <div id="eoFields" class="role-specific">
+        <div class="form-group">
+          <label for="eoName">EO Name</label>
+          <input type="text" id="eoName" name="eoName" placeholder="Enter your EO name" />
+          <div class="error-message" id="eoNameError">EO name is required for event organizers.</div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary">Create Account</button>
+      <div class="google-btn" id="googleBtn">
+        <img src="https://img.icons8.com/color/24/000000/google-logo.png" alt="Google" />
+        Sign up with Google
+      </div>
+      <div class="error-message" id="formError" style="text-align: center;"></div>
+    </form>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2025 HeaVenTly. All rights reserved.</p>
+  </footer>
+
+  <script>
+    function toggleRoleFields() {
+      const role = document.getElementById('role').value;
+      document.getElementById('clientFields').style.display = role === 'client' ? 'block' : 'none';
+      document.getElementById('vendorFields').style.display = role === 'vendor' ? 'block' : 'none';
+      document.getElementById('eoFields').style.display = role === 'eo' ? 'block' : 'none';
+    }
+
+    function validateEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function validatePhone(phone) {
+      return /^\+?\d{10,15}$/.test(phone);
+    }
+
+    function showError(id, message) {
+      const errorEl = document.getElementById(id);
+      errorEl.textContent = message;
+      errorEl.style.display = 'block';
+    }
+
+    function clearErrors() {
+      document.querySelectorAll('.error-message').forEach(el => {
+        el.style.display = 'none';
+        el.textContent = '';
+      });
+    }
+
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      clearErrors();
+
+      const formData = new FormData(this);
+      const fullName = formData.get('fullName');
+      const email = formData.get('email');
+      const phone = formData.get('phone');
+      const password = formData.get('password');
+      const role = formData.get('role');
+      let isValid = true;
+
+      if (!fullName) {
+        showError('fullNameError', 'Full name is required.');
+        isValid = false;
+      }
+      if (!email || !validateEmail(email)) {
+        showError('emailError', 'Please enter a valid email.');
+        isValid = false;
+      }
+      if (!phone || !validatePhone(phone)) {
+        showError('phoneError', 'Please enter a valid phone number.');
+        isValid = false;
+      }
+      if (!password || password.length < 8) {
+        showError('passwordError', 'Password must be at least 8 characters long.');
+        isValid = false;
+      }
+      if (!role) {
+        showError('roleError', 'Please select a role.');
+        isValid = false;
+      }
+
+      if (role === 'client' && !formData.get('clientDob')) {
+        showError('clientDobError', 'Please select your date of birth.');
+        isValid = false;
+      }
+      if (role === 'vendor') {
+        if (!formData.get('businessName')) {
+          showError('businessNameError', 'Business name is required for vendors.');
+          isValid = false;
+        }
+        if (!formData.get('serviceType')) {
+          showError('serviceTypeError', 'Please select a service type.');
+          isValid = false;
+        }
+      }
+      if (role === 'eo' && !formData.get('eoName')) {
+        showError('eoNameError', 'EO name is required for event organizers.');
+        isValid = false;
+      }
+
+      if (!isValid) {
+        showError('formError', 'Please fix the errors above.');
+        return;
+      }
+
+      // Simulasi API call (POST /api/auth/register)
+      console.log('--- SUBMIT FORM DATA (demo) ---');
+      for (const pair of formData.entries()) {
+        console.log(pair[0] + ':', pair[1]);
+      }
+      alert('Registration successful (demo)! Verification email sent.');
+      this.reset();
+      toggleRoleFields();
+    });
+
+    document.getElementById('googleBtn').addEventListener('click', () => {
+      alert('Google Sign-Up (demo). Integrate OAuth client to enable real sign-up.');
+    });
+  </script>
+</body>
+</html>

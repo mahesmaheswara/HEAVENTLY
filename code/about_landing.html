@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HeaVenTly — About</title>
+  <meta name="description" content="About HeaVenTly — Marketplace & OS untuk Vendor, EO, dan Client Event. Futuristic neon glass design with parallax, 3D team cards and reveal animations." />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ===================================================================
+       HeaVenTly — About page
+       - Full file (HTML/CSS/JS) optimized for responsiveness and animation
+       - Navbar style matches landing (neon gradient CTAs, glass)
+       - Parallax hero, tilt/3D team cards, reveal on scroll, testimonials,
+         tabs with fade transitions, scroll progress, back-to-top, footer
+       =================================================================== */
+
+    :root{
+      --bg-0:#060712;
+      --bg-1:#0b1220;
+      --panel:#0e1724;
+      --glass: rgba(255,255,255,0.04);
+      --muted: rgba(210,225,255,0.6);
+      --text: #e9f1ff;
+      --accent1:#00c6ff;
+      --accent2:#a855f7;
+      --accent-grad: linear-gradient(90deg,var(--accent1),var(--accent2));
+      --radius:16px;
+      --radius-sm:10px;
+      --nav-height:74px;
+      --focus: 0 0 0 4px rgba(0,198,255,0.14);
+      --shadow-glow: 0 12px 48px rgba(108,99,255,0.14);
+      --glass-border: rgba(255,255,255,0.06);
+    }
+
+    /* ---------- Reset & base ---------- */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:
+        radial-gradient(1000px 500px at 85% -120px, rgba(168,85,247,0.06), transparent 30%),
+        radial-gradient(900px 420px at 10% -80px, rgba(0,198,255,0.04), transparent 40%),
+        linear-gradient(180deg,var(--bg-1), #07080f 60%);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      -webkit-tap-highlight-color: transparent;
+      overflow-x:hidden;
+    }
+    img{display:block;max-width:100%;height:auto}
+    a{color:inherit;text-decoration:none}
+
+    /* ---------- Top progress bar ---------- */
+    .progressbar{
+      position:fixed; left:0; top:0; height:3px; width:0%;
+      background: linear-gradient(90deg,var(--accent1),var(--accent2));
+      box-shadow: 0 0 22px rgba(0,198,255,0.18), 0 0 10px rgba(168,85,247,0.12);
+      z-index:2500;
+      transition: width .18s linear;
+    }
+
+    /* ---------- NAVBAR (matching landing) ---------- */
+    header{
+      position:fixed; inset:0 0 auto 0; height:var(--nav-height);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 5%;
+      z-index:2000;
+      background: rgba(8,12,20,0.72);
+      backdrop-filter: blur(10px) saturate(1.05);
+      border-bottom: 1px solid var(--glass-border);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+    }
+    .nav-left{ display:flex; gap:18px; align-items:center }
+    .brand{
+      display:flex; gap:12px; align-items:center; cursor:pointer;
+    }
+    .brand .logo{
+      width:40px;height:40px;border-radius:10px;background:conic-gradient(from 200deg,var(--accent1),var(--accent2),#ff4ecd);box-shadow: var(--shadow-glow);
+    }
+    .brand b{ font-weight:800; font-size:1.05rem; letter-spacing:.2px; }
+
+    nav.nav-links{
+      display:flex; align-items:center; gap:28px;
+      justify-content:center; flex:1;
+      margin-left:18px;
+    }
+    nav.nav-links a{
+      font-weight:600; color:var(--muted); padding:10px 8px; border-radius:10px; position:relative;
+      transition: color .25s ease, background .2s ease;
+    }
+    nav.nav-links a:hover{ color:var(--text); background: rgba(255,255,255,0.03) }
+    nav.nav-links a.active{
+      color:#061018; background: var(--accent-grad);
+      box-shadow: 0 10px 26px rgba(108,99,255,0.18), inset 0 -1px 0 rgba(0,0,0,0.06);
+    }
+
+    .nav-actions{ display:flex; gap:12px; align-items:center }
+    .btn{ border:0; cursor:pointer; padding:.6rem 1rem; border-radius:999px; font-weight:700; transition: transform .18s ease, box-shadow .25s ease; }
+    .btn:focus{ outline:none; box-shadow: var(--focus) }
+    .btn-ghost{ background: transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.06); padding:.6rem .9rem }
+    .btn-ghost:hover{ background: rgba(255,255,255,0.03); color:var(--text) }
+    .btn-primary{ background: var(--accent-grad); color:#08101a; padding:.6rem 1.15rem; box-shadow: 0 10px 30px rgba(108,99,255,0.22) }
+    .btn-primary:hover{ transform: translateY(-2px) }
+
+    /* mobile toggle */
+    .hamburger{ display:none; background:transparent; border:1px solid rgba(255,255,255,0.06); width:44px;height:44px;border-radius:10px; align-items:center; justify-content:center; cursor:pointer }
+    .hamburger svg{ width:18px;height:18px }
+
+    /* mobile menu */
+    .mobile-menu{
+      position:fixed; left:0; right:0; top:var(--nav-height); height:0; overflow:hidden; background: rgba(6,8,14,0.96); z-index:1900; transition: height .32s ease;
+      border-bottom:1px solid rgba(255,255,255,0.04);
+    }
+    .mobile-menu.open{ height:320px }
+    .mobile-menu .inner{ padding:18px 5%; display:flex; flex-direction:column; gap:8px }
+
+    /* ---------- HERO with parallax ---------- */
+    .hero{
+      min-height:66vh;
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:28px;
+      align-items:center;
+      padding: calc(var(--nav-height) + 48px) 5% 48px;
+      position:relative;
+    }
+    @media (max-width:980px){
+      .hero{ grid-template-columns:1fr; padding-top: calc(var(--nav-height) + 36px) }
+    }
+
+    .hero-left{
+      max-width:900px;
+    }
+    .kicker{
+      display:inline-flex; gap:.6rem; align-items:center; padding:.35rem .8rem; background: linear-gradient(90deg,#111827,#0f1724); border-radius:999px; color:var(--muted); font-weight:700; margin-bottom:12px;
+    }
+    .hero h1{
+      font-size: clamp(1.6rem, 3.2vw, 3rem); line-height:1.02; margin:0 0 .6rem; font-weight:800; letter-spacing: -0.6px;
+      background: linear-gradient(90deg, #f7fbff 0%, rgba(255,255,255,0.88) 60%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+    .lead{ color:var(--muted); font-size:1.05rem; max-width:70ch; margin-bottom:18px }
+
+    .hero-cta{ display:flex; gap:.6rem; flex-wrap:wrap; margin-top:10px }
+
+    /* device / hero card (right) -- includes parallax layers */
+    .hero-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:20px; padding:18px; border:1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow-glow);
+      position:relative; overflow:hidden; transform-style:preserve-3d;
+    }
+    .hero-card .img-wrap{ border-radius:12px; overflow:hidden; height:380px; display:block; background:#06101a; }
+    .hero-card img{ width:100%; height:100%; object-fit:cover; display:block; transition: transform .9s cubic-bezier(.2,.9,.2,1); transform-origin:center; }
+    .hero-card:hover img{ transform: scale(1.03) rotate(.25deg); }
+
+    .parallax-layer{
+      position:absolute; pointer-events:none; will-change: transform; filter: blur(18px); opacity:.85;
+    }
+    .parallax-layer.l1{ width:420px; height:300px; right:-40px; top:-80px; background: radial-gradient(300px 180px at 20% 30%, rgba(168,85,247,0.22), transparent 40%), radial-gradient(300px 160px at 80% 10%, rgba(0,198,255,0.14), transparent 40%); border-radius:30px; }
+    .parallax-layer.l2{ width:240px; height:160px; left:-60px; bottom:-40px; background: radial-gradient(180px 120px at 30% 30%, rgba(0,198,255,0.12), transparent 40%), rgba(255,255,255,0.02); border-radius:20px; }
+
+    /* ---------- Sections ---------- */
+    section{ padding:72px 5%; }
+    .container{ max-width:1200px; margin:0 auto; }
+
+    .section-head{ display:flex; align-items:end; justify-content:space-between; gap:16px; margin-bottom:18px }
+    .section-head h2{ font-size: clamp(1.2rem, 2.3vw, 1.9rem); margin:0; font-weight:800; }
+    .kicker-small{ color:var(--accent1); font-weight:700; letter-spacing:.12em; text-transform:uppercase; font-size:.78rem; }
+
+    /* values grid */
+    .grid-3{ display:grid; grid-template-columns: repeat(3,1fr); gap:16px; }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius: 14px; padding:18px;
+      border:1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .card:hover{ transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.55) }
+
+    /* steps / timeline */
+    .steps{ display:grid; grid-template-columns: repeat(3,1fr); gap:12px }
+    .step{ padding:16px; border-radius:12px; border:1px dashed rgba(255,255,255,0.06); background: rgba(255,255,255,0.02) }
+
+    /* team */
+    .team-grid{
+      display:grid; grid-template-columns: repeat(3,1fr); gap:18px; align-items:start;
+    }
+    @media (max-width:980px){
+      .grid-3, .team-grid, .steps{ grid-template-columns: 1fr; }
+      nav.nav-links{ display:none }
+      .hamburger{ display:flex }
+      .hero{ grid-template-columns: 1fr; }
+      .hero-card .img-wrap{ height:300px }
+    }
+
+    /* team card 3D tilt */
+    .member{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      padding:18px; border-radius:14px; text-align:center; border:1px solid rgba(255,255,255,0.06);
+      transform: perspective(900px) translateZ(0); transition: transform .18s ease, box-shadow .22s ease;
+      will-change: transform;
+    }
+    .member .avatar{
+      width:120px;height:120px;border-radius:16px; overflow:hidden; margin:0 auto 12px; border:2px solid rgba(255,255,255,0.04);
+    }
+    .member img{ width:100%; height:100%; object-fit:cover; display:block }
+    .member h4{ margin:8px 0 6px; font-weight:800 }
+    .member p{ color:var(--muted); margin:0; }
+
+    /* testimonial slider lite */
+    .testi{
+      display:grid; grid-template-columns: 1fr 360px; gap:18px; align-items:center;
+    }
+    .quote{
+      padding:20px; border-radius:14px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.06);
+    }
+    .t-slider{ position:relative; height:160px; overflow:hidden }
+    .t-slide{ position:absolute; inset:12px; padding:8px; opacity:0; transform: translateY(12px); transition: all .4s ease; }
+    .t-slide.active{ opacity:1; transform:none }
+
+    /* faq / cta / footer */
+    .faq-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:16px }
+    .cta{ padding:24px; border-radius:14px; border:1px solid rgba(255,255,255,0.06); background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)) }
+    footer{
+      padding:28px 5%; background: linear-gradient(180deg, rgba(5,7,12,0.98), rgba(4,5,9,0.98)); border-top:1px solid rgba(255,255,255,0.04);
+    }
+    .footer-grid{ display:grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap:18px; max-width:1200px; margin:0 auto }
+    @media (max-width:900px){ .footer-grid{ grid-template-columns: 1fr 1fr } }
+
+    .foot small{ color:var(--muted) }
+
+    /* back to top */
+    .back-to-top{ position:fixed; right:18px; bottom:18px; width:46px;height:46px;border-radius:999px;background:rgba(6,8,14,0.85);border:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow: 0 12px 32px rgba(0,0,0,0.45); opacity:0; transform: translateY(12px); transition: all .25s ease; z-index:2200 }
+    .back-to-top.visible{ opacity:1; transform:none }
+
+    /* reveal helpers */
+    .reveal{ opacity:0; transform: translateY(28px); transition: opacity .7s cubic-bezier(.2,.9,.2,1), transform .7s cubic-bezier(.2,.9,.2,1) }
+    .reveal.show{ opacity:1; transform:none }
+
+    /* tab panels */
+    .tabs{ margin-top:12px }
+    .tab-controls{ display:flex; gap:8px; flex-wrap:wrap }
+    .tab-controls button{ padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,0.06); background:transparent; color:var(--muted); cursor:pointer; font-weight:700 }
+    .tab-controls button.active{ background:var(--accent-grad); color:#041018; box-shadow:0 10px 34px rgba(108,99,255,0.16) }
+    .tab-panels{ position:relative; min-height:140px; margin-top:12px; border-radius:12px; overflow:hidden }
+    .tab-panel{ position:absolute; inset:12px; opacity:0; transform: translateY(10px); transition: all .35s ease; }
+    .tab-panel.active{ opacity:1; transform:none }
+
+    /* small utilities */
+    .muted{ color:var(--muted) }
+    .small{ font-size:.92rem; color:var(--muted) }
+    .badge{ display:inline-block; padding:.3rem .6rem; border-radius:999px; background: linear-gradient(90deg,#a855f7,#00c6ff); color:#02101a; font-weight:800; font-size:.82rem }
+
+    /* Accessibility: reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .reveal, .t-slide, .hero-card img, .member, .parallax-layer{ transition:none !important; animation:none !important }
+    }
+
+    /* Extra vertical spacing for accessibility */
+    .spacer{ height:20px }
+
+    /* Debug helpers (comment out in production)
+    .parallax-layer{ outline:1px dashed rgba(255,255,255,0.03); }
+    */
+
+  </style>
+</head>
+<body>
+  <div class="progressbar" id="progressbar" aria-hidden="true"></div>
+
+  <!-- NAVBAR -->
+  <header id="siteHeader" role="banner">
+    <div class="nav-left">
+      <div class="brand" onclick="navigateTo('code/landing.html')" role="link" aria-label="HeaVenTly home">
+        <div class="logo" aria-hidden="true"></div>
+        <b>HeaVenTly</b>
+      </div>
+    </div>
+
+    <nav class="nav-links" aria-label="Primary navigation">
+      <a href="code/landing.html">Home</a>
+      <a href="code/features.html">Features</a>
+      <a href="code/howitworks_landing.html">How it works</a>
+      <a href="code/pricing_landing.html">Pricing</a>
+      <a href="code/about_landing.html" class="active">About</a>
+      <a href="code/contact_landing.html">Contact</a>
+    </nav>
+
+    <div class="nav-actions">
+      <button class="btn btn-ghost" onclick="navigateTo('signin.html')">Sign In</button>
+      <button class="btn btn-primary" onclick="navigateTo('signup.html')">Create Account</button>
+      <button class="hamburger" id="hamburger" aria-label="Open mobile menu" aria-expanded="false" title="Open menu" onclick="toggleMobile()">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <div class="inner">
+      <a href="code/landing.html" onclick="navigateTo('code/landing.html')">Home</a>
+      <a href="code/howitworks_landing.html" onclick="navigateTo('code/howitworks_landing.html')">How it works</a>
+      <a href="code/pricing_landing.html" onclick="navigateTo('code/pricing_landing.html')">Pricing</a>
+      <a href="code/about_landing.html" onclick="navigateTo('code/about_landing.html')">About</a>
+      <a href="code/contact_landing.html" onclick="navigateTo('code/contact_landing.html')">Contact</a>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button class="btn btn-ghost" style="flex:1" onclick="navigateTo('code/signin.html')">Sign In</button>
+        <button class="btn btn-primary" style="flex:1" onclick="navigateTo('code/signup.html')">Get Started</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <main>
+    <section class="hero container" id="hero">
+      <!-- parallax decorative layers -->
+      <div class="parallax-layer l1" data-speed="0.16" aria-hidden="true"></div>
+      <div class="parallax-layer l2" data-speed="-0.12" aria-hidden="true"></div>
+
+      <div class="hero-left">
+        <div class="kicker">Next-gen Event Platform</div>
+        <h1>About HeaVenTly — <span style="background:var(--accent-grad); -webkit-background-clip:text; -webkit-text-fill-color:transparent">We unify Clients, Vendors & EOs</span></h1>
+        <p class="lead">Upload portfolio, verify identity, manage timeline, and receive bookings with confidence. HeaVenTly combines marketplace and operating-system features in one futuristic UX.</p>
+
+        <div class="hero-cta" role="group" aria-label="Hero actions">
+          <button class="btn btn-primary" onclick="navigateTo('code/signup.html')">Create Account — Get Verified</button>
+          <button class="btn btn-ghost" onclick="document.getElementById('mission').scrollIntoView({behavior:'smooth', block:'start'})">Our Vision</button>
+        </div>
+
+        <div style="margin-top:18px" class="small muted">Trusted by 1,200+ planners • SLA 99.9% • Avg booking time 7m</div>
+      </div>
+
+      <div class="hero-card" aria-hidden="false" role="img" aria-label="Showcase">
+        <div class="img-wrap" style="position:relative;">
+          <!-- main hero image (local file) -->
+          <img src="bocahplongor.jpg" alt="Hero image: HeaVenTly showcase" loading="eager" />
+        </div>
+      </div>
+    </section>
+
+    <!-- MISSION / VALUES -->
+    <section id="mission" class="reveal">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="kicker-small">Mission</div>
+            <h2>Our mission & vision</h2>
+          </div>
+          <div>
+            <button class="btn btn-ghost" onclick="document.getElementById('team').scrollIntoView({behavior:'smooth'})">Meet the team</button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 380px; gap:20px; align-items:center;">
+          <div class="card">
+            <h3 style="margin-top:0">Mission</h3>
+            <p class="small muted">Menyatukan Vendor, EO, dan Client dalam satu sistem — discovery, negotiation, management, hingga settlement — semuanya terukur, aman, dan mudah.</p>
+            <div style="height:12px"></div>
+            <h3>Vision</h3>
+            <p class="small muted">Menjadi ekosistem event paling kredibel dan efisien di Asia, mendorong pertumbuhan ekonomi kreatif melalui teknologi dan proses yang transparan.</p>
+          </div>
+
+          <div class="card" style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;gap:10px;align-items:center;">
+              <div class="badge">Futuristic UI</div>
+              <div style="flex:1" class="small muted">Design & interactions that speed up decision making</div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;">
+              <div class="badge">Secure Payment</div>
+              <div style="flex:1" class="small muted">Escrow, milestone, and transparent settlement</div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;">
+              <div class="badge">OS Modules</div>
+              <div style="flex:1" class="small muted">Asset, Stock, Accounting — integrated for operations</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:18px"></div>
+
+        <div class="grid-3 reveal" aria-hidden="false">
+          <div class="card">
+            <h4>Transparency</h4>
+            <p class="small muted">Every quote, timeline and payout is visible and auditable.</p>
+          </div>
+          <div class="card">
+            <h4>Collaboration</h4>
+            <p class="small muted">Tools built for teams: assignments, approvals, and chat logs.</p>
+          </div>
+          <div class="card">
+            <h4>Scalability</h4>
+            <p class="small muted">From micro-events to large productions — same core flow, different scale.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TIMELINE / TABS -->
+    <section id="history" class="reveal">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="kicker-small">Story</div>
+            <h2>How HeaVenTly came to life</h2>
+          </div>
+          <div class="small muted">Read our timeline, achievements, and press</div>
+        </div>
+
+        <div class="tabs">
+          <div class="tab-controls" role="tablist" aria-label="About tabs">
+            <button id="tabBtn1" class="active" role="tab" aria-selected="true" aria-controls="tab1">Story</button>
+            <button id="tabBtn2" role="tab" aria-selected="false" aria-controls="tab2">Timeline</button>
+            <button id="tabBtn3" role="tab" aria-selected="false" aria-controls="tab3">Awards</button>
+          </div>
+
+          <div class="tab-panels card">
+            <div id="tab1" class="tab-panel active" role="tabpanel" aria-labelledby="tabBtn1">
+              <p class="small muted">HeaVenTly lahir dari keresahan pelaku event: jadwal tabrakan, dokumen tercecer, negosiasi berulang. Kami membangun marketplace & OS untuk menyederhanakan proses itu — dari discovery sampai payout.</p>
+            </div>
+
+            <div id="tab2" class="tab-panel" role="tabpanel" aria-labelledby="tabBtn2">
+              <div class="timeline">
+                <div class="step" style="margin-bottom:8px"><strong>2023 Q4</strong> — Riset & validasi problem bersama 60+ vendor & 30+ EO.</div>
+                <div class="step" style="margin-bottom:8px"><strong>2024 Q1</strong> — Prototype marketplace & assignment engine.</div>
+                <div class="step" style="margin-bottom:8px"><strong>2024 Q3</strong> — Beta launch untuk early partners.</div>
+                <div class="step"><strong>2025</strong> — Publik release & modul OS lengkap.</div>
+              </div>
+            </div>
+
+            <div id="tab3" class="tab-panel" role="tabpanel" aria-labelledby="tabBtn3">
+              <div class="grid-3">
+                <div class="card">
+                  <h4>Startup Pitch Finalist</h4>
+                  <p class="small muted">Finalis pada beberapa ajang inovasi teknologi kreatif.</p>
+                </div>
+                <div class="card">
+                  <h4>Featured on TechMag</h4>
+                  <p class="small muted">Dikenal sebagai 'next-gen' marketplace untuk event supply chain.</p>
+                </div>
+                <div class="card">
+                  <h4>Community Partner</h4>
+                  <p class="small muted">Jaringan vendor & EO aktif di beberapa kota.</p>
+                </div>
+              </div>
+            </div>
+          </div><!-- .tab-panels -->
+        </div><!-- .tabs -->
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section id="stats" class="reveal">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="kicker-small">Numbers</div>
+            <h2>Numbers that matter</h2>
+          </div>
+          <div class="small muted">Collected from early partners & beta</div>
+        </div>
+
+        <div class="grid-3">
+          <div class="card stat">
+            <h3 style="margin:0">+120</h3>
+            <p class="small muted">Early Partners (Vendor & EO)</p>
+          </div>
+          <div class="card stat">
+            <h3 style="margin:0">+350</h3>
+            <p class="small muted">Events processed in pilot</p>
+          </div>
+          <div class="card stat">
+            <h3 style="margin:0">99.9%</h3>
+            <p class="small muted">Platform Uptime</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEAM (3D tilt) -->
+    <section id="team" class="reveal">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="kicker-small">Team</div>
+            <h2>Meet the team</h2>
+          </div>
+          <div class="small muted">Small team, big impact</div>
+        </div>
+
+        <div class="team-grid" id="teamGrid">
+          <div class="member" data-tilt>
+            <div class="avatar"><img src="poto_mahes.JPG" alt="Anggara Maheswara — CEO & Founder" loading="lazy"></div>
+            <h4>Anggara Maheswara</h4>
+            <p class="small muted">CEO & Founder</p>
+          </div>
+
+          <div class="member" data-tilt>
+            <div class="avatar"><img src="poto_tino.jpg" alt="Endra Agustino — CTO" loading="lazy"></div>
+            <h4>Endra Agustino</h4>
+            <p class="small muted">CTO</p>
+          </div>
+
+          <div class="member" data-tilt>
+            <div class="avatar"><img src="poto_diki.jpg" alt="Dicky Pranata — OPM" loading="lazy"></div>
+            <h4>Dicky Pranata</h4>
+            <p class="small muted">OPM</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" class="reveal">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="kicker-small">Voices</div>
+            <h2>What partners say</h2>
+          </div>
+          <div class="small muted">Real quotes from early beta partners</div>
+        </div>
+
+        <div class="testi">
+          <div class="quote card">
+            <div class="t-slider" id="tSlider">
+              <div class="t-slide active">
+                <p style="font-weight:700">"Kami lebih cepat memproses proposal & menyusun paket harga. Semua terdokumentasi rapi."</p>
+                <small class="muted">— Novan, Owner Dekor</small>
+              </div>
+              <div class="t-slide">
+                <p style="font-weight:700">"Integrasi modul membuat manajemen asset & stock lebih gampang. Tinggal assign & jalan."</p>
+                <small class="muted">— Sherly, EO Lead</small>
+              </div>
+              <div class="t-slide">
+                <p style="font-weight:700">"Suka banget sama pengalaman approval & payout. Administrasi jadi tidak berat."</p>
+                <small class="muted">— Raka, Vendor Sound</small>
+              </div>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+              <button id="tPrev" class="btn btn-ghost">Prev</button>
+              <button id="tNext" class="btn btn-ghost">Next</button>
+            </div>
+          </div>
+
+          <aside class="card" aria-label="Numbers">
+            <h4 style="margin:0 0 8px 0">Quick numbers</h4>
+            <ul style="list-style:none;padding:0;margin:0" class="small muted">
+              <li>85% users complete booking <b>&lt; 10 minutes</b></li>
+              <li>+32% conversion thanks to smart packages</li>
+              <li>98% vendors rating ≥ 4.5/5</li>
+            </ul>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section id="cta" class="reveal">
+      <div class="container">
+        <div class="cta">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <h3 style="margin:0">Ready to join the ecosystem?</h3>
+            <p class="small muted">Daftar sebagai Vendor, EO, atau Client. Pastikan portofolio & proposal kamu tertata untuk percepatan verifikasi & payout activation.</p>
+            <div style="display:flex;gap:10px">
+              <button class="btn btn-primary" onclick="navigateTo('code/signup.html')">Create Account</button>
+              <button class="btn btn-ghost" onclick="navigateTo('code/howitworks_landing.html')">How it works</button>
+            </div>
+          </div>
+          <div style="max-width:520px">
+            <img src="https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=1600&auto=format&fit=crop" alt="Collaboration" style="width:100%;border-radius:12px;border:1px solid rgba(255,255,255,0.04)">
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="logo" style="width:36px;height:36px;border-radius:8px;background:conic-gradient( from 200deg, var(--accent1), var(--accent2) ); box-shadow: var(--shadow-glow)"></div>
+          <div style="font-weight:800">HeaVenTly</div>
+        </div>
+        <p class="small muted" style="margin-top:8px">Ekosistem event terpadu untuk Vendor, EO, dan Client. Transparansi & efisiensi.</p>
+        <div style="display:flex;gap:10px;margin-top:12px">
+          <a href="#" aria-label="Twitter" class="btn btn-ghost">T</a>
+          <a href="#" aria-label="Instagram" class="btn btn-ghost">I</a>
+          <a href="#" aria-label="LinkedIn" class="btn btn-ghost">in</a>
+        </div>
+      </div>
+
+      <div>
+        <h4>Product</h4>
+        <ul style="list-style:none;padding:0;margin-top:8px" class="small muted">
+          <li><a href="code/features.html">Features</a></li>
+          <li><a href="code/pricing_landing.html">Pricing</a></li>
+          <li><a href="code/docs.html">Docs</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Company</h4>
+        <ul style="list-style:none;padding:0;margin-top:8px" class="small muted">
+          <li><a href="code/about_landing.html">About</a></li>
+          <li><a href="code/careers.html">Careers</a></li>
+          <li><a href="code/contact_landing.html">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Newsletter</h4>
+        <p class="small muted">Subscribe untuk update fitur & kesempatan partnership.</p>
+        <form onsubmit="event.preventDefault(); alert('Subscribed (demo)');" style="display:flex;gap:8px;margin-top:8px">
+          <input type="email" placeholder="your@email.com" aria-label="email" required style="flex:1;padding:10px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--text)">
+          <button class="btn btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </div>
+
+    <div style="max-width:1200px;margin:18px auto 0;display:flex;justify-content:space-between;align-items:center;gap:12px">
+      <small class="muted">© <span id="year"></span> HeaVenTly — All rights reserved.</small>
+      <div style="display:flex;gap:8px" class="muted">
+        <span style="padding:.3rem .6rem;border-radius:999px;border:1px solid rgba(255,255,255,0.04)">Futuristic UI</span>
+        <span style="padding:.3rem .6rem;border-radius:999px;border:1px solid rgba(255,255,255,0.04)">Secure Payment</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- BACK TO TOP -->
+  <button id="backToTop" class="back-to-top" aria-label="Back to top" title="Back to top" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M12 19V6M5 12l7-7 7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <!-- ===================== SCRIPTS ===================== -->
+  <script>
+    // Remove no-js
+    document.documentElement.classList.remove('no-js');
+
+    // Utilities
+    const rafThrottle = (fn) => {
+      let busy = false;
+      return (...args) => {
+        if (busy) return;
+        busy = true;
+        requestAnimationFrame(() => { fn(...args); busy = false; });
+      };
+    };
+
+    // NAV: mobile toggle
+    const mobileMenu = document.getElementById('mobileMenu');
+    const hamburger = document.getElementById('hamburger');
+    function toggleMobile(){
+      const open = mobileMenu.classList.toggle('open');
+      hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      mobileMenu.setAttribute('aria-hidden', open ? 'false' : 'true');
+    }
+
+    // Simple SPA-like navigation fade
+    function navigateTo(url){
+      document.body.style.transition = 'opacity .28s ease';
+      document.body.style.opacity = '0';
+      setTimeout(()=> {
+        window.location.href = url;
+      }, 220);
+    }
+
+    // Progress bar
+    const progress = document.getElementById('progressbar');
+    function updateProgress(){
+      const sc = window.scrollY || window.pageYOffset;
+      const doc = document.documentElement;
+      const total = doc.scrollHeight - doc.clientHeight;
+      let pct = total > 0 ? (sc / total) * 100 : 0;
+      progress.style.width = Math.min(100, Math.max(0, pct)) + '%';
+    }
+    window.addEventListener('scroll', rafThrottle(updateProgress));
+    updateProgress();
+
+    // Reveal on scroll using IntersectionObserver
+    const revealEls = document.querySelectorAll('.reveal, .card, .member, .stat, .kicker, .hero-left, .hero-card');
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('show');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { root: null, threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    revealEls.forEach(el => io.observe(el));
+
+    // Back to top visibility
+    const backBtn = document.getElementById('backToTop');
+    window.addEventListener('scroll', rafThrottle(() => {
+      if (window.scrollY > 260) backBtn.classList.add('visible'); else backBtn.classList.remove('visible');
+    }));
+
+    // Tabs logic (fade)
+    const tabBtns = [document.getElementById('tabBtn1'), document.getElementById('tabBtn2'), document.getElementById('tabBtn3')];
+    const tabPanels = [document.getElementById('tab1'), document.getElementById('tab2'), document.getElementById('tab3')];
+    function activateTab(idx){
+      tabBtns.forEach((b,i) => {
+        b.classList.toggle('active', i===idx);
+        b.setAttribute('aria-selected', String(i===idx));
+      });
+      tabPanels.forEach((p,i) => {
+        p.classList.toggle('active', i===idx);
+      });
+    }
+    tabBtns.forEach((b,i) => b.addEventListener('click', ()=> activateTab(i)));
+
+    // Testimonials slider lite
+    const slides = document.querySelectorAll('.t-slide');
+    let tIndex = 0;
+    function showT(i){
+      slides.forEach((s,idx) => s.classList.toggle('active', idx===i));
+    }
+    document.getElementById('tPrev').addEventListener('click', ()=> { tIndex = (tIndex - 1 + slides.length) % slides.length; showT(tIndex); });
+    document.getElementById('tNext').addEventListener('click', ()=> { tIndex = (tIndex + 1) % slides.length; showT(tIndex); });
+    let tAuto = setInterval(()=> { tIndex = (tIndex + 1) % slides.length; showT(tIndex); }, 4800);
+    const tWrap = document.querySelector('.t-slider');
+    tWrap.addEventListener('mouseenter', ()=> { clearInterval(tAuto); });
+    tWrap.addEventListener('mouseleave', ()=> { tAuto = setInterval(()=> { tIndex = (tIndex + 1) % slides.length; showT(tIndex); }, 4800); });
+
+    // Parallax mouse move for layers
+    const parallaxEls = document.querySelectorAll('.parallax-layer');
+    window.addEventListener('mousemove', (ev) => {
+      const x = (ev.clientX / window.innerWidth - 0.5);
+      const y = (ev.clientY / window.innerHeight - 0.5);
+      parallaxEls.forEach(el => {
+        const speed = parseFloat(el.dataset.speed) || 0.08;
+        el.style.transform = `translate3d(${x * speed * 80}px, ${y * speed * 60}px, 0)`;
+      });
+    });
+
+    // Subtle scroll parallax on hero (vertical)
+    const hero = document.getElementById('hero');
+    function heroParallax(){
+      if(!hero) return;
+      const rect = hero.getBoundingClientRect();
+      const top = rect.top;
+      const windowH = window.innerHeight;
+      const pct = Math.min(1, Math.max(0, 1 - (top / windowH)));
+      parallaxEls.forEach((el, idx) => {
+        const s = parseFloat(el.dataset.speed) || (idx===0 ? 0.08 : -0.06);
+        el.style.transform = `translate3d(0, ${-pct * s * 120}px, 0)`;
+      });
+    }
+    window.addEventListener('scroll', rafThrottle(heroParallax));
+    heroParallax();
+
+    // 3D Tilt for team members
+    const tiltable = document.querySelectorAll('[data-tilt]');
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function tiltMove(e){
+      const el = this;
+      const rect = el.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width;
+      const py = (e.clientY - rect.top) / rect.height;
+      const rx = (py - 0.5) * -8;
+      const ry = (px - 0.5) * 10;
+      el.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(8px)`;
+      el.style.boxShadow = `0 18px 60px rgba(0,0,0,0.45), 0 6px 24px rgba(168,85,247,0.06)`;
+    }
+    function tiltLeave(){
+      this.style.transform = 'perspective(900px) translateZ(0) rotateX(0) rotateY(0)';
+      this.style.boxShadow = '';
+    }
+    if(!prefersReduced){
+      tiltable.forEach(el => {
+        el.addEventListener('mousemove', tiltMove);
+        el.addEventListener('mouseleave', tiltLeave);
+        // touch fallback (gentle)
+        el.addEventListener('touchstart', ()=> el.style.transform='translateY(-6px)', {passive:true});
+        el.addEventListener('touchend', ()=> el.style.transform='', {passive:true});
+      });
+    }
+
+    // Keyboard focus visual polish for nav links
+    document.querySelectorAll('nav a, .nav-actions .btn').forEach(el=>{
+      el.addEventListener('focus', ()=> el.style.outline = '3px solid rgba(0,198,255,0.14)');
+      el.addEventListener('blur', ()=> el.style.outline = '');
+    });
+
+    // Back-to-top show/hide handled earlier
+
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Smooth internal anchor links (offset for fixed nav)
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        const id = a.getAttribute('href');
+        if (id.length > 1 && document.querySelector(id)){
+          e.preventDefault();
+          const target = document.querySelector(id);
+          const y = target.getBoundingClientRect().top + window.scrollY - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-height')) || 80);
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+      });
+    });
+
+    // Fix header hide on scroll down / show on up
+    (function headerAutoHide(){
+      const headerEl = document.getElementById('siteHeader');
+      let last = 0;
+      window.addEventListener('scroll', () => {
+        const st = window.scrollY;
+        if (st > last && st > 120) headerEl.style.transform = 'translateY(-90px)'; else headerEl.style.transform = 'translateY(0)';
+        last = st;
+      }, { passive:true });
+    })();
+
+    // Google Sign-In mock sync (add real OAuth later)
+    function googleSignInMock(){
+      // Demo: open small popup then redirect; adapt to real OAuth flow
+      alert('Google Sign-In (demo). Integrate OAuth client for production.');
+    }
+
+    // Attach google mock to any button with data-google attribute
+    document.querySelectorAll('[data-google]').forEach(b => b.addEventListener('click', googleSignInMock));
+
+    // On load: trigger small reveal
+    window.addEventListener('load', () => {
+      setTimeout(()=> document.body.classList.add('loaded'), 80);
+      updateProgress();
+    });
+
+    // Accessibility: allow keyboard nav for tabs
+    tabBtns.forEach((btn, idx) => {
+      btn.addEventListener('keydown', (ev) => {
+        if (ev.key === 'ArrowRight') { activateTab((idx + 1) % tabBtns.length); tabBtns[(idx+1)%tabBtns.length].focus(); }
+        if (ev.key === 'ArrowLeft') { activateTab((idx - 1 + tabBtns.length) % tabBtns.length); tabBtns[(idx-1+tabBtns.length)%tabBtns.length].focus(); }
+      });
+    });
+
+    // small safety: if mobile menu open and resize to desktop, close it
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 980 && mobileMenu.classList.contains('open')) {
+        mobileMenu.classList.remove('open');
+        hamburger.setAttribute('aria-expanded','false');
+      }
+    });
+
+    // END script
+  </script>
+</body>
+</html>

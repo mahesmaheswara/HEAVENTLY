@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HeaVenTly — Manage Cart</title>
+  <meta name="theme-color" content="#08d9ff" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --accent1:#08d9ff; --accent2:#7b5cff; --accent3:#ff4ecd; --mint:#22ffa2;
+      --bg:#05060a; --bg-grad: radial-gradient(1000px 600px at 10% -10%, rgba(8,217,255,0.12), transparent 60%),
+                    radial-gradient(900px 600px at 90% 0%, rgba(123,92,255,0.12), transparent 60%),
+                    radial-gradient(600px 400px at 50% 120%, rgba(255,78,205,0.10), transparent 60%);
+      --glass: rgba(10,12,18,0.55);
+      --glass-strong: rgba(10,12,18,0.7);
+      --card-bg: rgba(11,13,20,0.7);
+      --muted:#b5c2e3; --txt:#eaf2ff; --border: rgba(255,255,255,0.06);
+      --radius:14px; --shadow: 0 20px 60px rgba(0,0,0,.55);
+      --neon: 0 12px 40px rgba(8,217,255,0.10);
+      --sidebar-w: 260px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--txt);font-family:"Poppins","Inter",system-ui,Segoe UI,Roboto,Arial;-webkit-font-smoothing:antialiased}
+    body::before{content:"";position:fixed;inset:0;background:var(--bg-grad);z-index:-1;pointer-events:none}
+    img{max-width:100%;height:auto;display:block}
+    a{color:inherit;text-decoration:none}
+    button{cursor:pointer}
+
+    .app{display:grid;grid-template-columns: var(--sidebar-w) 1fr; min-height:100vh; gap:16px; padding:16px}
+    @media(max-width:980px){ .app{grid-template-columns:1fr; padding:12px} }
+
+    .sidebar{
+      position:sticky; top:16px; height:calc(100vh - 32px);
+      background:var(--glass); border:1px solid var(--border); backdrop-filter: blur(10px);
+      border-radius:16px; box-shadow:var(--shadow); display:flex; flex-direction:column; overflow:hidden;
+    }
+    .sb-brand{display:flex;align-items:center;gap:12px;padding:14px}
+    .brand-logo{width:42px;height:42px;border-radius:12px;background:conic-gradient(from 220deg,var(--accent1),var(--accent2))}
+    .sb-title{line-height:1}
+    .sb-title .name{font-weight:800}
+    .sb-title .sub{font-size:12px;color:var(--muted)}
+
+    .sb-nav{display:flex;flex-direction:column;padding:8px}
+    .sb-link{
+      display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:12px;
+      color:var(--txt); border:1px solid transparent;
+    }
+    .sb-link:hover{ background:rgba(255,255,255,0.04); border-color:var(--border) }
+    .sb-foot{margin-top:auto;padding:10px;border-top:1px dashed var(--border);display:flex;gap:8px;flex-wrap:wrap}
+    .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.04);border:1px solid var(--border);font-size:12px;color:var(--muted)}
+
+    .topbar{
+      position:sticky; top:16px; z-index:50;
+      display:flex; align-items:center; gap:12px; padding:10px 12px;
+      background:var(--glass); border:1px solid var(--border); backdrop-filter: blur(10px);
+      border-radius:16px; box-shadow:var(--shadow);
+    }
+    .input{ padding:10px 12px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,0.02); color:var(--txt); min-width:220px; }
+
+    .content{display:grid; grid-template-rows: auto 1fr; gap:12px}
+    .card{background:var(--glass);border:1px solid var(--border);backdrop-filter: blur(10px);border-radius:16px;box-shadow:var(--shadow)}
+    .card-body{padding:14px}
+
+    .manage-grid{display:grid;grid-template-columns:1fr 360px;gap:12px}
+    @media(max-width:980px){ .manage-grid{grid-template-columns:1fr} }
+
+    .vendor-detail {
+      display:flex;gap:12px;align-items:flex-start;
+      border-radius:12px;padding:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
+    }
+    .thumb{width:220px;height:140px;border-radius:10px;overflow:hidden;background:#111;display:flex;align-items:center;justify-content:center}
+    .meta{flex:1}
+    .meta h3{margin:0 0 6px 0}
+    .meta p{margin:0;color:var(--muted)}
+
+    .assign-box{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid var(--border)}
+    .assign-box select,input{width:100%}
+
+    .list {list-style:none;padding:0;margin:0}
+    .small{font-size:12px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" aria-label="Sidebar">
+      <div class="sb-brand">
+        <div class="brand-logo" aria-hidden="true"></div>
+        <div class="sb-title">
+          <div class="name">HeaVenTly</div>
+          <div class="sub">Client • Dashboard</div>
+        </div>
+      </div>
+
+      <nav class="sb-nav" role="navigation" aria-label="Primary">
+        <a class="sb-link" href="dashboard_client.html"><i data-lucide="home"></i><span>Home</span></a>
+        <a class="sb-link" href="events.html"><i data-lucide="calendar"></i><span>Events</span></a>
+        <a class="sb-link" href="vendors.html"><i data-lucide="briefcase"></i><span>Vendors</span></a>
+        <a class="sb-link" href="settings.html"><i data-lucide="settings"></i><span>Settings</span></a>
+      </nav>
+
+      <div class="sb-foot">
+        <span class="pill">v0.1 • client</span>
+        <a class="sb-link" style="padding:8px 10px" href="signin.html"><i data-lucide="log-out"></i><span>Log out</span></a>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="content">
+      <header class="topbar" role="banner" aria-label="Header">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="font-weight:800">Manage Cart</div>
+          <div class="small muted">Assign booked vendor to event</div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+          <button class="btn" onclick="location.href='booked_vendor.html'"><i data-lucide="corner-down-left"></i>Back</button>
+        </div>
+      </header>
+
+      <section class="card card-body">
+        <div class="manage-grid">
+          <div id="leftCol">
+            <div id="vendorContainer"></div>
+          </div>
+
+          <aside>
+            <div class="assign-box">
+              <div style="font-weight:700">Assign to event</div>
+              <select id="eventSelect" class="input"></select>
+              <button id="assignBtn" class="btn btn-primary">Assign</button>
+              <button id="confirmBtn" class="btn">Confirm Booking</button>
+              <button id="removeBtn" class="btn" style="border-color:var(--border)">Remove from Cart</button>
+              <div class="small muted" style="margin-top:6px">Events are loaded from <code>events</code> localStorage (same as Events page)</div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+    const BOOKED_KEY = 'booked_vendors';
+    const EVENTS_KEY = 'events';
+
+    lucide.createIcons();
+
+    function loadBooked(){ try{ return JSON.parse(localStorage.getItem(BOOKED_KEY)||'[]'); }catch(e){ return []; } }
+    function saveBooked(arr){ try{ localStorage.setItem(BOOKED_KEY, JSON.stringify(arr)); }catch(e){} }
+
+    function loadEvents(){ try{ return JSON.parse(localStorage.getItem(EVENTS_KEY)||'[]'); }catch(e){ return []; } }
+
+    function getParam(name){
+      const url = new URL(location.href);
+      return url.searchParams.get(name);
+    }
+
+    let currentVendorId = null;
+
+    function render(){
+      const c = $('#vendorContainer');
+      const booked = loadBooked();
+      c.innerHTML = '';
+      const vid = getParam('v');
+      if(vid){
+        const v = booked.find(x=>x.id===vid);
+        if(!v){ c.innerHTML = `<div class="small muted">Vendor tidak ditemukan di cart.</div>`; return; }
+        currentVendorId = v.id;
+        c.innerHTML = vendorDetailHtml(v);
+      } else {
+        // show list with select option to edit single
+        if(booked.length===0){
+          c.innerHTML = `<div class="small muted">Cart kosong. Kunjungi <a href="vendors.html">Vendors</a></div>`;
+        } else {
+          const ul = document.createElement('div');
+          ul.className = 'list';
+          booked.forEach(v=>{
+            const node = document.createElement('div');
+            node.className = 'vendor-detail';
+            node.innerHTML = `
+              <div class="thumb">${v.img ? `<img src="${v.img}" alt="${v.name}" style="width:100%;height:100%;object-fit:cover">` : 'No image'}</div>
+              <div class="meta">
+                <h3>${escapeHtml(v.name)}</h3>
+                <div class="small muted">${escapeHtml(v.desc||v.category||'')}</div>
+                <div style="margin-top:10px;display:flex;gap:8px">
+                  <button class="btn" onclick="selectVendor('${v.id}')"><i data-lucide="edit-2"></i>Edit</button>
+                  <button class="btn" onclick="removeVendor('${v.id}')"><i data-lucide="trash-2"></i>Remove</button>
+                </div>
+              </div>
+            `;
+            ul.appendChild(node);
+          });
+          c.appendChild(ul);
+        }
+      }
+
+      populateEvents();
+      lucide.createIcons();
+    }
+
+    function vendorDetailHtml(v){
+      return `
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <div class="thumb">${v.img ? `<img src="${v.img}" alt="${v.name}" style="width:100%;height:100%;object-fit:cover">` : 'No image'}</div>
+          <div style="flex:1">
+            <h3>${escapeHtml(v.name)}</h3>
+            <div class="small muted">${escapeHtml(v.desc||'')}</div>
+            <div style="margin-top:12px">
+              <div style="font-weight:700">Details</div>
+              <div class="small muted">Category: ${escapeHtml(v.category||'')}</div>
+              <div class="small muted">Rating: ${'★'.repeat(v.rating||4)}${'☆'.repeat(5-(v.rating||4))}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function escapeHtml(s){ return (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    function populateEvents(){
+      const sel = $('#eventSelect');
+      sel.innerHTML = '';
+      const events = loadEvents();
+      if(!events || events.length===0){
+        const opt = document.createElement('option'); opt.value=''; opt.textContent='-- no events found --';
+        sel.appendChild(opt);
+        return;
+      }
+      const emptyOpt = document.createElement('option'); emptyOpt.value=''; emptyOpt.textContent='-- pilih event --';
+      sel.appendChild(emptyOpt);
+      events.forEach(ev=> {
+        const opt = document.createElement('option'); opt.value=ev.id; opt.textContent = `${ev.name} • ${ev.date} • ${ev.location}`;
+        sel.appendChild(opt);
+      });
+    }
+
+    function selectVendor(id){
+      // open current page with param
+      location.href = `manage_cart.html?v=${encodeURIComponent(id)}`;
+    }
+
+    function removeVendor(id){
+      if(!confirm('Hapus vendor dari cart?')) return;
+      const arr = loadBooked().filter(x=>x.id !== id);
+      saveBooked(arr);
+      // if this page was opened for that vendor, go back to booked_vendor
+      if(getParam('v') === id){
+        location.href = 'booked_vendor.html';
+      } else {
+        render();
+      }
+    }
+
+    // Assign button
+    $('#assignBtn').addEventListener('click', ()=>{
+      const sel = $('#eventSelect').value;
+      if(!sel){ alert('Pilih event terlebih dahulu'); return; }
+      const vendorId = getParam('v');
+      if(!vendorId){ alert('Pilih vendor untuk di-assign (klik Edit pada daftar dan pilih vendor)'); return; }
+      const booked = loadBooked();
+      const v = booked.find(x=>x.id === vendorId);
+      if(!v){ alert('Vendor tidak ditemukan'); return; }
+      v.assignedTo = sel;
+      saveBooked(booked);
+      alert('Vendor diassign ke event');
+      render();
+    });
+
+    // Confirm booking (dummy)
+    $('#confirmBtn').addEventListener('click', ()=>{
+      const vendorId = getParam('v');
+      if(!vendorId){ alert('Pilih vendor untuk konfirmasi'); return; }
+      const booked = loadBooked();
+      const v = booked.find(x=>x.id === vendorId);
+      if(!v){ alert('Vendor tidak ditemukan'); return; }
+      v.confirmed = true;
+      saveBooked(booked);
+      alert('Booking dikonfirmasi (dummy)');
+      render();
+    });
+
+    $('#removeBtn').addEventListener('click', ()=>{
+      const vendorId = getParam('v');
+      if(!vendorId){ alert('Pilih vendor untuk dihapus'); return; }
+      removeVendor(vendorId);
+    });
+
+    // init seed for demo if no booked vendors (non-destructive)
+    (function seedIfEmpty(){
+      try{
+        const b = loadBooked();
+        if(!b || b.length===0){
+          const demo = [
+            { id: 'v-ardi', name:'Vendor Dekor Ardi', img:'https://picsum.photos/seed/ardi/600/400', rating:4, desc:'Dekor & florist, indoor/outdoor', category:'decor' },
+            { id: 'v-catering-1', name:'Catering Bumi Rasa', img:'https://picsum.photos/seed/cat/600/400', rating:5, desc:'Menu tradisional & internasional', category:'catering' }
+          ];
+          saveBooked(demo);
+        }
+      }catch(e){}
+    })();
+
+    // load
+    window.addEventListener('load', ()=>{ lucide.createIcons(); render(); });
+  </script>
+</body>
+</html>

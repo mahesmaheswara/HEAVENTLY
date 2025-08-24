@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HeaVenTly — Pricing & Discover</title>
+  <meta name="theme-color" content="#08d9ff" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <style>
+    /* ===================== THEME & RESET (persis landing) ===================== */
+    :root{
+      --c-primary:#08d9ff; --c-secondary:#7b5cff; --c-tertiary:#ff4ecd; --c-accent:#22ffa2; --c-warm:#ffc857;
+      --bg-0:#070b14; --bg-1:#0c1424; --bg-2:#111a2e;
+      --txt-1:#e9f1ff; --txt-2:#b5c2e3; --ring:rgba(8,217,255,.55);
+      --radius:18px;
+      --shadow:0 8px 30px rgba(8,217,255,.15), 0 2px 10px rgba(123,92,255,.12);
+      --shadow-strong:0 24px 80px rgba(255,78,205,.18), 0 10px 30px rgba(8,217,255,.18);
+      --grad-1:radial-gradient(1200px 600px at 80% -10%, rgba(123,92,255,.25), transparent 60%),
+               radial-gradient(900px 400px at -10% 20%, rgba(8,217,255,.27), transparent 60%),
+               linear-gradient(135deg, rgba(8,217,255,.08), rgba(255,78,205,.06));
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,"Helvetica Neue",Arial;
+      background:var(--bg-0);color:var(--txt-1);line-height:1.6;
+      background-image:var(--grad-1);background-attachment:fixed;
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+      opacity:0; /* page transition */
+    }
+    img{max-width:100%;height:auto;display:block}
+    a{color:inherit;text-decoration:none}
+    .container{width:min(1200px,92vw);margin-inline:auto}
+    .btn{display:inline-flex;align-items:center;gap:.6rem;padding:.85rem 1.1rem;border:1px solid transparent;border-radius:var(--radius);font-weight:600;cursor:pointer;transition:transform .15s ease,box-shadow .3s ease,background .3s ease,border-color .3s ease}
+    .btn:focus-visible{outline:3px solid var(--ring);outline-offset:2px}
+    .btn-primary{background:linear-gradient(135deg,var(--c-primary),var(--c-secondary));color:#04121a;box-shadow:var(--shadow)}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:var(--shadow-strong)}
+    .btn-ghost{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.08)}
+    .btn-ghost:hover{background:rgba(255,255,255,.06)}
+    .badge{display:inline-flex;gap:.5rem;align-items:center;padding:.35rem .7rem;background:rgba(123,92,255,.18);color:#e9e1ff;border:1px solid rgba(123,92,255,.35);border-radius:999px;font-size:.8rem}
+    .small{font-size:.88rem;color:var(--txt-2)}
+
+    /* ===================== NAVBAR (copy landing) ===================== */
+    .nav{
+      position:sticky;top:0;z-index:50;backdrop-filter:saturate(1.1) blur(12px);
+      background:rgba(7,11,20,.50);border-bottom:1px solid rgba(255,255,255,.08);
+      transition:background .35s ease,transform .25s ease,padding .25s ease,box-shadow .35s ease,border-color .35s ease;
+      will-change:background,transform,padding;
+    }
+    .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;transition:padding .25s ease}
+    .nav.shrink .nav-inner{padding:.55rem 0}
+    .nav.shrink{background:rgba(7,11,20,.75);border-color:rgba(255,255,255,.12);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    .brand{display:flex;align-items:center;gap:.75rem;transition:transform .25s ease}
+    .nav.shrink .brand{transform:translateY(-1px) scale(.98)}
+    .brand-logo{width:34px;height:34px;border-radius:10px;position:relative;overflow:hidden;box-shadow:var(--shadow);
+      background:conic-gradient(from 220deg,var(--c-primary),var(--c-secondary),var(--c-tertiary),var(--c-primary))}
+    .nav-links{display:flex;gap:1rem;align-items:center}
+    .nav-links a{padding:.6rem .8rem;border-radius:10px;position:relative;overflow:hidden}
+    .nav-links a::after{content:"";position:absolute;inset:auto 0 0 0;height:2px;background:linear-gradient(90deg,var(--c-primary),var(--c-tertiary));
+      transform:scaleX(0);transform-origin:right;transition:transform .25s ease}
+    .nav-links a:hover{background:rgba(255,255,255,.06)}
+    .nav-links a:hover::after{transform:scaleX(1);transform-origin:left}
+    .nav-cta{display:flex;gap:.6rem;align-items:center}
+    .mobile-toggle{display:none}
+
+    /* ===================== HERO (parallax + stopper) ===================== */
+    header.hero{padding:calc(64px + 3vw) 0 50px;position:relative;overflow:hidden;will-change:transform}
+    .halo{position:absolute;inset:-20% -10% auto -10%;height:60vh;pointer-events:none;
+      background:radial-gradient(600px 300px at 20% 20%, rgba(34,255,162,.28), transparent 60%),
+                 radial-gradient(600px 300px at 80% 10%, rgba(8,217,255,.25), transparent 60%),
+                 radial-gradient(900px 400px at 50% -5%, rgba(255,78,205,.20), transparent 60%);
+      filter:blur(30px);opacity:.85;transform:translateZ(0);will-change:transform}
+    .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(24px,4vw,48px);align-items:center}
+    .eyebrow{display:inline-flex;align-items:center;gap:.6rem}
+    h1{font-size:clamp(2rem,3.4vw + .5rem,3.6rem);line-height:1.08;margin:.2rem 0 1rem}
+    .lead{font-size:clamp(1rem,.9rem + .5vw,1.2rem);color:var(--txt-2);max-width:60ch}
+    .device{background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.12);border-radius:26px;padding:18px;box-shadow:var(--shadow-strong);
+      transform-style:preserve-3d;perspective:900px;will-change:transform}
+    .screen{aspect-ratio:16/10;background:#060a12;border-radius:16px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+    .screen::before{content:"";position:absolute;inset:-30% -30% auto -30%;height:120%;
+      background:radial-gradient(500px 260px at 25% 40%, rgba(8,217,255,.25), transparent 60%),
+                 radial-gradient(600px 260px at 80% 20%, rgba(255,78,205,.22), transparent 60%),
+                 linear-gradient(135deg, rgba(123,92,255,.18), rgba(34,255,162,.18));filter:blur(30px)}
+    .ui-card{position:absolute;inset:auto 6% 8% 6%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);
+      border-radius:14px;padding:14px;backdrop-filter:blur(6px);display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;color:#dfe8ff}
+    .ui-input{display:flex;gap:.6rem;align-items:center;background:rgba(0,0,0,.35);padding:.7rem .9rem;border-radius:12px;border:1px solid rgba(255,255,255,.08)}
+    .ui-input input{background:transparent;border:0;color:#e9f1ff;outline:none;width:100%}
+
+    /* ===================== TABS ===================== */
+    .tabs{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin: 8px auto 18px}
+    .tab-btn{padding:.7rem 1rem;border-radius:999px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);color:var(--txt-1);font-weight:700;cursor:pointer;transition:transform .15s ease, background .25s ease}
+    .tab-btn:hover{transform:translateY(-2px)}
+    .tab-btn.active{background:linear-gradient(90deg,var(--c-primary),var(--c-tertiary));color:#04121a;box-shadow:var(--shadow-strong)}
+    .panel{display:none;opacity:0;transform:translateY(12px);transition:opacity .45s ease, transform .45s ease}
+    .panel.active{display:block;opacity:1;transform:none}
+
+    /* ===================== CLIENT — Search & Vendor grid ===================== */
+    .search-inline{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}
+    .input{min-width:220px;display:flex;align-items:center;gap:.5rem;padding:.7rem .9rem;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1)}
+    .input input,.input select{background:transparent;border:0;outline:0;color:var(--txt-1)}
+    .vendor-grid{margin-top:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;position:relative}
+    .vendor-card{
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:12px;box-shadow:var(--shadow);
+      transition:transform .25s ease, box-shadow .35s ease, background .35s ease, border-color .35s ease, opacity .25s ease;
+      will-change:transform;opacity:0;transform:translateY(20px)
+    }
+    .vendor-card.visible{opacity:1;transform:none}
+    .vendor-card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(8,217,255,.15), 0 6px 20px rgba(123,92,255,.18)}
+    .vendor-thumb{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.09)}
+    .vendor-name{margin-top:10px;font-weight:800}
+    .vendor-role{color:var(--txt-2);font-size:.93rem;margin-top:4px}
+    .vendor-meta{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px}
+    .vendor-rating{color:#ffd54a;font-weight:700;letter-spacing:.5px}
+    .vendor-cta{border:none;padding:.6rem .8rem;border-radius:10px;font-weight:800;cursor:pointer;
+      background:linear-gradient(90deg,var(--c-primary),var(--c-tertiary));color:#04121a}
+
+    /* shuffle animation */
+    .grid-animating .vendor-card{transition:transform .45s cubic-bezier(.2,.9,.2,1), opacity .35s ease}
+
+    /* ===================== PRICING (Vendor & EO) — gaya sama seperti landing ===================== */
+    .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .price{
+      background:linear-gradient(180deg, rgba(123,92,255,.08), rgba(8,217,255,.04));
+      border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:20px;position:relative;
+      transform:perspective(900px) translateZ(0) rotateX(0) rotateY(0);
+      transition:transform .25s ease, box-shadow .35s ease, background .35s ease, border-color .35s ease;
+      will-change:transform;opacity:0;transform:translateY(18px)
+    }
+    .price.visible{opacity:1;transform:none}
+    .price .tag{position:absolute;top:14px;right:14px;font-size:.75rem;padding:.2rem .5rem;border-radius:999px;background:rgba(255,206,87,.22);border:1px solid rgba(255,206,87,.5);color:#ffe39a}
+    .price .amt{font-size:2rem;font-weight:800}
+    .price:hover{transform:translateY(-6px)}
+    .tilt,.tilt-sm{transform:perspective(800px) translateZ(0) rotateX(0) rotateY(0);transition:transform .25s ease, box-shadow .35s ease}
+
+    /* ===================== SECTIONS REVEAL ===================== */
+    header.hero, section{opacity:0;transform:translateY(40px)}
+    .reveal-show{opacity:1!important;transform:translateY(0)!important;transition:opacity .8s ease, transform .8s ease}
+
+    /* ===================== FOOTER (copy landing) ===================== */
+    footer{padding:36px 0 48px;border-top:1px solid rgba(255,255,255,.08);color:var(--txt-2)}
+    .footgrid{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:18px}
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width:1024px){.hero-grid{grid-template-columns:1fr}.footgrid{grid-template-columns:1fr 1fr}}
+    @media (max-width:800px){
+      .nav-links{display:none}.mobile-toggle{display:inline-flex}
+      .vendor-grid,.pricing{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width:560px){
+      .vendor-grid,.pricing,.footgrid{grid-template-columns:1fr}
+      header.hero{padding-top:84px}
+    }
+
+    /* ===================== PAGE TRANSITION (fade) ===================== */
+    .fade-in{animation:fadeIn .28s ease forwards}
+    .fade-out{animation:fadeOut .18s ease forwards}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes fadeOut{from{opacity:1}to{opacity:0}}
+  </style>
+</head>
+<body>
+  <!-- ===================== NAVBAR ===================== -->
+  <nav class="nav" aria-label="Primary">
+    <div class="container nav-inner">
+      <a href="landing.html" class="brand" data-transition="true" aria-label="HeaVenTly Home">
+        <span aria-hidden="true" class="brand-logo"></span>
+        <b>HeaVenTly</b>
+      </a>
+      <div class="nav-links" role="navigation" aria-label="Main Menu">
+        <a href="landing.html#features" data-transition="true">Features</a>
+        <a href="landing.html#how" data-transition="true">How it works</a>
+        <a href="pricing_landing.html" aria-current="page">Pricing</a>
+        <a href="landing.html#faq" data-transition="true">FAQ</a>
+      </div>
+      <div class="nav-cta">
+        <a class="btn btn-ghost" href="signin.html" data-transition="true" aria-label="Sign In">Sign In</a>
+        <a class="btn btn-primary" href="signup.html" data-transition="true" aria-label="Create account">Create Account</a>
+        <button class="btn btn-ghost mobile-toggle" aria-controls="mobileMenu" aria-expanded="false" aria-label="Open menu">☰</button>
+      </div>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" hidden>
+      <div class="container" style="padding:.6rem 0 1rem;display:grid;gap:.4rem">
+        <a href="landing.html#features" data-transition="true">Features</a>
+        <a href="landing.html#how" data-transition="true">How it works</a>
+        <a href="pricing_landing.html">Pricing</a>
+        <a href="landing.html#faq" data-transition="true">FAQ</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===================== HERO (stopper parallax) ===================== -->
+  <header class="hero" id="hero">
+    <div class="halo floaty" aria-hidden="true"></div>
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="badge">Pricing & Discover</span></div>
+        <h1>Find vendors you love.<br/>Choose a plan that fits.</h1>
+        <p class="lead">Mode **Client** untuk eksplor vendor, **Vendor** & **EO** untuk melihat paket harga. Parallax halus dengan stopper biar scroll pertama fokus ke hero.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#role" aria-label="Explore">Explore</a>
+          <a class="btn btn-ghost" href="landing.html#pricing" data-transition="true">Back to overview</a>
+        </div>
+      </div>
+      <div class="device parallax-item" data-depth="0.06">
+        <div class="screen">
+          <div class="ui-card">
+            <div class="ui-input" role="search">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>
+              </svg>
+              <input placeholder="Cari vendor Semarang, Wedding, Photography…" aria-label="Search mock" />
+            </div>
+            <a class="btn btn-primary" href="#clientPanel" aria-label="Jump to Client">Try search</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== ROLE TABS ===================== -->
+  <section id="role">
+    <div class="container">
+      <div class="tabs" role="tablist" aria-label="Role tabs">
+        <button class="tab-btn active" role="tab" aria-selected="true" data-target="clientPanel">Client</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-target="vendorPanel">Vendor</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-target="eoPanel">EO</button>
+      </div>
+
+      <!-- -------- CLIENT PANEL -------- -->
+      <section id="clientPanel" class="panel active" aria-hidden="false">
+        <div class="search-inline" style="justify-content:center">
+          <label class="input"><span>📍</span><input id="loc" type="text" placeholder="Lokasi (cth: Semarang)" /></label>
+          <label class="input"><span>📅</span><input id="dateFrom" type="date" /></label>
+          <label class="input"><span>📅</span><input id="dateTo" type="date" /></label>
+          <label class="input">
+            <select id="category">
+              <option value="">Semua kategori</option>
+              <option value="wedding">Wedding</option>
+              <option value="photography">Photography</option>
+              <option value="decoration">Decoration</option>
+              <option value="catering">Catering</option>
+              <option value="lighting">Lighting</option>
+              <option value="sound">Sound & AV</option>
+              <option value="souvenir">Souvenir</option>
+              <option value="mc">MC</option>
+            </select>
+          </label>
+          <button id="searchBtn" class="btn btn-primary">Cari Vendor</button>
+        </div>
+
+        <div class="vendor-grid" id="vendorGrid" aria-live="polite">
+          <!-- JS inject cards -->
+        </div>
+      </section>
+
+      <!-- -------- VENDOR PANEL -------- -->
+      <section id="vendorPanel" class="panel" aria-hidden="true">
+        <h2 style="text-align:center;margin:.3rem 0 1rem">Pricing for Vendors</h2>
+        <div class="pricing tilt-grid">
+          <article class="price tilt">
+            <div class="tag">Popular</div>
+            <h3>Starter</h3>
+            <div class="amt">Free</div>
+            <p class="small">Event listing dasar, leads terbatas, support standar.</p>
+          </article>
+          <article class="price tilt">
+            <h3>Pro</h3>
+            <div class="amt">IDR 149k<span class="small">/mo</span></div>
+            <p class="small">Featured listing, AI matchmaking, prioritas support.</p>
+          </article>
+          <article class="price tilt">
+            <h3>Business</h3>
+            <div class="amt">Custom</div>
+            <p class="small">Integrasi enterprise, SLA, manager dedikasi.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- -------- EO PANEL -------- -->
+      <section id="eoPanel" class="panel" aria-hidden="true">
+        <h2 style="text-align:center;margin:.3rem 0 1rem">Pricing for Event Organizers (EO)</h2>
+        <div class="pricing tilt-grid">
+          <article class="price tilt">
+            <div class="tag">Popular</div>
+            <h3>Starter</h3>
+            <div class="amt">Free</div>
+            <p class="small">Tool EO dasar, task board, 1 team seat.</p>
+          </article>
+          <article class="price tilt">
+            <h3>Pro</h3>
+            <div class="amt">IDR 299k<span class="small">/mo</span></div>
+            <p class="small">Advanced scheduling, kolaborasi tim, prioritas support.</p>
+          </article>
+          <article class="price tilt">
+            <h3>Business</h3>
+            <div class="amt">Custom</div>
+            <p class="small">Onboarding khusus, integrasi kustom, reporting & SLA.</p>
+          </article>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER (persis landing) ===================== -->
+  <footer role="contentinfo">
+    <div class="container footgrid">
+      <div>
+        <div class="brand" style="margin-bottom:.5rem"><span class="brand-logo" aria-hidden="true"></span><b>HeaVenTly</b></div>
+        <p class="small">Platform event futuristik dengan palet warna cerah dan UX super responsif.</p>
+      </div>
+      <div>
+        <b>Product</b>
+        <ul class="small" style="list-style:none;padding:0;margin:.5rem 0 0;display:grid;gap:.3rem">
+          <li><a href="landing.html#features" data-transition="true">Features</a></li>
+          <li><a href="pricing_landing.html">Pricing</a></li>
+          <li><a href="docs.html" data-transition="true">Docs</a></li>
+        </ul>
+      </div>
+      <div>
+        <b>Company</b>
+        <ul class="small" style="list-style:none;padding:0;margin:.5rem 0 0;display:grid;gap:.3rem">
+          <li><a href="about_landing.html" data-transition="true">About</a></li>
+          <li><a href="careers.html" data-transition="true">Careers</a></li>
+          <li><a href="contact_landing.html" data-transition="true">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <b>Legal</b>
+        <ul class="small" style="list-style:none;padding:0;margin:.5rem 0 0;display:grid;gap:.3rem">
+          <li><a href="terms.html" data-transition="true">Terms</a></li>
+          <li><a href="privacy.html" data-transition="true">Privacy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container" style="margin-top:16px;display:flex;justify-content:space-between;gap:10px;align-items:center">
+      <small class="small">© <span id="y">2025</span> HeaVenTly</small>
+      <div style="display:flex;gap:.6rem">
+        <a class="btn btn-ghost" href="#" aria-label="Twitter">Twitter</a>
+        <a class="btn btn-ghost" href="#" aria-label="Instagram">Instagram</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================== SCRIPTS ===================== -->
+  <script>
+    /* ========= Utils ========= */
+    const rafThrottle = (fn) => { let t=false; return (...a)=>{ if(!t){ requestAnimationFrame(()=>{ fn(...a); t=false; }); t=true; } }; };
+
+    /* ========= Page fade-in/out transition ========= */
+    document.addEventListener('DOMContentLoaded', ()=>{
+      document.body.classList.add('fade-in');
+      document.body.style.opacity = 1;
+    });
+    document.addEventListener('click', (e)=>{
+      const a = e.target.closest('a[data-transition="true"]');
+      if(!a) return;
+      const href = a.getAttribute('href');
+      if(!href || href.startsWith('#')) return;
+      e.preventDefault();
+      document.body.classList.remove('fade-in');
+      document.body.classList.add('fade-out');
+      setTimeout(()=> location.href = href, 180);
+    });
+
+    /* ========= Mobile menu ========= */
+    const toggle = document.querySelector('.mobile-toggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    if(toggle){
+      toggle.addEventListener('click', ()=>{
+        const ex = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!ex));
+        mobileMenu.hidden = ex;
+      });
+    }
+
+    /* ========= Year ========= */
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    /* ========= Navbar shrink ========= */
+    const nav = document.querySelector('.nav');
+    const onScrollNav = rafThrottle(()=>{ if(window.scrollY>60) nav.classList.add('shrink'); else nav.classList.remove('shrink'); });
+    window.addEventListener('scroll', onScrollNav); onScrollNav();
+
+    /* ========= Reveal on scroll ========= */
+    const revealEls = document.querySelectorAll('header.hero, section');
+    const reveal = ()=>{ const trigger = window.innerHeight*0.85;
+      revealEls.forEach(el=>{ const {top} = el.getBoundingClientRect(); if(top<trigger) el.classList.add('reveal-show'); });
+    };
+    window.addEventListener('scroll', rafThrottle(reveal));
+    window.addEventListener('load', reveal);
+
+    /* ========= Parallax + STOPPER scroll (first wheel locks to hero) ========= */
+    const hero = document.getElementById('hero');
+    const halo = document.querySelector('.halo');
+    const heroCopy = document.querySelector('.hero-copy');
+    const device = document.querySelector('.device');
+    let stopperArmed = true;   // di top page: scroll pertama “menghabiskan” hero
+    let animatingSnap = false;
+
+    const parallax = ()=>{
+      const sc = window.scrollY || window.pageYOffset;
+      const rect = hero.getBoundingClientRect();
+      const heroTop = sc + rect.top;
+      const heroHeight = rect.height;
+      const progress = Math.min(1, Math.max(0, (sc - heroTop + 1) / heroHeight)); // 0..1 hanya dalam hero
+      halo.style.transform = `translate3d(0, ${progress * -40}px, 0) scale(${1 + progress * 0.04})`;
+      heroCopy.style.transform = `translate3d(0, ${progress * -16}px, 0)`;
+      device.style.transform   = `translate3d(0, ${progress * 10}px, 0)`;
+    };
+    window.addEventListener('scroll', rafThrottle(parallax));
+    window.addEventListener('load', parallax);
+
+    // Stopper: saat posisi di very top dan user scroll-down, snap ke bawah hero dulu.
+    const wheelHandler = (e)=>{
+      if(!stopperArmed || animatingSnap) return;
+      const atTop = window.scrollY < 8;
+      const delta = e.deltaY || 0;
+      if(atTop && delta > 0){
+        e.preventDefault();
+        animatingSnap = true;
+        const target = hero.offsetTop + hero.offsetHeight - 68; // posisi akhir hero (offset navbar)
+        window.scrollTo({ top: target, behavior:'smooth' });
+        setTimeout(()=>{ animatingSnap = false; stopperArmed = false; }, 520); // “double scroll”: setelah ini baru lanjut normal
+      }
+    };
+    window.addEventListener('wheel', wheelHandler, { passive:false });
+
+    /* ========= Tabs ========= */
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.panel');
+    tabButtons.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        tabButtons.forEach(t=>{ t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+        panels.forEach(p=>{ p.classList.remove('active'); p.setAttribute('aria-hidden','true'); });
+        btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+        const panel = document.getElementById(btn.dataset.target);
+        panel.classList.add('active'); panel.setAttribute('aria-hidden','false');
+        revealCards(panel);
+        window.scrollTo({ top: document.getElementById('role').offsetTop - 68, behavior:'smooth' });
+      });
+    });
+    document.addEventListener('keydown',(e)=>{
+      const i=[...tabButtons].findIndex(t=>t.classList.contains('active'));
+      if(e.key==='ArrowRight'){ const n=Math.min(tabButtons.length-1,i+1); tabButtons[n].click(); tabButtons[n].focus(); }
+      if(e.key==='ArrowLeft'){ const p=Math.max(0,i-1); tabButtons[p].click(); tabButtons[p].focus(); }
+    });
+
+    /* ========= Client: Vendor data ========= */
+    const vendorData = [
+      {id:1,name:'Sagittarius Wedding',category:'wedding',location:'Semarang',service:'Wedding Organizer',rating:4.8,img:'https://picsum.photos/seed/sg/800/500'},
+      {id:2,name:'Pisces Studio',category:'photography',location:'Semarang',service:'Photography',rating:4.6,img:'https://picsum.photos/seed/ps/800/500'},
+      {id:3,name:'Libra Decor',category:'decoration',location:'Semarang',service:'Decoration',rating:4.7,img:'https://picsum.photos/seed/ld/800/500'},
+      {id:4,name:'Gemini Gifts',category:'souvenir',location:'Semarang',service:'Souvenir',rating:4.5,img:'https://picsum.photos/seed/gg/800/500'},
+      {id:5,name:'Aquarius Photo',category:'photography',location:'Semarang',service:'Photography',rating:4.9,img:'https://picsum.photos/seed/ap/800/500'},
+      {id:6,name:'Virgo Bloom',category:'decoration',location:'Semarang',service:'Decoration',rating:4.6,img:'https://picsum.photos/seed/vb/800/500'},
+      {id:7,name:'Orion Lights',category:'lighting',location:'Semarang',service:'Lighting',rating:4.4,img:'https://picsum.photos/seed/ol/800/500'},
+      {id:8,name:'Corona Catering',category:'catering',location:'Semarang',service:'Catering',rating:4.7,img:'https://picsum.photos/seed/cc/800/500'},
+      {id:9,name:'Halo Sound',category:'sound',location:'Semarang',service:'Sound & AV',rating:4.5,img:'https://picsum.photos/seed/hs/800/500'},
+      {id:10,name:'Altair MC',category:'mc',location:'Semarang',service:'Master of Ceremony',rating:4.6,img:'https://picsum.photos/seed/amc/800/500'},
+      {id:11,name:'Deneb Visual',category:'photography',location:'Semarang',service:'Videography',rating:4.7,img:'https://picsum.photos/seed/dv/800/500'},
+      {id:12,name:'Vega Florist',category:'decoration',location:'Semarang',service:'Florist & Decor',rating:4.8,img:'https://picsum.photos/seed/vf/800/500'},
+      {id:13,name:'Sirius Stage',category:'lighting',location:'Semarang',service:'Stage & Lighting',rating:4.5,img:'https://picsum.photos/seed/ss/800/500'},
+      {id:14,name:'Mira Moments',category:'photography',location:'Semarang',service:'Photo Booth',rating:4.6,img:'https://picsum.photos/seed/mm/800/500'},
+      {id:15,name:'Aries Audio',category:'sound',location:'Semarang',service:'Audio Engineer',rating:4.7,img:'https://picsum.photos/seed/aa/800/500'},
+      {id:16,name:'Capella Cakes',category:'catering',location:'Semarang',service:'Dessert Table',rating:4.6,img:'https://picsum.photos/seed/ck/800/500'},
+      {id:17,name:'Phoenix Fireworks',category:'lighting',location:'Semarang',service:'Special Effects',rating:4.4,img:'https://picsum.photos/seed/pf/800/500'},
+      {id:18,name:'Nova Rentals',category:'decoration',location:'Semarang',service:'Chair & Table',rating:4.5,img:'https://picsum.photos/seed/nr/800/500'}
+    ];
+
+    const vendorGrid = document.getElementById('vendorGrid');
+
+    // FLIP-ish reveal + shuffle animation helpers
+    function capturePositions(container){
+      const map = new Map();
+      container.querySelectorAll('.vendor-card').forEach(el=>{
+        map.set(el.dataset.id, el.getBoundingClientRect());
+      });
+      return map;
+    }
+    function playFlip(container, prev){
+      container.classList.add('grid-animating');
+      container.querySelectorAll('.vendor-card').forEach(el=>{
+        const id = el.dataset.id;
+        const first = prev.get(id);
+        const last = el.getBoundingClientRect();
+        if(first){
+          const dx = first.left - last.left;
+          const dy = first.top - last.top;
+          el.style.transform = `translate(${dx}px, ${dy}px)`;
+          el.style.opacity = '0.6';
+          requestAnimationFrame(()=>{
+            el.style.transition = 'transform .45s cubic-bezier(.2,.9,.2,1), opacity .35s ease';
+            el.style.transform = '';
+            el.style.opacity = '1';
+          });
+          el.addEventListener('transitionend',()=>{ el.style.transition=''; }, {once:true});
+        }else{
+          // new item fade-in
+          el.style.opacity='0'; el.style.transform='translateY(16px)';
+          requestAnimationFrame(()=>{ el.style.transition='transform .45s ease, opacity .45s ease'; el.style.opacity='1'; el.style.transform=''; });
+        }
+      });
+      setTimeout(()=> container.classList.remove('grid-animating'), 480);
+    }
+
+    function renderVendors(list){
+      const prevPos = capturePositions(vendorGrid);
+      vendorGrid.innerHTML = '';
+      if(!list || list.length===0){
+        vendorGrid.innerHTML = '<div class="small" style="padding:16px">Tidak ada vendor ditemukan.</div>';
+        return;
+      }
+      list.forEach(v=>{
+        const card = document.createElement('article');
+        card.className = 'vendor-card';
+        card.dataset.id = v.id;
+        card.innerHTML = `
+          <img class="vendor-thumb" src="${v.img}" alt="${v.name}" loading="lazy" />
+          <div class="vendor-name">${v.name}</div>
+          <div class="vendor-role">${v.service} • ${v.location}</div>
+          <div class="vendor-meta">
+            <div class="vendor-rating">${'★'.repeat(Math.round(v.rating))} <span style="opacity:.8">(${v.rating})</span></div>
+            <a class="vendor-cta" href="forum.html?vendor=${encodeURIComponent(v.id)}" data-transition="true">Detail</a>
+          </div>
+        `;
+        vendorGrid.appendChild(card);
+      });
+      revealCards(document.getElementById('clientPanel'));
+      playFlip(vendorGrid, prevPos);
+    }
+
+    // initial render: 12 pertama acak dikit biar hidup
+    renderVendors([...vendorData].sort(()=>Math.random()-.5).slice(0,12));
+
+    /* ========= Search (Client only) + Shuffle ========= */
+    const $loc = document.getElementById('loc');
+    const $cat = document.getElementById('category');
+    document.getElementById('searchBtn').addEventListener('click', ()=>{
+      const loc = ($loc.value||'').trim().toLowerCase();
+      const cat = $cat.value;
+      let results = vendorData.filter(v=> true);
+
+      if(loc) results = results.filter(v => v.location.toLowerCase().includes(loc));
+      if(cat) results = results.filter(v => v.category === cat);
+
+      // logika acak dulu (urutan diacak setiap search untuk “auto list vendor”)
+      results = results.sort(()=>Math.random()-.5);
+
+      renderVendors(results);
+    });
+
+    /* ========= Reveal cards when in view ========= */
+    function revealCards(panel){
+      const cards = panel.querySelectorAll('.vendor-card, .price');
+      if('IntersectionObserver' in window){
+        const obs = new IntersectionObserver((entries,o)=>{
+          entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('visible'); o.unobserve(en.target); } });
+        },{threshold:.12});
+        cards.forEach(c=> obs.observe(c));
+      }else{
+        cards.forEach((c,i)=> setTimeout(()=> c.classList.add('visible'), i*80));
+      }
+    }
+    window.addEventListener('load', ()=>{
+      revealCards(document.getElementById('clientPanel'));
+      revealCards(document.getElementById('vendorPanel'));
+      revealCards(document.getElementById('eoPanel'));
+    });
+
+    /* ========= 3D Tilt Hover (cards & pricing) ========= */
+    const prefersNoMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const tiltables = document.querySelectorAll('.tilt, .tilt-sm');
+    function handleTilt(e){
+      const el = e.currentTarget, r = el.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      const rx = ((y/r.height)-.5)*-10, ry=((x/r.width)-.5)*10;
+      el.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(8px)`;
+      el.style.boxShadow = `0 18px 40px rgba(8,217,255,.15), 0 6px 20px rgba(123,92,255,.18)`;
+    }
+    function exitTilt(e){ const el=e.currentTarget; el.style.transform='perspective(800px) translateZ(0) rotateX(0) rotateY(0)'; el.style.boxShadow=''; }
+    if(!prefersNoMotion){
+      tiltables.forEach(el=>{
+        const enter = ()=> el.style.transition='transform .15s ease, box-shadow .25s ease';
+        el.addEventListener('mouseenter', enter);
+        el.addEventListener('mousemove', handleTilt);
+        el.addEventListener('mouseleave', exitTilt);
+        el.addEventListener('touchstart', ()=> el.style.transform='translateY(-3px)', {passive:true});
+        el.addEventListener('touchend', ()=> el.style.transform='', {passive:true});
+      });
+    }
+
+    /* ========= Keyboard focus ring polish ========= */
+    document.querySelectorAll('.nav a, .nav-cta a, .mobile-toggle, .vendor-cta, .tab-btn').forEach(el=>{
+      el.addEventListener('focus', ()=> el.style.outline='3px solid var(--ring)');
+      el.addEventListener('blur',  ()=> el.style.outline='');
+    });
+  </script>
+</body>
+</html>

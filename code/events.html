@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HeaVenTly — Events</title>
+  <meta name="theme-color" content="#08d9ff" />
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="assets/css/events.css" />
+  <link rel="icon" href="assets/img/icon/myevent_icon.png" />
+</head>
+<body>
+  <!-- Decorative starfield (optional, injected by JS) -->
+  <div id="starField" class="star-field" aria-hidden="true"></div>
+
+  <!-- App wrapper: two-column grid on desktop, single column on mobile -->
+  <div class="app" role="application">
+
+    <!-- SIDEBAR -->
+    <aside id="sideNav" class="sidebar" aria-label="Sidebar">
+      <div class="sb-brand">
+        <img src="assets/img/icon/myevent_icon.png" alt="HeaVenTly" width="44" height="44" />
+        <div class="sb-title">
+          <div class="name">HeaVenTly</div>
+          <div class="sub">Client • Dashboard</div>
+        </div>
+      </div>
+
+      <nav class="sb-nav" role="navigation" aria-label="Primary navigation">
+        <a class="sb-link" href="dashboard_client.html">
+          <img src="assets/img/icon/dashboard_icon.png" alt="Dashboard" /><span>Home</span>
+        </a>
+        <a class="sb-link active" href="events.html">
+          <img src="assets/img/icon/myevent_icon.png" alt="Events" /><span>Events</span>
+        </a>
+        <a class="sb-link" href="vendors.html">
+          <img src="assets/img/icon/vendor_icon.png" alt="Vendors" /><span>Vendors</span>
+        </a>
+        <a class="sb-link" href="messages.html">
+          <img src="assets/img/icon/chatbot_icon.png" alt="Messages" /><span>Messages</span>
+        </a>
+        <a class="sb-link" href="settings.html">
+          <img src="assets/img/icon/settings_icon.png" alt="Settings" /><span>Settings</span>
+        </a>
+      </nav>
+
+      <div class="sb-foot">
+        <a class="sb-link" href="landing.html" id="logoutBtn">
+          <img src="assets/img/icon/logout_icon.png" alt="Logout" /><span>Log out</span>
+        </a>
+        <div class="pill">v0.1 • client</div>
+      </div>
+    </aside>
+
+    <!-- Overlay for mobile sidebar -->
+    <div id="sideNavOverlay" class="side-nav-overlay" data-action="close-sidenav" hidden></div>
+
+    <!-- MAIN CONTENT -->
+    <main id="mainContent" class="content" role="main" aria-live="polite">
+
+      <!-- TOPBAR -->
+      <header class="topbar" role="banner" aria-label="Header">
+        <div style="display:flex;align-items:center;gap:12px">
+          <button id="menuToggle" class="menu-btn" aria-label="Toggle menu">☰</button>
+          <div style="display:flex;flex-direction:column">
+            <div style="font-weight:800;font-size:1.05rem">Events</div>
+            <div class="small muted">Plan • Track • Collaborate</div>
+          </div>
+        </div>
+
+        <div class="search" role="search" aria-label="Search events" style="margin-left:auto;display:flex;align-items:center;gap:8px">
+          <label for="q" class="sr-only">Cari event</label>
+          <input id="q" class="input" type="search" placeholder="Search event / vendor / location" />
+          <button class="btn" id="btnSearch" aria-label="Search">Search</button>
+          <button class="btn" id="btnNew" aria-label="Plan new event">Plan New</button>
+          <button class="btn btn-primary" id="btnExport" aria-label="Export">Export</button>
+        </div>
+      </header>
+
+      <!-- Page grid: calendar card + panels row -->
+      <section style="padding:16px">
+        <!-- Calendar Card -->
+        <div class="card calendar" aria-label="Calendar card">
+          <div class="cal-header" style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div id="monthTitle" class="month-title">—</div>
+              <div id="monthSubtitle" class="small muted">Click a date to see events</div>
+            </div>
+            <div class="cal-actions" style="display:flex;gap:8px;align-items:center">
+              <button class="btn" id="prevMonth" title="Prev month" aria-label="Previous month">◀</button>
+              <button class="btn" id="nextMonth" title="Next month" aria-label="Next month">▶</button>
+              <select id="viewMode" class="select" aria-label="Calendar view">
+                <option value="month">Month</option>
+                <option value="list">List</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="cal-weekdays" aria-hidden="true">
+            <div class="weekday">Sun</div><div class="weekday">Mon</div><div class="weekday">Tue</div>
+            <div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div>
+          </div>
+
+          <div id="calGrid" class="cal-grid" role="grid" aria-label="Calendar grid"></div>
+          <div id="listView" style="display:none;margin-top:10px"></div>
+        </div>
+
+        <!-- Panels row -->
+        <div class="grid" style="display:grid;grid-template-columns: 320px 1fr 320px; gap:16px; margin-top:16px;">
+          <!-- LEFT: mini chat -->
+         <!-- LEFT: Contact List -->
+        <aside class="card contact-list" aria-label="Contact list">
+          <h4>Chats</h4>
+          <div class="contact-thread">
+
+            <!-- EO A -->
+            <div class="contact-item" tabindex="0">
+              <div class="avatar eo"></div>
+              <div class="contact-info">
+                <div class="name">EO A</div>
+                <div class="last">Last active: 5m ago</div>
+              </div>
+            </div>
+
+            <!-- Vendor A -->
+            <div class="contact-item" tabindex="0">
+              <div class="avatar vendor"></div>
+              <div class="contact-info">
+                <div class="name">Vendor A</div>
+                <div class="last">Last: 2h ago</div>
+              </div>
+            </div>
+
+            <!-- Vendor B -->
+            <div class="contact-item" tabindex="0">
+              <div class="avatar vendor"></div>
+              <div class="contact-info">
+                <div class="name">Vendor B</div>
+                <div class="last">Last: 30m ago</div>
+              </div>
+            </div>
+
+            <!-- Client -->
+            <div class="contact-item" tabindex="0">
+              <div class="avatar client"></div>
+              <div class="contact-info">
+                <div class="name">Client</div>
+                <div class="last">You: Please confirm schedule</div>
+              </div>
+            </div>
+
+            <!-- Forum Group Chat -->
+            <div class="contact-item group" tabindex="0">
+              <div class="avatar group"></div>
+              <div class="contact-info">
+                <div class="name">Event Forum Group</div>
+                <div class="last">EO A: Semua siap jam 5 ya</div>
+              </div>
+            </div>
+
+          </div>
+        </aside>
+
+
+
+          <!-- MIDDLE: events list -->
+          <main class="card events-panel" aria-label="Events list">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+              <div>
+                <h3>Your Events</h3>
+                <div id="eventsCount" class="small muted">0 events</div>
+              </div>
+              <div class="small muted">Tips: Klik tanggal di kalender untuk filter cepat</div>
+            </div>
+
+            <div class="events-controls" style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <select id="filterStatus" class="filter-select" title="Filter by status">
+                <option value="">All status</option>
+                <option value="ongoing">Ongoing</option>
+                <option value="completed">Completed</option>
+                <option value="cancel">Canceled</option>
+              </select>
+              <select id="filterCategory" class="filter-select" title="Filter by category">
+                <option value="">All categories</option>
+                <option value="wedding">Wedding</option>
+                <option value="corporate">Corporate</option>
+                <option value="party">Party</option>
+                <option value="other">Other</option>
+              </select>
+              <button class="btn" id="clearFilters">Clear</button>
+            </div>
+
+            <div class="small muted" style="margin-top:8px">• Use toolbox pada tiap event (rundown, checklist, notes, vendor link)</div>
+
+            <div id="eventList" class="event-list" style="margin-top:12px;max-height:520px;overflow:auto;padding-right:6px"></div>
+          </main>
+
+          <!-- RIGHT: toolbox & notes -->
+          <aside class="card toolbox" aria-label="Toolbox & notes">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:800">Toolbox</div>
+              <div class="small muted">Global tools</div>
+            </div>
+
+            <div class="tabs" role="tablist" style="margin-top:8px;display:flex;gap:8px">
+              <div class="tab active" data-tab="rundownTab" role="tab" aria-selected="true">Rundown</div>
+              <div class="tab" data-tab="budgetTab" role="tab">Budget</div>
+              <div class="tab" data-tab="checklistTab" role="tab">Checklist</div>
+            </div>
+
+            <div id="rundownTab" class="toolbox-content active" role="tabpanel" style="margin-top:10px">
+              <ul id="rundownList" class="list" style="padding-left:0;list-style:none;max-height:160px;overflow:auto">
+                <li class="list-item" draggable="true">08:00 - Opening (MC)</li>
+                <li class="list-item" draggable="true">09:00 - Talkshow (EO)</li>
+              </ul>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <input id="globalRundownInput" class="input" placeholder="Tambah rundown (global)" />
+                <button class="btn" id="globalRundownAdd">Add</button>
+              </div>
+            </div>
+
+            <div id="budgetTab" class="toolbox-content" role="tabpanel" style="display:none;margin-top:10px">
+              <svg id="budgetPie" viewBox="0 0 200 200" aria-hidden="true" style="width:100%;height:auto"></svg>
+              <table style="width:100%;margin-top:8px">
+                <thead><tr><th style="text-align:left;color:var(--text-muted)">Category</th><th style="color:var(--text-muted)">Estimate</th></tr></thead>
+                <tbody>
+                  <tr><td>Catering</td><td><input id="est_catering" value="5000000" style="background:transparent;border:0;color:inherit;width:100%"></td></tr>
+                  <tr><td>Decor</td><td><input id="est_decor" value="3000000" style="background:transparent;border:0;color:inherit;width:100%"></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div id="checklistTab" class="toolbox-content" role="tabpanel" style="display:none;margin-top:10px">
+              <ul id="checklistList" class="list" style="padding-left:0;list-style:none;max-height:160px;overflow:auto">
+                <li class="list-item" draggable="true"><label><input type="checkbox"> Confirm seats</label></li>
+                <li class="list-item" draggable="true"><label><input type="checkbox" checked> Sound check</label></li>
+              </ul>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <input id="globalCheckInput" class="input" placeholder="Tambah checklist (global)" />
+                <button class="btn" id="globalCheckAdd">Add</button>
+              </div>
+            </div>
+
+            <div style="margin-top:12px">
+              <div style="font-weight:700">Quick Notes</div>
+              <div id="notesArea" class="notes" contenteditable="true" aria-label="Notes">Add quick notes here...</div>
+            </div>
+
+            <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+              <button class="btn" id="btnDownload">Download</button>
+              <button class="btn" id="btnImport">Import</button>
+              <input id="fileInput" type="file" accept="application/json" style="display:none" />
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- EVENT DETAIL MODAL -->
+  <div id="eventModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;align-items:flex-start;padding-top:40px">
+    <div class="box" role="document" style="max-width:1100px;width:96%;padding:18px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div>
+          <h3 id="eTitle">Event Title</h3>
+          <div class="small muted" id="eMeta">Date • Location</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div id="eStatus" class="event-status status-ongoing">Ongoing</div>
+          <button class="btn" id="closeModal" aria-label="Close modal">Close</button>
+        </div>
+      </div>
+
+      <hr style="border:none;border-top:1px solid rgba(255,255,255,0.06);margin:12px 0">
+
+      <div class="split" style="display:grid;grid-template-columns:1fr 320px;gap:12px">
+        <div>
+          <div id="eDesc" style="margin-bottom:12px;color:var(--text-muted)"></div>
+
+          <div style="margin-top:6px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:700">Timeline (Rundown)</div>
+              <div class="small muted">Drag to reorder</div>
+            </div>
+            <ul id="modalRundown" class="list" style="margin-top:8px;padding-left:0;list-style:none"></ul>
+
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <input id="newRundownText" class="input" placeholder="New rundown item (e.g., 10:00 - Ceremony)"/>
+              <button class="btn" id="addRundownBtn">Add</button>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn" id="saveRundownBtn">Save Rundown</button>
+            </div>
+          </div>
+
+          <div style="margin-top:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:700">Attachments</div>
+              <div class="small muted">Upload files (preview images)</div>
+            </div>
+            <input id="attachInput" type="file" multiple style="margin-top:8px"/>
+            <div class="attach-list" id="attachList" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
+          </div>
+        </div>
+
+        <aside style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-weight:700">Per-event Toolbox</div>
+
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <label class="small muted">Vendor / EO link</label>
+            <input id="vendorLink" class="input" placeholder="https://vendor.example" />
+          </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <button class="btn" id="saveToolbox">Save Toolbox</button>
+            <button class="btn" id="toggleStatus">Toggle Status</button>
+            <button class="btn btn-primary" id="btnContact">Contact Vendor</button>
+            <button class="btn" id="btnDelete">Delete Event</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE CHAT SHEET -->
+  <div id="chatSheet" style="display:none;position:fixed;left:8px;right:8px;bottom:12px;background:rgba(255,255,255,0.03);border-radius:14px;padding:12px;border:1px solid rgba(255,255,255,0.06);box-shadow:0 10px 40px rgba(0,0,0,0.6);z-index:200" aria-hidden="true">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div style="font-weight:800">Chat</div>
+      <button class="btn" id="closeChatSheet">Close</button>
+    </div>
+    <div id="chatSheetList" style="max-height:240px;overflow:auto;margin-bottom:8px"></div>
+    <div style="display:flex;gap:8px">
+      <input id="chatSheetInput" class="input" placeholder="Message..." />
+      <button class="btn" id="chatSheetSend">Send</button>
+    </div>
+  </div>
+
+  <!-- LOGOUT MODAL -->
+  <div id="logoutModal" class="modal" aria-hidden="true" style="display:none;align-items:center">
+    <div class="modal-content">
+      <h2 id="logoutTitle">Logout</h2>
+      <p>Yakin ingin keluar?</p>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+        <button class="btn" data-action="cancel-logout">Batal</button>
+        <button class="btn" data-action="confirm-logout">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast" role="status" aria-live="polite" style="display:none"></div>
+
+  <!-- TEMPLATES -->
+  <template id="eventCardTemplate">
+    <article class="event-card" data-id="">
+      <header class="event-card-head" style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <h3 class="event-name">Nama Event</h3>
+          <div class="event-meta small muted">
+            <span class="date">12/12/2025</span> • <span class="category">Kategori</span> • <span class="location">Lokasi</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="status pill">On Going</span>
+        </div>
+      </header>
+
+      <p class="notes" style="margin-top:8px">Catatan singkat…</p>
+
+      <div class="event-actions" style="display:flex;gap:8px;margin-top:8px">
+        <a class="btn small" data-action="open" href="#">Open</a>
+        <button class="btn small" data-action="edit" type="button">Edit</button>
+        <button class="btn small danger" data-action="delete" type="button">Delete</button>
+      </div>
+    </article>
+  </template>
+
+  <!-- Icons (lucide) -->
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <!-- Main JS -->
+  <script src="assets/js/events.js" defer></script>
+</body>
+</html>

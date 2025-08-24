@@ -1,0 +1,199 @@
+/* Theme-specific styles for HeaVenTly Client Dashboard */
+
+/* Custom variables for theme */
+:root {
+  --theme-primary: #4a44ff; /* Slightly darker primary color */
+  --theme-secondary: #00ccff; /* Brighter secondary color */
+  --theme-background: linear-gradient(135deg, #0f1325, #1f3355); /* Darker gradient for depth */
+  --theme-card-bg: rgba(15, 19, 37, 0.9); /* Darker glass effect */
+  --theme-text: #e0e2ff; /* Lighter text for contrast */
+  --theme-muted: #b0b2d0; /* Softer muted color */
+  --theme-glow: 0 6px 30px rgba(74, 68, 255, 0.2), 0 0 20px rgba(0, 204, 255, 0.1); /* Adjusted neon glow */
+}
+
+/* Apply theme to body */
+body {
+  background: var(--theme-background);
+  color: var(--theme-text);
+}
+
+/* Header customization */
+header {
+  background: var(--theme-card-bg);
+  box-shadow: var(--theme-glow);
+}
+.logo {
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.notification-bell, .chatbot-icon {
+  color: var(--theme-secondary);
+}
+.notification-bell:hover, .chatbot-icon:hover {
+  color: var(--theme-primary);
+}
+
+/* Side Navigation theme */
+.side-nav {
+  background: var(--theme-card-bg);
+}
+.nav-brand {
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.nav-item {
+  color: var(--theme-text);
+}
+.nav-item:hover, .nav-item.active {
+  background: rgba(255, 255, 255, 0.08);
+}
+.nav-footer {
+  color: var(--theme-muted);
+}
+
+/* Dashboard Container theme */
+.dashboard-container {
+  color: var(--theme-text);
+}
+.dashboard-header {
+  background: var(--theme-card-bg);
+  box-shadow: var(--theme-glow);
+}
+.dashboard-header h1 {
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.dashboard-header p {
+  color: var(--theme-muted);
+}
+
+/* Search and Categories */
+.search input {
+  background: var(--theme-card-bg);
+  color: var(--theme-text);
+}
+.search input::placeholder {
+  color: var(--theme-muted);
+}
+.cat {
+  background: var(--theme-card-bg);
+  color: var(--theme-text);
+}
+.cat:hover {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: var(--theme-glow);
+}
+
+/* Cards and Lists */
+.card, .bundling-list, .vendor-list {
+  background: var(--theme-card-bg);
+  box-shadow: var(--theme-glow);
+}
+.card h3, .bundling-list h3, .vendor-list h3 {
+  color: var(--theme-secondary);
+}
+.bundling-item:hover, .vendor-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+.btn-bundle, .btn-view {
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+  color: var(--theme-text);
+}
+.btn-bundle:hover, .btn-view:hover {
+  opacity: 0.9;
+}
+
+/* Toolbox */
+.toolbox-section {
+  background: var(--theme-card-bg);
+  box-shadow: var(--theme-glow);
+}
+.toolbox-tab {
+  background: var(--theme-card-bg);
+  color: var(--theme-text);
+}
+.toolbox-tab.active {
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+}
+.rundown-item, .checklist-item {
+  background: rgba(255, 255, 255, 0.05);
+}
+.budget-table th, .budget-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.budget-table input {
+  color: var(--theme-text);
+}
+
+/* Stats */
+.stat {
+  background: var(--theme-card-bg);
+  box-shadow: var(--theme-glow);
+}
+.stat .num {
+  color: var(--theme-secondary);
+}
+.stat .muted {
+  color: var(--theme-muted);
+}
+
+/* Plan Button */
+.plan-btn {
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+  color: var(--theme-text);
+}
+.plan-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Footer */
+footer {
+  background: var(--theme-card-bg);
+  box-shadow: var(--theme-glow);
+}
+footer p {
+  color: var(--theme-muted);
+}
+
+/* Logout Modal */
+.logout-modal .logout-content {
+  background: var(--theme-card-bg);
+  box-shadow: var(--theme-glow);
+}
+.logout-content h2 {
+  color: var(--theme-text);
+}
+.logout-content p {
+  color: var(--theme-muted);
+}
+.logout-btns .btn-secondary, .logout-btns .btn-primary {
+  background: var(--theme-card-bg);
+  color: var(--theme-text);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.logout-btns .btn-primary {
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+}
+
+/* High Contrast Mode */
+body.high-contrast {
+  background: #000 !important;
+  color: #fff !important;
+}
+body.high-contrast .card,
+body.high-contrast .bundling-list,
+body.high-contrast .vendor-list,
+body.high-contrast .toolbox-section,
+body.high-contrast .stat,
+body.high-contrast .plan-btn {
+  background: #222 !important;
+  border: 1px solid #444;
+}
+
+/* Large Text Mode */
+body.large-text {
+  font-size: 1.2rem;
+}

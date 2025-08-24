@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HeaVenTly - Create New Event</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================
+       Theme variables (match dashboard)
+       ========================= */
+    :root{
+      --accent1: #08d9ff;
+      --accent2: #7b5cff;
+      --accent3: #ff4ecd;
+      --mint: #22ffa2;
+      --bg-deep: #05060a;
+      --card-bg: rgba(11,13,20,0.72);
+      --glass: rgba(255,255,255,0.04);
+      --muted: #b5c2e3;
+      --txt: #eaf2ff;
+      --radius: 14px;
+      --neon-soft: 0 12px 40px rgba(8,217,255,0.06), 0 6px 20px rgba(123,92,255,0.05);
+      --neon-strong: 0 30px 90px rgba(255,78,205,0.12), 0 10px 30px rgba(8,217,255,0.12);
+      --focus: rgba(8,217,255,0.36);
+      --ease-fast: 180ms;
+      --ease-med: 300ms;
+
+      /* icons */
+      --icon-size: 36px;
+      --icon-img-size: 20px;
+
+      /* layout */
+      --max-width: 1200px;
+    }
+
+    /* Reset & base */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:
+        radial-gradient(900px 400px at 10% 10%, rgba(123,92,255,0.06), transparent 20%),
+        radial-gradient(800px 380px at 90% 80%, rgba(8,217,255,0.05), transparent 20%),
+        linear-gradient(180deg, rgba(6,8,15,0.95), rgba(10,16,28,0.95)),
+        url('assets/img/background/bocahplongor.jpg');
+      background-size: cover;
+      background-position: center;
+      color:var(--txt);
+      -webkit-font-smoothing:antialiased;
+      min-height:100vh;
+      transition:background var(--ease-med),color var(--ease-fast);
+    }
+
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;height:auto;display:block}
+
+    /* star field */
+    .star-field{position:fixed;inset:0;pointer-events:none;z-index:-1}
+    .star{position:absolute;border-radius:50%;background:rgba(255,255,255,0.9);filter:drop-shadow(0 0 8px rgba(255,255,255,.08));transform-origin:center center}
+    @keyframes starTw{0%{opacity:.12;transform:scale(.9)}50%{opacity:1;transform:scale(1.15)}100%{opacity:.15;transform:scale(.95)}}
+
+    /* header (merged styling) */
+    header{
+      position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:140;width:min(var(--max-width),calc(100% - 32px));display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;background:rgba(6,9,16,0.5);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.04);
+    }
+    .logo{display:inline-flex;align-items:center;gap:.6rem;cursor:pointer}
+    .brand-logo{width:36px;height:36px;border-radius:10px;background:conic-gradient(from 220deg,var(--accent1),var(--accent2));box-shadow:var(--neon-soft)}
+    .logo b{font-weight:800}
+    .header-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+    .notification-bell img, .chatbot-icon img{width:28px;height:28px;display:block}
+    .notification-count{position:absolute;top:-6px;right:-6px;background:#ff6b6b;color:#fff;padding:0.1rem 0.44rem;border-radius:999px;font-size:.78rem;font-weight:700}
+
+    /* icon utility (keeps original icon behavior + fallback) */
+    .icon-wrap{
+      width:var(--icon-size);height:var(--icon-size);display:inline-grid;place-items:center;border-radius:10px;background:linear-gradient(135deg, rgba(8,217,255,0.08), rgba(123,92,255,0.06));padding:6px;flex:0 0 auto;transition:transform .14s ease;
+    }
+    .icon-wrap.small{width:30px;height:30px;padding:4px;border-radius:8px}
+    .icon-wrap img{width:var(--icon-img-size);height:var(--icon-img-size);object-fit:contain;display:block}
+
+    /* side nav (adapted from merged) */
+    .side-nav{
+      position:fixed;left:18px;top:96px;z-index:200;width:300px;height:calc(100vh - 132px);transform:translateX(-110%);opacity:0;transition:transform 320ms cubic-bezier(.16,.9,.3,1),opacity 240ms ease;backdrop-filter:blur(8px);border-radius:12px;padding:16px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);box-shadow:var(--neon-soft);overflow:auto;
+    }
+    .side-nav[aria-hidden="false"]{transform:translateX(0);opacity:1}
+    .side-nav .nav-brand{font-weight:800;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;color:var(--txt);font-weight:600}
+    .nav-item img{width:20px;height:20px;object-fit:contain}
+    .nav-item.active{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#04121a;box-shadow:var(--neon-soft)}
+    .side-nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.48);backdrop-filter:blur(2px);z-index:150;opacity:0;pointer-events:none;transition:opacity 240ms ease}
+    .side-nav-overlay.show{opacity:1;pointer-events:auto}
+
+    /* main content */
+    .main-content{max-width:var(--max-width);margin:120px auto 40px;padding:18px;min-height:calc(100vh - 220px)}
+    .event-form{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;padding:28px;border:1px solid rgba(255,255,255,0.04);box-shadow:var(--neon-strong);backdrop-filter:blur(8px)}
+    .event-form h2{margin:0 0 14px 0;font-size:1.6rem;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .form-group{margin-bottom:14px}
+    .form-group label{display:block;margin-bottom:6px;color:var(--muted);font-weight:700}
+    .form-group input,.form-group select,.form-group textarea{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--txt)}
+    .form-group textarea{min-height:110px;resize:vertical}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:3px solid var(--focus);outline-offset:2px}
+
+    .submit-btn{display:inline-flex;align-items:center;gap:.6rem;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#04121a;border:none;padding:10px 16px;border-radius:12px;font-weight:800;cursor:pointer;box-shadow:var(--neon-soft)}
+    .submit-btn:hover{transform:translateY(-2px)}
+
+    .success-msg{display:none;color:var(--mint);text-align:center;margin-top:12px}
+
+    /* vendor section */
+    .vendor-section{margin-top:20px;display:none}
+    .vendor-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:10px}
+    .vendor-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:var(--neon-soft)}
+    .vendor-img{width:72px;height:72px;border-radius:999px;object-fit:cover}
+    .vendor-name{font-weight:800;color:var(--accent2)}
+    .btn-view{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#04121a;padding:8px 12px;border-radius:999px;border:none;cursor:pointer;font-weight:700}
+
+    /* popup boxes */
+    .popup{position:fixed;top:84px;right:28px;width:260px;background:var(--card-bg);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.04);box-shadow:var(--neon-strong);display:none;z-index:220}
+    .popup.show{display:block}
+
+    /* logout modal */
+    .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);z-index:300;opacity:0;pointer-events:none;transition:opacity var(--ease-fast)}
+    .modal.show{opacity:1;pointer-events:auto}
+    .modal .box{background:var(--card-bg);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);width:min(480px,94%)}
+
+    /* responsiveness */
+    @media(max-width:1024px){
+      .event-form{padding:18px}
+      .side-nav{left:50%;transform:translate(-50%,-10%);top:46%;width:min(92vw,680px);height:auto;max-height:82vh;border-radius:12px;overflow:auto}
+      .side-nav[aria-hidden="true"]{transform:translate(-50%,110%);opacity:0}
+    }
+    @media(max-width:680px){
+      header{left:12px;right:12px;transform:none;width:calc(100% - 24px)}
+      .logo b{font-size:1.05rem}
+      .main-content{margin:88px 12px 28px}
+      .vendor-img{width:64px;height:64px}
+      .popup{right:12px;left:12px;width:auto}
+    }
+
+    /* reduced motion */
+    @media(prefers-reduced-motion:reduce){
+      *{transition:none!important}
+      .star{animation:none}
+    }
+
+    /* accessibility helpers */
+    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+    .skip-link:focus{left:12px;top:12px;width:auto;height:auto;padding:8px;background:#000;color:#fff;border-radius:6px;z-index:9999}
+  /* --- MOBILE-FRIENDLY TWEAKS --- */
+/* make header full-width on small screens and increase tappable area */
+@media (max-width:680px){
+  header{
+    left:0 !important;
+    right:0 !important;
+    transform:none !important;
+    width:100% !important;
+    padding:12px;
+  }
+  .header-right { gap:12px; }
+  .icon-wrap.small { width:38px;height:38px;padding:6px; } /* bigger tap target */
+  .notification-count { top:-8px; right:-8px; font-size:.75rem; padding:.18rem .44rem; }
+
+  /* popups become full-width bottom sheets for easier thumb reach */
+  .popup{
+    right:12px;
+    left:12px;
+    width:auto;
+    bottom:12px;
+    top:auto;
+    position:fixed;
+    transform: translateY(0);
+  }
+
+  /* vendor-card touch comfort */
+  .vendor-card { padding:16px; gap:10px; }
+  .btn-view { padding:10px 14px; font-size:1rem; }
+
+  /* reduce star density visually */
+  .star { filter: blur(.2px); }
+
+  /* side nav sheet full width handled in JS, but ensure overlay blocks scroll */
+  body.side-nav-open { overflow: hidden; touch-action: none; }
+}
+
+/* Improve visibility & hit area for inputs on mobile */
+@media (max-width:420px){
+  .form-group input, .form-group select, .form-group textarea {
+    padding:14px;
+    font-size:1rem;
+  }
+  .submit-btn { padding:12px 18px; font-size:1rem; }
+}
+
+  </style>
+</head>
+<body>
+  <!-- STAR FIELD -->
+  <div id="starField" class="star-field" aria-hidden="true"></div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo" id="logoBtn" role="button" tabindex="0" aria-controls="sideNav" aria-expanded="false" title="Toggle sidebar">
+      <span class="brand-logo" aria-hidden="true"></span>
+      <div style="display:flex;flex-direction:column;line-height:1"><b>HeaVenTly</b><small style="color:var(--muted);font-weight:600">Client</small></div>
+    </div>
+
+    <div class="header-right" role="region" aria-label="Header actions">
+      <button class="icon-btn" id="btnNotifHeader" title="Notifications" aria-label="Notifications" style="background:transparent;border:none;display:flex;align-items:center;gap:8px;cursor:pointer">
+        <span class="icon-wrap small" title="Notifications">
+          <img id="img_notif_header" alt="notif" src="file:///D:/download%20D/heavently/assets/img/icon/notif_icon.png"
+               onerror="this.onerror=null;this.src='assets/img/icon/notif_icon.png'">
+        </span>
+        <span id="unreadCountHeader" style="font-weight:700;color:var(--muted);font-size:.88rem">3</span>
+      </button>
+
+      <button class="icon-btn" id="chatBtnHeader" title="Chat" aria-label="Chat" style="background:transparent;border:none;display:flex;align-items:center;gap:8px;cursor:pointer">
+        <span class="icon-wrap small" title="Chatbot">
+          <img id="img_chatbot_header" alt="chatbot" src="file:///D:/download%20D/heavently/assets/img/icon/chatbot_icon.png"
+               onerror="this.onerror=null;this.src='assets/img/icon/chatbot_icon.png'">
+        </span>
+      </button>
+    </div>
+  </header>
+
+  <!-- SIDENAV -->
+  <nav id="sideNav" class="side-nav" aria-label="Main navigation" aria-hidden="true">
+    <div class="nav-brand">HeaVenTly • Client</div>
+
+    <div class="nav-group">
+      <h3 style="font-size:.82rem;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Navigation</h3>
+      <a href="events.html" class="nav-item"><span class="icon-wrap"><img alt="my events" src="file:///D:/download%20D/heavently/assets/img/icon/myevent_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/myevent_icon.png'"></span><span>My Events</span></a>
+      <a href="vendors.html" class="nav-item"><span class="icon-wrap"><img alt="vendors" src="file:///D:/download%20D/heavently/assets/img/icon/vendor_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/vendor_icon.png'"></span><span>Vendors</span></a>
+      <a href="payments.html" class="nav-item"><span class="icon-wrap"><img alt="payments" src="file:///D:/download%20D/heavently/assets/img/icon/payment_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/payment_icon.png'"></span><span>Payments</span></a>
+      <a href="profile.html" class="nav-item"><span class="icon-wrap"><img alt="profile" src="file:///D:/download%20D/heavently/assets/img/icon/profil_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/profil_icon.png'"></span><span>Profile</span></a>
+    </div>
+
+    <div class="nav-group" style="margin-top:12px">
+      <h3 style="font-size:.82rem;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Primary</h3>
+      <a href="dashboard_client.html" class="nav-item"><span class="icon-wrap"><img alt="dashboard" src="file:///D:/download%20D/heavently/assets/img/icon/dashboard_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/dashboard_icon.png'"></span><span>Homepage</span></a>
+      <a href="events_new.html" class="nav-item active"><span class="icon-wrap"><img alt="create event" src="file:///D:/download%20D/heavently/assets/img/icon/buatevent_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/buatevent_icon.png'"></span><span>Buat Event</span></a>
+      <a href="#" class="nav-item"><span class="icon-wrap"><img alt="toolbox" src="file:///D:/download%20D/heavently/assets/img/icon/toolbox_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/toolbox_icon.png'"></span><span>Toolbox</span></a>
+      <a href="#" class="nav-item"><span class="icon-wrap"><img alt="saved vendors" src="file:///D:/download%20D/heavently/assets/img/icon/savedvendor_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/savedvendor_icon.png'"></span><span>Saved Vendors</span></a>
+    </div>
+
+    <div class="nav-group" style="margin-top:12px">
+      <h3 style="font-size:.82rem;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Accessibility</h3>
+      <a href="#" class="nav-item" id="toggleContrast"><span class="icon-wrap"><img alt="contrast" src="file:///D:/download%20D/heavently/assets/img/icon/contrast_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/contrast_icon.png'"></span><span>High Contrast</span></a>
+      <a href="#" class="nav-item" id="toggleLargeText"><span class="icon-wrap"><img alt="large text" src="file:///D:/download%20D/heavently/assets/img/icon/large_text_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/large_text_icon.png'"></span><span>Large Text</span></a>
+      <a href="#" class="nav-item" id="toggleNotifications"><span class="icon-wrap"><img alt="notif setting" src="file:///D:/download%20D/heavently/assets/img/icon/notifsetting_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/notifsetting_icon.png'"></span><span>Notification Settings</span></a>
+    </div>
+
+    <div class="nav-group" style="margin-top:12px">
+      <h3 style="font-size:.82rem;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Account</h3>
+      <a href="#" class="nav-item" id="showLogout"><span class="icon-wrap"><img alt="logout" src="file:///D:/download%20D/heavently/assets/img/icon/logout_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/logout_icon.png'"></span><span>Logout</span></a>
+      <a href="account_personal.html" class="nav-item"><span class="icon-wrap"><img alt="personal" src="file:///D:/download%20D/heavently/assets/img/icon/P_information_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/P_information_icon.png'"></span><span>Personal Information</span></a>
+      <a href="account_security.html" class="nav-item"><span class="icon-wrap"><img alt="security" src="file:///D:/download%20D/heavently/assets/img/icon/security_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/security_icon.png'"></span><span>Security</span></a>
+    </div>
+
+    <div style="position:absolute;left:16px;bottom:12px;color:var(--muted);font-size:.8rem">
+      v1.0 (prod) | <a href="#" style="color:var(--muted)">Terms</a> | <a href="#" style="color:var(--muted)">Privacy</a>
+    </div>
+  </nav>
+
+  <div id="sideNavOverlay" class="side-nav-overlay" aria-hidden="true"></div>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content" id="main-content">
+    <section class="event-form" aria-labelledby="create-event">
+      <h2 id="create-event">Create New Event</h2>
+
+      <form id="eventForm" onsubmit="submitEvent(event)" novalidate>
+        <div class="form-group">
+          <label for="eventName">Event Name</label>
+          <input type="text" id="eventName" name="eventName" required placeholder="e.g., Wedding Celebration" />
+        </div>
+
+        <div class="form-group">
+          <label for="eventDate">Event Date</label>
+          <input type="date" id="eventDate" name="eventDate" required />
+        </div>
+
+        <div class="form-group">
+          <label for="eventCategory">Category</label>
+          <select id="eventCategory" name="eventCategory" required>
+            <option value="">Select a category</option>
+            <option value="wedding">Wedding</option>
+            <option value="corporate">Corporate</option>
+            <option value="party">Party</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="eventLocation">Location</label>
+          <input type="text" id="eventLocation" name="eventLocation" required placeholder="e.g., Jakarta Convention Center" />
+        </div>
+
+        <div class="form-group">
+          <label for="eventNotes">Additional Notes</label>
+          <textarea id="eventNotes" name="eventNotes" placeholder="e.g., Outdoor setup required"></textarea>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button type="submit" class="submit-btn">Save Event</button>
+          <div id="successMsg" class="success-msg" role="status" aria-live="polite">Event saved successfully!</div>
+        </div>
+      </form>
+    </section>
+
+    <section class="vendor-section" id="vendorSection" aria-live="polite">
+      <h3 style="text-align:center;margin-bottom:12px;color:var(--accent1);font-weight:800">Recommended Vendors & EO</h3>
+      <div id="vendorList" class="vendor-list" aria-label="Vendor recommendations"></div>
+    </section>
+  </main>
+
+  <!-- Notification Popup -->
+  <div id="notifPopup" class="popup" aria-hidden="true">
+    <h4 style="margin:0 0 8px 0;color:var(--accent1);font-size:1rem;">Notifikasi</h4>
+    <div style="font-size:0.95rem;color:var(--txt);margin-bottom:0.5rem;">🎉 Event "Wedding Celebration" berhasil disimpan!</div>
+    <div style="font-size:0.95rem;color:var(--txt);margin-bottom:0.5rem;">🔔 Pembayaran "Venue Booking" jatuh tempo besok.</div>
+    <div style="font-size:0.95rem;color:var(--txt);">📢 Vendor baru "Libra Decor" tersedia di Semarang.</div>
+  </div>
+
+  <!-- Chatbot Popup -->
+  <div id="chatbotPopup" class="popup" aria-hidden="true" style="width:320px;height:360px;display:none;flex-direction:column;">
+    <h4 style="margin:0 0 8px 0;color:var(--accent1);font-size:1rem;">HeaVenTly Chatbot</h4>
+    <div id="chatContent" style="flex:1;overflow-y:auto;font-size:0.95rem;color:var(--txt);margin-bottom:8px;">
+      <div style="margin-bottom:0.5rem;"><b>Bot:</b> Halo! Ada yang bisa dibantu?</div>
+    </div>
+    <form id="chatForm" style="display:flex;gap:0.5rem;">
+      <input id="chatInput" type="text" placeholder="Ketik pesan..." style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--txt)" />
+      <button type="submit" style="background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#04121a;border:none;border-radius:8px;padding:8px 12px;cursor:pointer">Kirim</button>
+    </form>
+  </div>
+
+  <!-- Logout Modal -->
+  <div id="logoutModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="box">
+      <h3>Confirm Logout</h3>
+      <p style="color:var(--muted)">Are you sure you want to log out? This will end your current session.</p>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+        <button class="btn-ghost" id="logoutCancel" style="padding:8px 12px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)">Cancel</button>
+        <button class="submit-btn" id="logoutConfirm">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="padding:28px 0 36px;border-top:1px solid rgba(255,255,255,0.03);margin-top:28px;color:var(--muted);text-align:center">
+    <div style="max-width:var(--max-width);margin:0 auto">© <span id="year">2025</span> HeaVenTly — All rights reserved</div>
+  </footer>
+
+  <script>
+    /* -------------------
+       Utilities & init
+       ------------------- */
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* -------------------
+       Star field (robust)
+       ------------------- */
+    (function createStars(count=90){
+      const field = document.getElementById('starField');
+      if(!field) return;
+      function regen(){
+        field.innerHTML = '';
+        const isMobile = window.matchMedia('(max-width:760px)').matches;
+        const n = isMobile ? Math.max(20, Math.floor(count*0.45)) : count;
+        for(let i=0;i<n;i++){
+          const s = document.createElement('div');
+          s.className = 'star';
+          const size = (Math.random()*2) + 0.6;
+          s.style.width = s.style.height = size + 'px';
+          s.style.left = (Math.random()*100) + 'vw';
+          s.style.top = (Math.random()*100) + 'vh';
+          const dur = (Math.random()*3 + 2).toFixed(2);
+          const delay = (Math.random()*2).toFixed(2);
+          s.style.animation = `starTw ${dur}s linear ${delay}s infinite`;
+          s.style.opacity = 0.12 + Math.random()*0.9;
+          field.appendChild(s);
+        }
+      }
+      regen();
+      let t;
+      window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(regen, 160); });
+    })();
+
+    /* -------------------
+       Sidebar open/close + focus trap + responsive sheet
+       ------------------- */
+    const logoBtn = $('#logoBtn');
+    const side = $('#sideNav');
+    const overlay = $('#sideNavOverlay');
+    let sideOpen = false;
+
+    const isSmallScreen = () => window.matchMedia('(max-width:900px)').matches;
+
+    function trapFocus(container, enable){
+      const focusable = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+      if(!container) return;
+      if(!enable){
+        container.removeEventListener('keydown', container._trapKeydown);
+        return;
+      }
+      const nodes = Array.from(container.querySelectorAll(focusable));
+      container._trapKeydown = function(e){
+        if(e.key !== 'Tab') return;
+        const first = nodes[0], last = nodes[nodes.length-1];
+        if(e.shiftKey){
+          if(document.activeElement === first){ e.preventDefault(); last.focus(); }
+        } else {
+          if(document.activeElement === last){ e.preventDefault(); first.focus(); }
+        }
+      };
+      container.addEventListener('keydown', container._trapKeydown);
+    }
+
+    function applySheetStyles(enable){
+      if(!side) return;
+      if(enable){
+        side.style.left = '50%';
+        side.style.top = '46%';
+        side.style.transform = 'translate(-50%,110%)';
+        side.style.width = 'min(92vw,680px)';
+        side.style.height = 'auto';
+        side.style.maxHeight = '82vh';
+        side.style.borderRadius = '12px';
+      } else {
+        side.style.left = '18px';
+        side.style.top = '96px';
+        side.style.width = '300px';
+        side.style.height = 'calc(100vh - 132px)';
+        side.style.transform = 'translateX(-110%)';
+      }
+    }
+
+    function openSide(){
+      if(!side) return;
+      if(isSmallScreen()){
+        applySheetStyles(true);
+        requestAnimationFrame(()=> {
+          side.style.transform = 'translate(-50%,0)';
+          side.style.opacity = '1';
+        });
+      } else {
+        side.style.transform = 'translateX(0)';
+        side.style.opacity = '1';
+      }
+      side.setAttribute('aria-hidden','false');
+      if(overlay) overlay.classList.add('show');
+      sideOpen = true;
+      trapFocus(side, true);
+      const first = side.querySelector('.nav-item, a, button');
+      if(first) first.focus();
+      document.documentElement.style.overflow = isSmallScreen() ? 'hidden' : '';
+      if(logoBtn) logoBtn.setAttribute('aria-expanded','true');
+    }
+
+    function closeSide(){
+      if(!side) return;
+      if(isSmallScreen()){
+        side.style.transform = 'translate(-50%,110%)';
+        side.style.opacity = '0';
+        setTimeout(()=> applySheetStyles(false), 320);
+      } else {
+        side.style.transform = 'translateX(-110%)';
+        side.style.opacity = '0';
+      }
+      side.setAttribute('aria-hidden','true');
+      if(overlay) overlay.classList.remove('show');
+      sideOpen = false;
+      trapFocus(side, false);
+      document.documentElement.style.overflow = '';
+      if(logoBtn) logoBtn.setAttribute('aria-expanded','false');
+    }
+
+    function toggleSide(){ sideOpen ? closeSide() : openSide(); }
+
+    if(logoBtn){
+      logoBtn.addEventListener('click', toggleSide);
+      logoBtn.addEventListener('keydown', e=> { if(e.key==='Enter' || e.key===' '){ e.preventDefault(); toggleSide(); }});
+    }
+    if(overlay) overlay.addEventListener('click', closeSide);
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ if(sideOpen) closeSide(); if($('#logoutModal')?.classList.contains('show')) closeLogout(); } });
+    window.addEventListener('resize', () => { if(!isSmallScreen()) applySheetStyles(false); else applySheetStyles(true); });
+
+    /* -------------------
+       Icon image fallback logging (helpful during dev)
+       ------------------- */
+    window.addEventListener('DOMContentLoaded', () => {
+      $$('img').forEach(img => {
+        img.addEventListener('error', () => {
+          console.warn('Icon failed to load:', img.getAttribute('src'));
+        });
+      });
+    });
+
+    /* -------------------
+       Popups: notifications & chatbot
+       ------------------- */
+    const notifBell = $('#btnNotifHeader');
+    const notifPopup = $('#notifPopup');
+    const chatBtn = $('#chatBtnHeader');
+    const chatPopup = $('#chatbotPopup');
+
+    function togglePopup(popup){
+      if(!popup) return;
+      const isShown = popup.classList.contains('show');
+      // hide all
+      [notifPopup, chatPopup].forEach(p => { if(p) p.classList.remove('show'); p && (p.setAttribute('aria-hidden','true')) });
+      if(!isShown){ popup.classList.add('show'); popup.setAttribute('aria-hidden','false'); }
+    }
+
+    notifBell?.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      togglePopup(notifPopup);
+    });
+    chatBtn?.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      togglePopup(chatPopup);
+    });
+    document.addEventListener('click', (e)=>{
+      if(notifPopup && !notifPopup.contains(e.target) && !notifBell.contains(e.target)) notifPopup.classList.remove('show');
+      if(chatPopup && !chatPopup.contains(e.target) && !chatBtn.contains(e.target)) chatPopup.classList.remove('show');
+    });
+
+    // chat form
+    $('#chatForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = $('#chatInput');
+      const content = $('#chatContent');
+      if(input && input.value.trim()){
+        content.innerHTML += `<div style="margin-bottom:.5rem"><b>Anda:</b> ${escapeHtml(input.value)}</div>`;
+        setTimeout(()=> {
+          content.innerHTML += `<div style="margin-bottom:.5rem"><b>Bot:</b> Terima kasih! (simulasi)</div>`;
+          content.scrollTop = content.scrollHeight;
+        }, 700);
+        content.scrollTop = content.scrollHeight;
+        input.value = '';
+      }
+    });
+
+    function escapeHtml(str){ return str.replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+    /* -------------------
+       Vendor recommendations (kept original logic + randomization)
+       ------------------- */
+    const allVendors = [
+      { name: 'Premier EO', rating: '★ 4.8 (120 reviews)', desc: 'Specialized in wedding & corporate events', img: 'poto_mahes.JPG', link: 'vendor_1.html', category: 'wedding', location: 'Jakarta' },
+      { name: 'Elite Vendors', rating: '★ 4.9 (150 reviews)', desc: 'Top-rated party and seminar organizer', img: 'poto_tino.jpg', link: 'vendor_2.html', category: 'party', location: 'Jakarta' },
+      { name: 'Star Events', rating: '★ 4.7 (100 reviews)', desc: 'Creative event solutions for all occasions', img: 'poto_diki.jpg', link: 'vendor_3.html', category: 'corporate', location: 'Bandung' },
+      { name: 'Sagittarius', rating: '★ 4.8 (110 reviews)', desc: 'Wedding Organizer • Semarang', img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80', link: '#', category: 'wedding', location: 'Semarang' },
+      { name: 'Pisces Studio', rating: '★ 4.6 (90 reviews)', desc: 'Photography • Semarang', img: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80', link: '#', category: 'party', location: 'Semarang' },
+      { name: 'Libra Decor', rating: '★ 4.7 (100 reviews)', desc: 'Decoration • Semarang', img: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80', link: '#', category: 'corporate', location: 'Semarang' }
+    ];
+
+    // Fisher-Yates shuffle for true random reordering
+    function shuffleArray(arr){
+      const a = arr.slice();
+      for(let i = a.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    // Determine if there's at least one non-empty input in the event form
+    function anyFormInputPresent(){
+      const ids = ['eventName','eventDate','eventCategory','eventLocation','eventNotes'];
+      return ids.some(id => {
+        const el = document.getElementById(id);
+        if(!el) return false;
+        const val = (el.value || '').toString().trim();
+        return val.length > 0;
+      });
+    }
+
+    function showVendorRecommendations(){
+      const category = ($('#eventCategory')?.value || '').toLowerCase();
+      const location = ($('#eventLocation')?.value || '').toLowerCase();
+      const vendorSection = $('#vendorSection');
+      const vendorList = $('#vendorList');
+      if(!vendorList || !vendorSection) return;
+
+      // If no input present, keep vendorSection hidden (per your requirement)
+      if(!anyFormInputPresent()){
+        vendorSection.style.display = 'none';
+        vendorList.innerHTML = '';
+        return;
+      }
+
+      // Filter vendors by category or location
+      let filtered = allVendors.filter(v => {
+        const matchCat = category ? v.category.includes(category) : true;
+        const matchLoc = location ? v.location.toLowerCase().includes(location) : true;
+        return matchCat && matchLoc;
+      });
+
+      // fallback if none matched
+      if(filtered.length === 0) filtered = allVendors.slice(0, 3);
+
+      // shuffle every time function is called so order changes on each input
+      filtered = shuffleArray(filtered);
+
+      // Build markup
+      vendorList.innerHTML = filtered.map(v => `
+        <div class="vendor-card">
+          <img src="${v.img}" alt="${escapeHtml(v.name)}" class="vendor-img" onerror="this.onerror=null;this.src='assets/img/vendor-placeholder.png'"/>
+          <div class="vendor-name">${escapeHtml(v.name)}</div>
+          <div class="vendor-rating" style="color:var(--muted)">${escapeHtml(v.rating)}</div>
+          <div class="vendor-desc" style="text-align:center;color:var(--txt)">${escapeHtml(v.desc)}</div>
+          <a class="btn-view" href="${v.link}">Pesan</a>
+        </div>
+      `).join('');
+      vendorSection.style.display = 'block';
+    }
+
+    // Attach listeners to inputs (keeps original behavior but now shows vendors only when inputs present)
+    ['eventCategory','eventLocation','eventName','eventDate','eventNotes'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.addEventListener('input', () => {
+        // call original logic (kept) but ensure random reorder on each input
+        showVendorRecommendations();
+      });
+    });
+
+    /* -------------------
+       Form submission (keeps original storage behavior)
+       ------------------- */
+    function submitEvent(e){
+      e.preventDefault();
+      const form = $('#eventForm');
+      const successMsg = $('#successMsg');
+      if(!form) return;
+      if(form.checkValidity()){
+        const data = {
+          name: $('#eventName').value,
+          date: $('#eventDate').value,
+          category: $('#eventCategory').value,
+          location: $('#eventLocation').value,
+          notes: $('#eventNotes').value
+        };
+        let events = JSON.parse(localStorage.getItem('events') || '[]');
+        events.push(data);
+        localStorage.setItem('events', JSON.stringify(events));
+        if(successMsg){ successMsg.style.display = 'block'; }
+        showVendorRecommendations();
+        setTimeout(()=> {
+          if(successMsg) successMsg.style.display = 'none';
+          form.reset();
+          // after reset, hide vendor recommendations because inputs are empty now
+          showVendorRecommendations();
+        }, 1600);
+      } else {
+        alert('Please fill in all required fields.');
+      }
+    }
+
+    /* -------------------
+       Accessibility toggles
+       ------------------- */
+    $('#toggleContrast')?.addEventListener('click', (e) => { e.preventDefault(); document.body.classList.toggle('high-contrast'); });
+    $('#toggleLargeText')?.addEventListener('click', (e) => { e.preventDefault(); document.body.classList.toggle('large-text'); document.body.style.fontSize = document.body.classList.contains('large-text') ? '1.12rem' : ''; });
+    $('#toggleNotifications')?.addEventListener('click', (e) => { e.preventDefault(); alert('Notification settings (placeholder)'); });
+
+    /* -------------------
+       Logout modal handlers
+       ------------------- */
+    $('#showLogout')?.addEventListener('click', (e) => { e.preventDefault(); showLogoutModal(); });
+    $('#logoutCancel')?.addEventListener('click', () => { closeLogout(); });
+    $('#logoutConfirm')?.addEventListener('click', () => { localStorage.removeItem('authenticated'); location.href='landing.html'; });
+
+    const logoutModal = $('#logoutModal');
+    function showLogoutModal(){ if(!logoutModal) return; logoutModal.classList.add('show'); logoutModal.setAttribute('aria-hidden','false'); trapFocus(logoutModal,true); $('#logoutCancel')?.focus(); }
+    function closeLogout(){ if(!logoutModal) return; logoutModal.classList.remove('show'); logoutModal.setAttribute('aria-hidden','true'); trapFocus(logoutModal,false); }
+
+    /* -------------------
+       Mock auth & init
+       ------------------- */
+    if(!localStorage.getItem('authenticated')){ localStorage.setItem('authenticated','true'); /* for demo only */ }
+
+    /* -------------------
+       Small UI polish: nav shrink / reveal
+       ------------------- */
+    (function uiPolish(){
+      const nav = document.querySelector('header');
+      const rafThrottle = (fn) => { let ticking=false; return (...args)=>{ if(!ticking){ requestAnimationFrame(()=>{fn(...args); ticking=false}); ticking=true; } } };
+      const onScroll = rafThrottle(()=> {
+        const sc = window.scrollY || window.pageYOffset;
+        nav.classList.toggle('shrink', sc>40);
+      });
+      window.addEventListener('scroll', onScroll);
+      onScroll();
+      // initial hide vendor recommendations
+      setTimeout(showVendorRecommendations, 120);
+    })();
+  /* --- MOBILE BEHAVIOR HELPERS --- */
+/* 1) lazy-load semua gambar vendor & ikon (keamanan: tidak hapus src, hanya tambahkan attr) */
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('img').forEach(img => {
+    // jika browser mendukung: set loading lazy jika belum ada
+    if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
+    // ensure there is an alt for a11y
+    if (!img.alt) img.alt = 'image';
+  });
+});
+
+/* 2) prevent body scroll while side sheet open (augment existing logic) */
+const _origOpenSide = openSide;
+const _origCloseSide = closeSide;
+openSide = function(){
+  _origOpenSide && _origOpenSide();
+  document.body.classList.add('side-nav-open');
+};
+closeSide = function(){
+  _origCloseSide && _origCloseSide();
+  document.body.classList.remove('side-nav-open');
+};
+
+/* 3) make popups easier to dismiss on mobile with swipe-down (lightweight) */
+function addSwipeToClose(el){
+  if(!el) return;
+  let startY = null;
+  el.addEventListener('touchstart', (e)=> { startY = e.touches[0].clientY; }, {passive:true});
+  el.addEventListener('touchmove', (e)=> {
+    if(startY === null) return;
+    const dy = e.touches[0].clientY - startY;
+    if(dy > 60){ // downward swipe
+      el.classList.remove('show');
+      el.setAttribute('aria-hidden','true');
+      startY = null;
+    }
+  }, {passive:true});
+}
+addSwipeToClose(document.getElementById('notifPopup'));
+addSwipeToClose(document.getElementById('chatbotPopup'));
+
+/* 4) reduce starfield work on very small devices to save CPU */
+(function capStarField(){
+  const m = window.matchMedia('(max-width:420px)');
+  if (m.matches){
+    const stars = document.querySelectorAll('.star');
+    let i = 0;
+    stars.forEach(s => { i++; if(i%2===0) s.style.display='none'; });
+  }
+})();
+
+  </script>
+</body>
+</html>

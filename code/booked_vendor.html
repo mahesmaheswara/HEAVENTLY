@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HeaVenTly — Vendors Deal</title>
+  <meta name="theme-color" content="#08d9ff" />
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- CSS (akan kamu isi setelah ini) -->
+  <link rel="stylesheet" href="assets/css/booked_vendor.css" />
+  <link rel="icon" href="assets/img/icon/myevent_icon.png" />
+</head>
+<body>
+  <!-- Star field dekoratif -->
+  <div id="starField" class="star-field" aria-hidden="true"></div>
+
+  <div class="app" role="application">
+
+    <!-- SIDEBAR (identik events.html) -->
+    <aside id="sideNav" class="sidebar" aria-label="Sidebar">
+      <div class="sb-brand">
+        <img src="assets/img/icon/myevent_icon.png" alt="HeaVenTly" width="44" height="44" />
+        <div class="sb-title">
+          <div class="name">HeaVenTly</div>
+          <div class="sub">Client • Dashboard</div>
+        </div>
+      </div>
+
+      <nav class="sb-nav" role="navigation" aria-label="Primary navigation">
+        <a class="sb-link" href="dashboard_client.html">
+          <img src="assets/img/icon/dashboard_icon.png" alt="Dashboard" /><span>Home</span>
+        </a>
+        <a class="sb-link" href="events.html">
+          <img src="assets/img/icon/myevent_icon.png" alt="Events" /><span>Events</span>
+        </a>
+        <a class="sb-link active" href="vendors.html">
+          <img src="assets/img/icon/vendor_icon.png" alt="Vendors" /><span>Vendors</span>
+        </a>
+        <a class="sb-link" href="messages.html">
+          <img src="assets/img/icon/chatbot_icon.png" alt="Messages" /><span>Messages</span>
+        </a>
+        <a class="sb-link" href="settings.html">
+          <img src="assets/img/icon/settings_icon.png" alt="Settings" /><span>Settings</span>
+        </a>
+      </nav>
+
+      <div class="sb-foot">
+        <a class="sb-link" href="signin.html" id="logoutBtn">
+          <img src="assets/img/icon/logout_icon.png" alt="Logout" /><span>Log out</span>
+        </a>
+        <div class="pill">v0.1 • client</div>
+      </div>
+    </aside>
+
+    <!-- Overlay mobile sidebar -->
+    <div id="sideNavOverlay" class="side-nav-overlay" data-action="close-sidenav" hidden></div>
+
+    <!-- MAIN -->
+    <main id="mainContent" class="content" role="main" aria-live="polite">
+
+      <!-- TOPBAR (identik style events) -->
+      <header class="topbar" role="banner" aria-label="Header">
+        <div class="left">
+          <button id="menuToggle" class="menu-btn" aria-label="Toggle menu" aria-expanded="false">☰</button>
+          <div class="page-title">
+            <div class="title">Vendors Deal</div>
+            <div class="subtitle">Hubungkan vendor ke event • Draft kontrak • Negosiasi • Payment</div>
+          </div>
+        </div>
+
+        <div class="right">
+          <div class="search" role="search" aria-label="Search vendors">
+            <label for="topSearch" class="sr-only">Cari vendor</label>
+            <input id="topSearch" class="input" type="search" placeholder="Cari vendor / lokasi / kategori" />
+            <button class="btn" id="btnTopSearch">Search</button>
+            <button class="btn" id="btnManageAll">Manage All</button>
+            <button class="btn btn-primary" id="btnProceed" aria-label="Lanjut proses">Proceed</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- WRAPPER -->
+      <section class="deal-page" aria-label="Vendor Deal Page">
+
+        <!-- 1) KERANJANG & SELEKSI -->
+        <div class="card deal-row">
+          <header class="deal-head">
+            <div>
+              <h3>Booked Vendors</h3>
+              <div class="muted small">Vendors yang sudah kamu pilih dari halaman marketplace</div>
+            </div>
+            <div class="head-actions">
+              <button class="btn" id="btnOpenBooked">Open Booked List</button>
+              <a class="btn" id="btnGoBookedList" href="booked_vendor.html">Go to Booked Page</a>
+            </div>
+          </header>
+
+          <div class="deal-body">
+            <div class="toolbar">
+              <div class="filters">
+                <label class="sr-only" for="fCat">Kategori</label>
+                <select id="fCat" class="select small">
+                  <option value="">Semua kategori</option>
+                  <option value="catering">Catering</option>
+                  <option value="decor">Decor</option>
+                  <option value="photo">Photography</option>
+                  <option value="entertainment">Entertainment/MC</option>
+                  <option value="sound">Sound & Lighting</option>
+                  <option value="transport">Transport</option>
+                </select>
+
+                <label class="sr-only" for="fLoc">Lokasi</label>
+                <input id="fLoc" class="input small" placeholder="Lokasi" />
+                <button class="btn small" id="btnFilter">Apply</button>
+                <button class="btn small" id="btnClearFilter">Clear</button>
+              </div>
+
+              <div class="muted small" id="selInfo">0 selected</div>
+            </div>
+
+            <!-- Grid vendor yang diseleksi -->
+            <div id="vendorSelectGrid" class="vendor-select-grid" role="list" aria-label="Vendor selection">
+              <!-- card diisi via template -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 2) PILIH EVENT TARGET -->
+        <div class="card deal-row">
+          <header class="deal-head">
+            <div>
+              <h3>Connect to Event</h3>
+              <div class="muted small">Pilih event yang akan dihubungkan dengan vendor terpilih</div>
+            </div>
+            <div class="head-actions">
+              <button class="btn" id="btnNewEvent">+ Create Event</button>
+            </div>
+          </header>
+
+          <div class="deal-body">
+            <div class="event-picker">
+              <label for="eventSelect">Event</label>
+              <select id="eventSelect" class="select">
+                <option value="">— pilih event —</option>
+                <!-- diisi dinamically -->
+              </select>
+              <div class="muted small" id="eventMeta">Tanggal • Lokasi • Status</div>
+            </div>
+
+            <!-- Checklist mapping kebutuhan vendor -->
+            <div class="mapping">
+              <h4>Mapping Kebutuhan</h4>
+              <div class="muted small">Checklist vendor mana saja yang ingin dikirim request deal / negosiasi ke event terpilih.</div>
+              <ul id="mapList" class="map-list" role="list">
+                <!-- item mapping diisi via template -->
+              </ul>
+            </div>
+
+            <div class="actions">
+              <button class="btn" id="btnSendReq">Send Requests</button>
+              <button class="btn" id="btnOpenNegotiate">Open Negotiation Panel</button>
+              <button class="btn btn-primary" id="btnOpenContract">Create Contract (draft)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3) NEGOTIATION PANEL -->
+        <div class="card deal-row">
+          <header class="deal-head">
+            <div>
+              <h3>Negotiation & Notes</h3>
+              <div class="muted small">Tulis detail kebutuhan / budget / opsi pengganti bila ada batas kapasitas</div>
+            </div>
+            <div class="head-actions">
+              <button class="btn" id="btnLoadTemplates">Templates</button>
+            </div>
+          </header>
+
+          <div class="deal-body">
+            <div class="neg-grid">
+              <section class="neg-left">
+                <label for="negDetails">Instruksi singkat (opsional)</label>
+                <textarea id="negDetails" class="input area" rows="6" placeholder="Contoh: Kebutuhan catering 1800 pax (balance 300 pax via vendor B), fokus menu halal, free flow drink..."></textarea>
+
+                <div class="row-2">
+                  <div>
+                    <label for="negBudget">Budget maksimal (opsional)</label>
+                    <input id="negBudget" class="input" inputmode="numeric" placeholder="Rp" />
+                  </div>
+                  <div>
+                    <label for="negDeadline">Batas waktu respon</label>
+                    <input id="negDeadline" class="input" type="date" />
+                  </div>
+                </div>
+              </section>
+
+              <aside class="neg-right">
+                <h4>Quick Suggest</h4>
+                <ul id="negSuggest" class="list" role="list">
+                  <!-- tips diisi JS -->
+                </ul>
+              </aside>
+            </div>
+
+            <div class="actions">
+              <button class="btn" id="btnPreviewReq">Preview Request</button>
+              <button class="btn" id="btnSendNow">Send Now</button>
+              <button class="btn ghost" id="btnClearNeg">Clear</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4) CONTRACT BUILDER PREVIEW -->
+        <div class="card deal-row">
+          <header class="deal-head">
+            <div>
+              <h3>Contract Draft</h3>
+              <div class="muted small">Buat draf kontrak: DP / Full / Custom. Kontrak harus disetujui kedua pihak sebelum vendor join forum event.</div>
+            </div>
+            <div class="head-actions">
+              <button class="btn" id="btnAutoGenerate">Auto-generate</button>
+            </div>
+          </header>
+
+          <div class="deal-body">
+            <div class="contract-grid">
+              <section class="c-left">
+                <div class="row-2">
+                  <div>
+                    <label for="cType">Tipe pembayaran</label>
+                    <select id="cType" class="select">
+                      <option value="dp">DP</option>
+                      <option value="full">Full</option>
+                      <option value="custom">Custom</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="cDue">Tanggal jatuh tempo (awal)</label>
+                    <input id="cDue" type="date" class="input" />
+                  </div>
+                </div>
+
+                <div class="row-2">
+                  <div>
+                    <label for="cAmount">Nominal (awal/DP)</label>
+                    <input id="cAmount" class="input" inputmode="numeric" placeholder="Rp" />
+                  </div>
+                  <div>
+                    <label for="cRemainder">Sisa pembayaran (opsional)</label>
+                    <input id="cRemainder" class="input" inputmode="numeric" placeholder="Rp" />
+                  </div>
+                </div>
+
+                <div>
+                  <label>Ketentuan ringkas</label>
+                  <ul id="termList" class="list" role="list">
+                    <!-- terms -->
+                  </ul>
+                  <div class="row-add">
+                    <input id="termInput" class="input small" placeholder="Tambah ketentuan..." />
+                    <button class="btn small" id="termAdd">Add</button>
+                  </div>
+                </div>
+              </section>
+
+              <aside class="c-right">
+                <h4>Preview</h4>
+                <div id="cPreview" class="contract-preview" role="document">
+                  <div class="muted">Kontrak preview akan tampil di sini...</div>
+                </div>
+              </aside>
+            </div>
+
+            <div class="actions">
+              <button class="btn" id="btnExportDraft">Export draft</button>
+              <button class="btn" id="btnSendVendor">Send to vendor</button>
+              <button class="btn btn-primary" id="btnOpenPayment">Open Payment</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5) FORUM CONNECTOR -->
+        <div class="card deal-row">
+          <header class="deal-head">
+            <div>
+              <h3>Forum Connection</h3>
+              <div class="muted small">Setelah kontrak & pembayaran lengkap, vendor otomatis digabung ke forum event. Disini kamu bisa jump ke forum atau lihat ringkasan kontrak.</div>
+            </div>
+            <div class="head-actions">
+              <button class="btn" id="btnForumSummary">Summary</button>
+            </div>
+          </header>
+
+          <div class="deal-body">
+            <div class="forum-grid">
+              <section class="f-left">
+                <h4>Selected Vendors</h4>
+                <ul id="fList" class="list" role="list">
+                  <!-- vendor badge -->
+                </ul>
+              </section>
+
+              <aside class="f-right">
+                <h4>Next steps</h4>
+                <ol class="muted small">
+                  <li>Vendor menerima undangan + draf kontrak</li>
+                  <li>Vendor review dan Accept / Negotiate / Decline</li>
+                  <li>Jika Accept → lakukan pembayaran sesuai kesepakatan</li>
+                  <li>Setelah valid, vendor join forum event</li>
+                </ol>
+              </aside>
+            </div>
+
+            <div class="actions">
+              <button class="btn" id="btnPayDemo">Pay now (demo)</button>
+              <a class="btn btn-primary" id="btnOpenForum" href="event_forum.html">Open Event Forum</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ===========================
+       MODALS (semua hidden)
+  ============================ -->
+
+  <!-- BOOKED DRAWER -->
+  <div id="drawerBooked" class="drawer" role="dialog" aria-modal="true" aria-labelledby="drBookedTitle" hidden>
+    <div class="drawer-box">
+      <header class="drawer-head">
+        <h3 id="drBookedTitle">Your Booked Vendors</h3>
+        <button class="btn ghost" data-close="drawerBooked">Close</button>
+      </header>
+
+      <div class="drawer-body">
+        <div class="toolbar">
+          <input id="drBookedSearch" class="input" placeholder="Cari vendor..." />
+          <button class="btn" id="drBookedBtnSearch">Search</button>
+          <button class="btn" id="drBookedClear">Clear</button>
+        </div>
+        <div id="drBookedGrid" class="booked-grid" role="list">
+          <!-- diisi via template vendor-card -->
+        </div>
+
+        <div class="drawer-foot">
+          <div class="muted small" id="drBookedCount">0 selected</div>
+          <div class="right">
+            <button class="btn" id="drBookedSelect">Use Selected</button>
+            <button class="btn ghost" data-close="drawerBooked">Done</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEGOTIATION PREVIEW MODAL -->
+  <div id="negPreviewModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="negPvTitle" hidden>
+    <div class="modal-box lg">
+      <header class="modal-head">
+        <h3 id="negPvTitle">Preview Request to Vendors</h3>
+        <button class="btn ghost" data-close="negPreviewModal" aria-label="Tutup">Close</button>
+      </header>
+
+      <div class="modal-body">
+        <div class="preview-text" id="negPvText">—</div>
+        <div class="list" id="negPvTargets"></div>
+      </div>
+
+      <footer class="modal-foot">
+        <button class="btn" id="negPvSend">Send</button>
+        <button class="btn ghost" data-close="negPreviewModal">Cancel</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- CONTRACT EXPORT MODAL -->
+  <div id="contractExportModal" class="modal" role="dialog" aria-modal="true" hidden>
+    <div class="modal-box md">
+      <header class="modal-head">
+        <h3>Export Contract</h3>
+        <button class="btn ghost" data-close="contractExportModal">Close</button>
+      </header>
+      <div class="modal-body">
+        <p class="muted">Pilih format:</p>
+        <div class="row">
+          <button class="btn" id="expPdf">PDF</button>
+          <button class="btn" id="expDoc">DOCX</button>
+          <button class="btn" id="expJson">JSON</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENT MODAL -->
+  <div id="paymentModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="payTitle" hidden>
+    <div class="modal-box md">
+      <header class="modal-head">
+        <h3 id="payTitle">Payment</h3>
+        <button class="btn ghost" data-close="paymentModal">Close</button>
+      </header>
+      <div class="modal-body">
+        <div id="paySummary" class="muted">Ringkasan pembayaran...</div>
+        <div class="row-2">
+          <div>
+            <label for="payMethod">Metode</label>
+            <select id="payMethod" class="select">
+              <option value="va">Virtual Account</option>
+              <option value="cc">Credit Card</option>
+              <option value="qris">QRIS</option>
+            </select>
+          </div>
+          <div>
+            <label for="payAmount">Nominal</label>
+            <input id="payAmount" class="input" inputmode="numeric" placeholder="Rp" />
+          </div>
+        </div>
+      </div>
+      <footer class="modal-foot">
+        <button class="btn" id="payProceed">Proceed</button>
+        <button class="btn ghost" data-close="paymentModal">Cancel</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- FORUM SUMMARY MODAL -->
+  <div id="forumSummaryModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="fsTitle" hidden>
+    <div class="modal-box lg">
+      <header class="modal-head">
+        <h3 id="fsTitle">Forum Connection Summary</h3>
+        <button class="btn ghost" data-close="forumSummaryModal">Close</button>
+      </header>
+      <div class="modal-body">
+        <ul id="fsList" class="list">
+          <!-- item: vendor + status connect -->
+        </ul>
+      </div>
+      <footer class="modal-foot">
+        <a class="btn btn-primary" href="event_forum.html">Open Forum</a>
+        <button class="btn ghost" data-close="forumSummaryModal">Tutup</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS MODAL -->
+  <div id="notifModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="notifTitle" hidden>
+    <div class="modal-box sm">
+      <header class="modal-head">
+        <h3 id="notifTitle">Notifications</h3>
+        <button class="btn ghost" data-close="notifModal">Close</button>
+      </header>
+      <div class="modal-body">
+        <ul id="notifList" class="list">
+          <!-- list item -->
+        </ul>
+      </div>
+      <footer class="modal-foot">
+        <button class="btn" data-close="notifModal">Tutup</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- GENERIC CONFIRM -->
+  <div id="confirmModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" hidden>
+    <div class="modal-box sm">
+      <h3 id="confirmTitle">Konfirmasi</h3>
+      <p id="confirmText" class="muted">Apakah kamu yakin?</p>
+      <div class="modal-actions">
+        <button class="btn ghost" data-action="cancel-confirm" type="button">Batal</button>
+        <button class="btn" data-action="ok-confirm" type="button">Ya</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <!-- ===========================
+       TEMPLATES
+  ============================ -->
+
+  <!-- vendor select card -->
+  <template id="vendorSelectCardTmpl">
+    <article class="v-sel-card" role="listitem" data-id="">
+      <header class="card-head">
+        <label class="checkbox">
+          <input type="checkbox" data-action="toggle" />
+          <span class="fake"></span>
+        </label>
+        <div class="badges" role="list"></div>
+      </header>
+      <a class="thumb" href="#" data-action="open-detail">
+        <img src="" alt="" />
+      </a>
+      <div class="body">
+        <div class="row">
+          <div class="name">Nama Vendor</div>
+          <div class="rating">★ 4.8</div>
+        </div>
+        <div class="muted small"><span class="category">Kategori</span> • <span class="location">Lokasi</span></div>
+        <p class="muted desc">Deskripsi singkat…</p>
+      </div>
+      <footer class="foot">
+        <button class="btn small" data-action="chat">Chat</button>
+        <button class="btn small" data-action="negotiate">Negotiate</button>
+        <button class="btn small btn-primary" data-action="add-contract">Add to Contract</button>
+      </footer>
+    </article>
+  </template>
+
+  <!-- mapping item -->
+  <template id="mappingItemTmpl">
+    <li class="map-item" data-id="">
+      <label class="checkbox">
+        <input type="checkbox" checked />
+        <span class="fake"></span>
+        <span class="label">
+          <span class="name">Vendor X</span>
+          <span class="muted small">kategori • lokasi</span>
+        </span>
+      </label>
+      <div class="map-actions">
+        <button class="btn small" data-action="detail">Detail</button>
+        <button class="btn small" data-action="remove">Remove</button>
+      </div>
+    </li>
+  </template>
+
+  <!-- notification item -->
+  <template id="notifItemTmpl">
+    <li class="notif">
+      <div class="title">Accepted</div>
+      <div class="text muted small">Vendor Catering telah menyetujui permintaanmu.</div>
+      <div class="time muted small">2h ago</div>
+    </li>
+  </template>
+
+  <!-- booked drawer card -->
+  <template id="bookedCardTmpl">
+    <article class="booked-card" data-id="">
+      <label class="checkbox">
+        <input type="checkbox" />
+        <span class="fake"></span>
+      </label>
+      <div class="thumb"><img src="" alt=""></div>
+      <div class="info">
+        <div class="name">Vendor Name</div>
+        <div class="muted small"><span class="category">Kategori</span> • <span class="location">Lokasi</span></div>
+      </div>
+      <div class="actions">
+        <button class="btn small" data-action="manage">Manage</button>
+        <button class="btn small" data-action="remove">Remove</button>
+      </div>
+    </article>
+  </template>
+
+  <!-- simple badge -->
+  <template id="badgeTmpl">
+    <span class="badge">Preferred</span>
+  </template>
+
+  <!-- page scripts (kosong dulu, nanti diisi) -->
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <script src="assets/js/vendors_deal.js" defer></script>
+</body>
+</html>

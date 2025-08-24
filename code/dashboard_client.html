@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HeaVenTly — Client Dashboard (toolbox merged, mobile-friendly)</title>
+  <meta name="theme-color" content="#08d9ff" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* =========================
+       Variables & Reset (full file) + icon additions
+       ========================= */
+    :root{
+      --accent1: #08d9ff;
+      --accent2: #7b5cff;
+      --accent3: #ff4ecd;
+      --mint: #22ffa2;
+      --bg-deep: #05060a;
+      --card-bg: rgba(11,13,20,0.72);
+      --glass: rgba(255,255,255,0.04);
+      --muted: #b5c2e3;
+      --txt: #eaf2ff;
+      --radius: 14px;
+      --neon-soft: 0 12px 40px rgba(8,217,255,0.06), 0 6px 20px rgba(123,92,255,0.05);
+      --neon-strong: 0 30px 90px rgba(255,78,205,0.12), 0 10px 30px rgba(8,217,255,0.12);
+      --focus: rgba(8,217,255,0.36);
+      --bg-image-local: url('file:///D:/download%20D/heavently/assets/img/background/bocahplongor.jpg');
+      --bg-image-fallback: url('assets/img/background/bocahplongor.jpg');
+      --ease-fast: 180ms;
+      --ease-med: 300ms;
+
+      /* icon-specific */
+      --icon-size: 36px;
+      --icon-img-size: 20px;
+    }
+
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:"Poppins","Inter",system-ui,Segoe UI,Roboto,Arial;background:var(--bg-deep);color:var(--txt);-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;height:auto;display:block}
+
+    /* Prevent horizontal overflow (fix mobile clipping) */
+    body{overflow-x:hidden}
+
+    /* layered background - prefer local file, fallback relative */
+    body{
+      background-image:
+        radial-gradient(900px 400px at 10% 10%, rgba(123,92,255,0.06), transparent 20%),
+        radial-gradient(800px 380px at 90% 80%, rgba(8,217,255,0.05), transparent 20%),
+        linear-gradient(180deg, rgba(6,8,15,0.9), rgba(10,16,28,0.9)),
+        var(--bg-image-local),
+        var(--bg-image-fallback);
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      transition: background var(--ease-med) ease, color var(--ease-fast) ease;
+      min-height:100vh;
+    }
+
+    /* Accessibility mode classes */
+    body.high-contrast{
+      background:#000;
+      color:#fff;
+      filter: contrast(1.06) saturate(1.05);
+    }
+    body.large-text{ font-size:1.06rem }
+
+    .container{max-width:1200px;width:calc(100% - 32px);margin:0 auto;padding:0 16px;box-sizing:border-box}
+
+    /* Buttons */
+    .btn{display:inline-flex;align-items:center;gap:.6rem;padding:.7rem 1rem;border-radius:12px;font-weight:700;border:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:transform var(--ease-fast),box-shadow var(--ease-med),background var(--ease-med)}
+    .btn:focus{outline:3px solid var(--focus);outline-offset:3px}
+    .btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#04121a;border:none;box-shadow:var(--neon-soft)}
+    .btn-ghost{background:rgba(255,255,255,0.02);color:var(--muted)}
+    .btn-full{width:100%;display:inline-flex;justify-content:center}
+
+    /* NAV */
+    .nav{
+      position:sticky;top:18px;z-index:140;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-radius:12px;background:rgba(6,9,16,0.5);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.04);margin:0 auto;max-width:calc(100% - 32px);
+      transition:transform var(--ease-med),box-shadow var(--ease-med),background var(--ease-med);
+      box-sizing:border-box;
+    }
+    .brand{display:flex;align-items:center;gap:.75rem;cursor:pointer}
+    .brand-logo{width:36px;height:36px;border-radius:10px;background:conic-gradient(from 220deg,var(--accent1),var(--accent2));box-shadow:var(--neon-soft)}
+    .brand b{font-weight:800}
+    .nav-links{display:flex;gap:12px;align-items:center}
+    .nav-links a{padding:.45rem .7rem;border-radius:10px;color:var(--muted);font-weight:600}
+    .nav-cta{display:flex;gap:.6rem;align-items:center}
+
+    /* star field */
+    .star-field{position:fixed;inset:0;pointer-events:none;z-index:-1}
+    .star{position:absolute;border-radius:50%;background:rgba(255,255,255,0.95);filter:drop-shadow(0 0 8px rgba(255,255,255,.08));transform-origin:center center}
+    @keyframes starTw { 0% { opacity:.12; transform:scale(.9) } 50% { opacity:1; transform:scale(1.15) } 100% { opacity:.15; transform:scale(.95) } }
+
+    /* HERO */
+    .hero{padding:64px 0 36px;position:relative;display:block}
+    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:center;max-width:1200px;margin:0 auto;padding:28px;box-sizing:border-box}
+    .eyebrow{display:inline-block;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,0.03);color:var(--muted);font-weight:700;margin-bottom:12px}
+    .hero-title{font-size:clamp(1.8rem,3.4vw,2.8rem);line-height:1.02;margin:6px 0 12px;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .lead{color:var(--muted);max-width:56ch}
+
+    /* device card */
+    .device-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:18px;padding:16px;border:1px solid rgba(255,255,255,0.04);box-shadow:var(--neon-strong)}
+
+    /* Dashboard grid */
+    .dashboard{max-width:1200px;margin:22px auto;padding:18px;display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));box-sizing:border-box}
+    @media(min-width:768px){
+      .dashboard{grid-template-areas:
+        "header header header header"
+        "search search search search"
+        "categories categories categories categories"
+        "bundling bundling recommend recommend"
+        "vendor vendor events payments"
+        "toolbox toolbox toolbox toolbox"
+        "stats stats stats stats"
+        "plan plan plan plan";}
+    }
+    .summary{grid-area:header}
+    .search{grid-area:search}
+    .categories{grid-area:categories}
+    .bundling{grid-area:bundling}
+    .recommend{grid-area:recommend}
+    .vendor{grid-area:vendor}
+    .events{grid-area:events}
+    .payments{grid-area:payments}
+    .toolbox{grid-area:toolbox}
+    .stats{grid-area:stats}
+    .plan{grid-area:plan}
+
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,0.04);box-shadow:var(--neon-soft);backdrop-filter:blur(6px);box-sizing:border-box}
+    .card h3{color:var(--accent2);margin:0 0 8px 0}
+    .search input{width:100%;padding:12px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--txt)}
+
+    /* cards rows */
+    .list-row{display:flex;gap:12px;align-items:center}
+    .avatar-square{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent1),var(--accent2))}
+
+    /* toolbox (original simple) -- replaced below with rich toolbox content */
+    .tabs{display:flex;gap:8px;margin-bottom:12px}
+    .tab{flex:1;padding:10px;border-radius:12px;background:rgba(255,255,255,0.02);text-align:center;cursor:pointer;border:1px solid rgba(255,255,255,0.03);transition:all var(--ease-fast)}
+    .tab.active{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#04121a;box-shadow:var(--neon-soft)}
+    .toolbox-content{display:none}
+    .toolbox-content.active{display:block}
+    .list{list-style:none;padding:0;margin:0}
+    .list-item{padding:10px;border-radius:12px;margin-bottom:8px;background:rgba(255,255,255,0.02);cursor:grab;transition:transform var(--ease-fast),box-shadow var(--ease-fast)}
+    .list-item:active{cursor:grabbing}
+
+    /* budget pie */
+    .budget-pie{width:100%;height:200px}
+
+    /* responsive adjustments */
+    @media(max-width:1024px){ .hero-grid{grid-template-columns:1fr;gap:18px;padding:18px} }
+    @media(max-width:680px){
+      .nav{margin:10px 8px; border-radius:10px}
+      .brand-logo{width:32px;height:32px}
+      .hero-grid{padding:12px}
+      .card{padding:12px}
+      .avatar-square{width:48px;height:48px}
+      .btn{padding:.6rem .8rem}
+      .hero{padding-top:74px}
+    }
+
+    /* modal */
+    .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);z-index:220;opacity:0;pointer-events:none;transition:opacity var(--ease-fast)}
+    .modal.show{opacity:1;pointer-events:auto}
+    .modal .box{background:var(--card-bg);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);width:min(480px,94%)}
+
+    /* Icon-specific styles */
+    .icon-wrap{
+      width: var(--icon-size);
+      height: var(--icon-size);
+      display:inline-grid;
+      place-items:center;
+      border-radius:10px;
+      background: linear-gradient(135deg, rgba(8,217,255,0.12), rgba(123,92,255,0.08));
+      box-shadow: 0 8px 24px rgba(8,217,255,0.06), 0 2px 8px rgba(123,92,255,0.04);
+      padding:6px;
+      flex: 0 0 auto;
+    }
+    .icon-wrap.small{ width:30px; height:30px; padding:4px; border-radius:8px }
+    .icon-wrap img{
+      width: var(--icon-img-size);
+      height: var(--icon-img-size);
+      object-fit:contain;
+      display:block;
+    }
+    .icon-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:.6rem;
+      padding:6px 10px;
+      border-radius:10px;
+      background: rgba(255,255,255,0.02);
+      border:1px solid rgba(255,255,255,0.03);
+      cursor:pointer;
+      color:var(--muted);
+    }
+    .icon-btn:focus{outline:3px solid rgba(8,217,255,0.22);outline-offset:3px}
+
+    /* =========================
+       Toolbox-rich styles (scoped under .card.toolbox-content-full)
+       ========================= */
+    /* We'll put toolbox content inside a container with class .toolbox-full so these rules won't affect rest */
+    .toolbox-full { padding: 6px; }
+    .toolbox-full .tabs-full { display:flex; gap:8px; margin-bottom:12px; }
+    .toolbox-full .tab-full { flex:1; padding:8px; border-radius:12px; background:rgba(255,255,255,0.02); text-align:center; cursor:pointer; border:1px solid rgba(255,255,255,0.03); color:var(--muted); font-weight:700; }
+    .toolbox-full .tab-full.active { background: linear-gradient(90deg,var(--accent1),var(--accent2)); color:#04121a; box-shadow:var(--neon-soft); }
+
+    .toolbox-full .card-inner { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:12px; padding:12px; box-shadow:none; border:1px solid rgba(255,255,255,0.03); }
+    /* Rundown list */
+    .toolbox-full .rundown-list { display:flex; flex-direction:column; gap:8px; max-height:240px; overflow:auto; padding-right:6px; }
+    .toolbox-full .r-item { display:flex; gap:8px; padding:8px; border-radius:10px; background:linear-gradient(90deg, rgba(8,217,255,0.03), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.03); align-items:center; }
+    .toolbox-full .time { width:64px; font-weight:700; color:var(--accent2); }
+    .toolbox-full .small-btn { font-size:12px; padding:4px 8px; border-radius:8px; border:none; background:rgba(255,255,255,0.03); color:var(--muted); cursor:pointer; }
+
+    /* Budget inside toolbox */
+    .toolbox-full .budget-controls { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+    .toolbox-full input[type="number"], .toolbox-full input[type="text"], .toolbox-full select { padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:var(--txt); min-width:0; }
+
+    .toolbox-full .chart-wrap { display:flex; justify-content:center; margin-top:8px; }
+    .toolbox-full svg.pie { width:180px; height:180px; }
+
+    .toolbox-full table { width:100%; border-collapse:collapse; color:var(--txt); }
+    .toolbox-full th, .toolbox-full td { padding:8px; text-align:left; font-size:13px; color:var(--muted) }
+
+    /* Checklist */
+    .toolbox-full .chk-list { display:flex; flex-direction:column; gap:8px; max-height:180px; overflow:auto; padding-right:6px; }
+    .toolbox-full .chk-item { display:flex; align-items:center; gap:8px; padding:8px; border-radius:10px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03); }
+
+    /* Mobile specific tweaks for toolbox */
+    @media(max-width:680px){
+      .toolbox-full .time { width:56px; font-size:13px; }
+      .toolbox-full .r-item { padding:6px; }
+      .toolbox-full .chart-wrap { padding:6px; }
+    }
+
+    /* reduced motion */
+    @media(prefers-reduced-motion:reduce){ *{transition:none!important} .list-item{cursor:default} .star{animation:none} }
+  </style>
+</head>
+<body>
+  <!-- STAR FIELD -->
+  <div id="starField" class="star-field" aria-hidden="true"></div>
+
+  <!-- NAV -->
+  <nav class="nav" role="navigation" aria-label="Primary">
+    <div class="container" style="display:flex;align-items:center;gap:12px">
+      <div class="brand" id="logoBtn" role="button" tabindex="0" aria-controls="sideNav" aria-expanded="false" title="Toggle sidebar">
+        <div class="brand-logo" aria-hidden="true"></div>
+        <div style="display:flex;flex-direction:column;line-height:1"><b>HeaVenTly</b><small style="color:var(--muted);font-weight:600">Client</small></div>
+      </div>
+
+      <div style="margin-left:20px;color:var(--muted);display:none" id="navContext">Dashboard</div>
+
+      <!-- Header actions: merged to include icon buttons (images + fallback) -->
+      <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+        <!-- Notifications: uses icon-btn/icon-wrap + unreadCount (id preserved) -->
+        <button class="icon-btn" title="Notifications" id="btnNotif" aria-label="Notifications">
+          <span class="icon-wrap small" title="Notifications">
+            <img alt="notif" id="img_notif" src="file:///D:/download%20D/heavently/assets/img/icon/notif_icon.png"
+                 onerror="this.onerror=null;this.src='assets/img/icon/notif_icon.png'">
+          </span>
+          <span id="unreadCount" style="font-weight:700;color:var(--muted);font-size:.88rem">3</span>
+        </button>
+
+        <!-- Chatbot: icon style, calls openChatbot -->
+        <button class="icon-btn" title="Chat" id="chatBtn" aria-label="Chat" onclick="openChatbot()">
+          <span class="icon-wrap small" title="Chatbot">
+            <img alt="chatbot" id="img_chatbot" src="file:///D:/download%20D/heavently/assets/img/icon/chatbot_icon.png"
+                 onerror="this.onerror=null;this.src='assets/img/icon/chatbot_icon.png'">
+          </span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- SIDEBAR -->
+  <aside id="sideNav" aria-label="Main navigation" style="position:fixed;left:18px;top:96px;z-index:200;width:300px;height:calc(100vh - 132px);transform:translateX(-110%);opacity:0;transition:transform 320ms cubic-bezier(.16,.9,.3,1),opacity 240ms ease;backdrop-filter:blur(8px);border-radius:12px;padding:16px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);box-shadow:var(--neon-soft);overflow:auto">
+    <div style="font-weight:800;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px">HeaVenTly • Client</div>
+
+    <nav aria-label="Sidebar links">
+      <div style="margin-bottom:12px">
+        <h4 style="font-size:.82rem;color:var(--muted);text-transform:uppercase;margin-bottom:6px">Navigation</h4>
+        <a class="nav-link" href="events.html" style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;color:var(--txt)">
+          <span class="icon-wrap" title="My Events"><img alt="my events" src="file:///D:/download%20D/heavently/assets/img/icon/myevent_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/myevent_icon.png'"></span>
+          <span>My Events</span>
+        </a>
+        <a class="nav-link" href="vendors.html" style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;color:var(--txt)">
+          <span class="icon-wrap" title="Vendors"><img alt="vendors" src="file:///D:/download%20D/heavently/assets/img/icon/vendor_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/vendor_icon.png'"></span>
+          <span>Vendors</span>
+        </a>
+        <a class="nav-link" href="payments.html" style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;color:var(--txt)">
+          <span class="icon-wrap" title="Payments"><img alt="payments" src="file:///D:/download%20D/heavently/assets/img/icon/payment_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/payment_icon.png'"></span>
+          <span>Payments</span>
+        </a>
+        <a class="nav-link" href="profile.html" style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;color:var(--txt)">
+          <span class="icon-wrap" title="Profile"><img alt="profile" src="file:///D:/download%20D/heavently/assets/img/icon/profil_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/profil_icon.png'"></span>
+          <span>Profile</span>
+        </a>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <h4 style="font-size:.82rem;color:var(--muted);text-transform:uppercase;margin-bottom:6px">Primary</h4>
+        <a class="nav-link" href="dashboard_client.html" style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;color:var(--txt)">
+          <span class="icon-wrap" title="Dashboard"><img alt="dashboard" src="file:///D:/download%20D/heavently/assets/img/icon/dashboard_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/dashboard_icon.png'"></span>
+          <span>Homepage</span>
+        </a>
+        <a class="nav-link" href="events_new.html" style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;color:var(--txt)">
+          <span class="icon-wrap" title="Create Event"><img alt="create event" src="file:///D:/download%20D/heavently/assets/img/icon/buatevent_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/buatevent_icon.png'"></span>
+          <span>Buat Event</span>
+        </a>
+        <a class="nav-link" href="#" style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;color:var(--txt)">
+          <span class="icon-wrap" title="Toolbox"><img alt="toolbox" src="file:///D:/download%20D/heavently/assets/img/icon/toolbox_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/toolbox_icon.png'"></span>
+          <span>Toolbox</span>
+        </a>
+        <a class="nav-link" href="#" style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;color:var(--txt)">
+          <span class="icon-wrap" title="Saved Vendors"><img alt="saved vendors" src="file:///D:/download%20D/heavently/assets/img/icon/savedvendor_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/savedvendor_icon.png'"></span>
+          <span>Saved Vendors</span>
+        </a>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <h4 style="font-size:.82rem;color:var(--muted);text-transform:uppercase;margin-bottom:6px">Accessibility</h4>
+        <a class="nav-link" href="#" id="toggleContrast" style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;color:var(--txt)"><span class="icon-wrap" title="High Contrast"><img alt="contrast" src="file:///D:/download%20D/heavently/assets/img/icon/contrast_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/contrast_icon.png'"></span><span>High Contrast</span></a>
+        <a class="nav-link" href="#" id="toggleLargeText" style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;color:var(--txt)"><span class="icon-wrap" title="Large Text"><img alt="large text" src="file:///D:/download%20D/heavently/assets/img/icon/large_text_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/large_text_icon.png'"></span><span>Large Text</span></a>
+        <a class="nav-link" href="#" id="toggleNotifications" style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;color:var(--txt)"><span class="icon-wrap" title="Notification Settings"><img alt="notif settings" src="file:///D:/download%20D/heavently/assets/img/icon/notifsetting_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/notifsetting_icon.png'"></span><span>Notification Settings</span></a>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <h4 style="font-size:.82rem;color:var(--muted);text-transform:uppercase;margin-bottom:6px">Account</h4>
+        <a class="nav-link" href="#" id="showLogout" style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;color:var(--txt)"><span class="icon-wrap" title="Logout"><img alt="logout" src="file:///D:/download%20D/heavently/assets/img/icon/logout_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/logout_icon.png'"></span><span>Logout</span></a>
+        <a class="nav-link" href="account_personal.html" style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;color:var(--txt)"><span class="icon-wrap" title="Personal Information"><img alt="personal info" src="file:///D:/download%20D/heavently/assets/img/icon/P_information_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/P_information_icon.png'"></span><span>Personal Information</span></a>
+        <a class="nav-link" href="account_security.html" style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;color:var(--txt)"><span class="icon-wrap" title="Security"><img alt="security" src="file:///D:/download%20D/heavently/assets/img/icon/security_icon.png" onerror="this.onerror=null;this.src='assets/img/icon/security_icon.png'"></span><span>Security</span></a>
+      </div>
+    </nav>
+
+    <div style="position:absolute;left:16px;bottom:12px;color:var(--muted);font-size:.8rem">
+      v1.0 (prod) | <a href="#" style="color:var(--muted)">Terms</a> | <a href="#" style="color:var(--muted)">Privacy</a>
+    </div>
+  </aside>
+
+  <!-- overlay -->
+  <div id="overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.48);backdrop-filter: blur(2px);z-index:150;opacity:0;pointer-events:none;transition:opacity 240ms ease"></div>
+
+  <!-- HERO -->
+  <header class="hero" role="banner" aria-label="Hero section">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">Next-gen Event Platform</div>
+        <h1 class="hero-title">Plan, Book, and Glow — Events done in minutes.</h1>
+        <p class="lead">HeaVenTly menyatukan <strong>Client</strong>, <strong>Vendor</strong>, dan <strong>Event Organizer</strong> dalam satu platform. Kelola vendor, timeline, dan pembayaran dengan cepat.</p>
+        <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="location.href='events_new.html'">Start Planning</button>
+          <a class="btn btn-ghost" href="#toolbox">Open Toolbox</a>
+        </div>
+      </div>
+
+      <aside class="device-card" aria-labelledby="quickActions">
+        <h3 id="quickActions" style="margin:0 0 8px 0">Quick Actions</h3>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="search" placeholder="Search venue, vendor, city…" aria-label="Search" style="flex:1;padding:10px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.05);color:var(--txt)">
+          <button class="btn btn-primary" onclick="location.href='search.html'">Search</button>
+        </div>
+        <div style="margin-top:10px;color:var(--muted)">Preview shortcuts & quick bookings — open the full dashboard below to manage events.</div>
+      </aside>
+    </div>
+  </header>
+
+  <!-- DASHBOARD -->
+  <main class="dashboard container" id="mainContent">
+    <!-- header summary -->
+    <section class="card summary" aria-label="Welcome">
+      <h2 style="margin:0;font-size:1.3rem">Welcome to HeaVenTly</h2>
+      <p style="color:var(--muted)">Manage your events, vendors, and payments seamlessly. Use sidebar (logo) to open navigation.</p>
+    </section>
+
+    <!-- search -->
+    <section class="card search" aria-label="Search">
+      <input type="search" placeholder="Search vendors, services, or locations" aria-label="Search main">
+    </section>
+
+    <!-- categories -->
+    <section class="card categories" aria-label="Categories">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
+        <div style="padding:12px;border-radius:12px;background:rgba(255,255,255,0.02);text-align:center">Catering</div>
+        <div style="padding:12px;border-radius:12px;background:rgba(255,255,255,0.02);text-align:center">Decoration</div>
+        <div style="padding:12px;border-radius:12px;background:rgba(255,255,255,0.02);text-align:center">Photography</div>
+        <div style="padding:12px;border-radius:12px;background:rgba(255,255,255,0.02);text-align:center">Event Organizer</div>
+      </div>
+    </section>
+
+    <!-- bundling -->
+    <section class="card bundling" aria-label="Bundling">
+      <h3>Paket Bundling Acara</h3>
+      <div class="list-row" style="margin-top:8px">
+        <div class="avatar-square" aria-hidden="true"></div>
+        <div style="flex:1">
+          <div style="font-weight:700">Wedding Starter Pack</div>
+          <div style="color:var(--muted)">Venue + Catering + Dekorasi • Rp 15,000,000</div>
+        </div>
+        <a class="btn btn-primary" href="bundle_1.html">Detail</a>
+      </div>
+      <div class="list-row" style="margin-top:8px">
+        <div class="avatar-square" aria-hidden="true"></div>
+        <div style="flex:1">
+          <div style="font-weight:700">Seminar Pro Pack</div>
+          <div style="color:var(--muted)">Ruang Seminar + MC + Sound System • Rp 10,000,000</div>
+        </div>
+        <a class="btn btn-primary" href="bundle_2.html">Detail</a>
+      </div>
+    </section>
+
+    <!-- recommendations -->
+    <section class="card recommend" aria-label="Recommendations">
+      <h3>Recommendations</h3>
+      <img src="https://picsum.photos/seed/wedding/900/300" alt="Recommendation image" style="border-radius:10px;margin-top:8px">
+      <div style="margin-top:10px">
+        <div style="font-weight:700">Wedding Reception</div>
+        <div style="color:var(--muted)">Venue, decoration, catering</div>
+        <div style="color:var(--accent1);font-weight:800">Rp 25,000,000</div>
+      </div>
+    </section>
+
+    <!-- vendor -->
+    <section class="card vendor" aria-label="Vendor recommendations">
+      <h3>EO Vendor Recommendations</h3>
+      <div style="margin-top:8px" class="list-row">
+        <div class="avatar-square" aria-hidden="true"></div>
+        <div style="flex:1">
+          <div style="font-weight:700">Premier EO</div>
+          <div style="color:var(--muted)">★ 4.8 (120 reviews)</div>
+        </div>
+        <a class="btn btn-ghost" href="vendor_1.html">View</a>
+      </div>
+    </section>
+
+    <!-- events -->
+    <section class="card events" aria-label="Events">
+      <h3>Your Events</h3>
+      <div style="margin-top:8px"><strong>Wedding Celebration</strong> — 2025-09-15<br><span style="color:var(--accent1)">Ongoing</span></div>
+      <div style="margin:8px 0 0 0"><strong>Corporate Seminar</strong> — 2025-08-20<br><span style="color:var(--mint)">Completed</span></div>
+    </section>
+
+    <!-- payments -->
+    <section class="card payments" aria-label="Payments snapshot">
+      <h3>Payments Snapshot</h3>
+      <div style="display:flex;justify-content:space-between;margin-top:8px"><span>Wedding Catering</span><span style="color:var(--muted)">Rp 8,000,000 (Paid)</span></div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px"><span>Venue Booking</span><span style="color:#ff6b6b">Rp 12,000,000 (Due)</span></div>
+    </section>
+
+    <!-- toolbox: REPLACED with full toolkit card (integrated toolbox.html content) -->
+    <section class="card toolbox" id="toolbox" aria-label="Toolbox">
+      <div class="toolbox-full">
+        <div class="tabs-full" role="tablist" aria-label="Toolbox Tabs">
+          <div class="tab-full active" role="tab" aria-selected="true" data-tab="rundown">Rundown</div>
+          <div class="tab-full" role="tab" data-tab="budget">Budget</div>
+          <div class="tab-full" role="tab" data-tab="checklist">Checklist</div>
+          <div class="tab-full" role="tab" data-tab="permits">Permits</div>
+        </div>
+
+        <div class="card-inner">
+          <!-- RUNDOWN -->
+          <div id="rundown" class="tb-panel" style="display:block" aria-labelledby="Rundown">
+            <div class="kicker">Rundown Builder — buat timeline acara dengan cepat</div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <input id="rd-time" type="time" aria-label="Waktu acara" style="min-width:95px" />
+              <input id="rd-title" type="text" placeholder="Judul (contoh: Opening Speech)" aria-label="Judul acara" style="flex:1" />
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <input id="rd-role" type="text" placeholder="Penanggung jawab (EO / vendor)" aria-label="Role" style="flex:1" />
+              <button class="btn" onclick="addRundown()">Tambah</button>
+            </div>
+
+            <div class="rundown-list" id="rundownList" aria-live="polite" aria-label="Daftar rundown" style="margin-top:10px">
+              <!-- dinamika -->
+            </div>
+
+            <div style="display:flex;gap:8px;margin-top:10px;justify-content:space-between;align-items:center">
+              <button class="btn btn-ghost" onclick="clearRundown()">Reset</button>
+              <div style="color:var(--muted);font-size:12px">Autosave • Versi: <strong id="rv">v1</strong></div>
+            </div>
+          </div>
+
+          <!-- BUDGET -->
+          <div id="budget" class="tb-panel" style="display:none" aria-labelledby="Budget">
+            <div class="kicker">Budget Estimator — simulasi biaya real-time & kategori</div>
+            <div class="budget-controls" style="margin-top:8px">
+              <input id="guestCount" type="number" min="0" placeholder="Jumlah tamu" />
+              <input id="costPerGuest" type="number" min="0" placeholder="Biaya/orang (Rp)" />
+              <input id="venueCost" type="number" min="0" placeholder="Biaya venue (Rp)" />
+              <input id="extras" type="number" min="0" placeholder="Extras (Rp)" />
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+              <div style="color:var(--muted)">Estimasi total cepat</div>
+              <div style="font-weight:800;color:var(--accent1)" id="budgetTotal">Rp 0</div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn" onclick="calculateBudget()">Hitung</button>
+              <button class="btn btn-ghost" onclick="resetBudget()">Reset</button>
+              <button class="btn btn-ghost" onclick="saveBudget()">Simpan</button>
+            </div>
+
+            <div class="chart-wrap" style="margin-top:10px">
+              <svg id="pie" class="pie" viewBox="-110 -110 220 220" role="img" aria-label="Pie chart"></svg>
+            </div>
+
+            <div style="margin-top:10px;overflow:auto;max-height:220px">
+              <table aria-label="Tabel kategori" style="width:100%">
+                <thead><tr><th>Kategori</th><th>Estimasi</th><th>Realisasi</th><th>Selisih</th><th>Progres</th></tr></thead>
+                <tbody id="tableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- CHECKLIST -->
+          <div id="checklist" class="tb-panel" style="display:none" aria-labelledby="Checklist">
+            <div class="kicker">Checklist Manager — assign & reminder</div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <input id="chkText" type="text" placeholder="Tambah item (contoh: sound check)" />
+              <button class="btn" onclick="addCheck()">Tambah</button>
+            </div>
+            <div class="chk-list" id="checkList" aria-live="polite" style="margin-top:10px"></div>
+
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="btn" onclick="markAll()">Centang Semua</button>
+              <button class="btn btn-ghost" onclick="clearChecklist()">Hapus Selesai</button>
+            </div>
+          </div>
+
+          <!-- PERMITS -->
+          <div id="permits" class="tb-panel" style="display:none" aria-labelledby="Permits">
+            <div class="kicker">Permits & Compliance Hub — pengingat deadline & status</div>
+            <div style="margin-top:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:10px;background:rgba(255,255,255,0.02);margin-bottom:8px">
+                <div>
+                  <div style="font-weight:700">Izin Keramaian</div>
+                  <div style="color:var(--muted);font-size:12px">Dinas Kota • Lead: EO • Lama proses: 7 hari kerja</div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <div class="icon-wrap small" id="p1-badge" style="background:var(--accent1);color:#04121a;padding:6px 8px;border-radius:12px">pending</div>
+                  <button class="btn btn-ghost" onclick="togglePermit('p1')">Ubah</button>
+                </div>
+              </div>
+
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:10px;background:rgba(255,255,255,0.02);margin-bottom:8px">
+                <div>
+                  <div style="font-weight:700">Hak Cipta Musik</div>
+                  <div style="color:var(--muted);font-size:12px">Publisher • Lead: EO • Lama proses: 3 hari</div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <div class="icon-wrap small" id="p2-badge" style="background:#f59e0b;color:#04121a;padding:6px 8px;border-radius:12px">review</div>
+                  <button class="btn btn-ghost" onclick="togglePermit('p2')">Ubah</button>
+                </div>
+              </div>
+
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:10px;background:rgba(255,255,255,0.02);margin-bottom:8px">
+                <div>
+                  <div style="font-weight:700">Izin Venue</div>
+                  <div style="color:var(--muted);font-size:12px">Kontrak & asuransi • Lead: Vendor Venue</div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <div class="icon-wrap small" id="p3-badge" style="background:#16a34a;color:#04121a;padding:6px 8px;border-radius:12px">done</div>
+                  <button class="btn btn-ghost" onclick="togglePermit('p3')">Ubah</button>
+                </div>
+              </div>
+
+              <div style="color:var(--muted);font-size:12px">Sistem akan mengirim pengingat otomatis pada H-7 dan H-1 sebelum deadline.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- stats -->
+    <section class="card stats" aria-label="Stats">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+        <div style="flex:1;min-width:140px;text-align:center">
+          <div style="font-weight:800;color:var(--accent2);font-size:1.2rem">10</div>
+          <div style="color:var(--muted)">Active Events</div>
+        </div>
+        <div style="flex:1;min-width:140px;text-align:center">
+          <div style="font-weight:800;color:var(--accent1);font-size:1.2rem">25</div>
+          <div style="color:var(--muted)">Connected Vendors</div>
+        </div>
+        <div style="flex:1;min-width:140px;text-align:center">
+          <div style="font-weight:800;color:var(--mint);font-size:1.2rem">98%</div>
+          <div style="color:var(--muted)">Satisfaction</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- plan -->
+    <section class="card plan" aria-label="Plan">
+      <div style="display:flex;justify-content:center">
+        <button class="btn btn-primary" onclick="location.href='events_new.html'">Plan New Event</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- footer -->
+  <footer style="padding:36px 0;border-top:1px solid rgba(255,255,255,0.03);margin-top:28px">
+    <div class="container" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted)">
+      <div style="display:flex;align-items:center;gap:12px"><div style="width:44px;height:44px;border-radius:10px;background:conic-gradient(from 220deg,var(--accent1),var(--accent2))"></div><strong>HeaVenTly</strong></div>
+      <div>© <span id="year">2025</span> HeaVenTly — All rights reserved</div>
+    </div>
+  </footer>
+
+  <!-- logout modal (kept full version) -->
+  <div id="logoutModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="box">
+      <h3>Confirm Logout</h3>
+      <p style="color:var(--muted)">Are you sure you want to log out? This will end your current session.</p>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+        <button class="btn btn-ghost" id="logoutCancel">Cancel</button>
+        <button class="btn btn-primary" id="logoutConfirm">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* -------------------
+       Utilities & init (combined)
+       ------------------- */
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+    // set year (from full file)
+    const yearEl = document.getElementById('year');
+    if(yearEl) yearEl.textContent = new Date().getFullYear();
+
+    /* -------------------
+       Star field (from full file, robust)
+       ------------------- */
+    (function createStars(count=120){
+      const field = $('#starField');
+      if(!field) return;
+      function regen(){
+        field.innerHTML = '';
+        const isMobile = window.matchMedia('(max-width:760px)').matches;
+        const n = isMobile ? Math.max(20, Math.floor(count*0.45)) : count;
+        for(let i=0;i<n;i++){
+          const s = document.createElement('div');
+          s.className = 'star';
+          const size = (Math.random()*2) + 0.6;
+          s.style.width = s.style.height = size + 'px';
+          s.style.left = (Math.random()*100) + 'vw';
+          s.style.top = (Math.random()*100) + 'vh';
+          const dur = (Math.random()*3 + 2).toFixed(2);
+          const delay = (Math.random()*2).toFixed(2);
+          s.style.animation = `starTw ${dur}s linear ${delay}s infinite`;
+          s.style.opacity = 0.12 + Math.random()*0.9;
+          field.appendChild(s);
+        }
+      }
+      regen();
+      let t;
+      window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(regen, 160); });
+    })();
+
+    /* -------------------
+       Sidebar open/close + overlay (full file logic)
+       ------------------- */
+    const logoBtn = $('#logoBtn');
+    const side = $('#sideNav');
+    const overlay = $('#overlay');
+    const logoutModal = $('#logoutModal');
+
+    let sideOpen = false;
+    function openSide(){
+      if(!side) return;
+      side.style.transform = 'translateX(0)';
+      side.style.opacity = '1';
+      if(overlay) { overlay.style.display = 'block'; setTimeout(()=> overlay.style.opacity = '1', 10); }
+      if(logoBtn) logoBtn.setAttribute('aria-expanded','true');
+      sideOpen = true;
+      // focus trap: focus first link
+      const first = side.querySelector('.nav-link');
+      if(first) first.focus();
+    }
+    function closeSide(){
+      if(!side) return;
+      side.style.transform = 'translateX(-110%)';
+      side.style.opacity = '0';
+      if(overlay) { overlay.style.opacity = '0'; setTimeout(()=> overlay.style.display = 'none', 260); }
+      if(logoBtn) logoBtn.setAttribute('aria-expanded','false');
+      sideOpen = false;
+    }
+    function toggleSide(){ sideOpen ? closeSide() : openSide(); }
+
+    if(logoBtn){
+      logoBtn.addEventListener('click', toggleSide);
+      logoBtn.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleSide(); }});
+    }
+    if(overlay) overlay.addEventListener('click', closeSide);
+    document.addEventListener('keydown', (e)=> { if(e.key === 'Escape'){ if(sideOpen) closeSide(); if(logoutModal && logoutModal.classList.contains('show')) closeLogout(); }});
+
+    // close sidebar on nav click (nicety)
+    $$('.nav-link').forEach(a => a.addEventListener('click', () => { closeSide(); }));
+
+    /* -------------------
+       TOOLBOX tab switching (custom)
+       ------------------- */
+    (function toolboxTabs(){
+      const tabs = $$('.toolbox-full .tab-full');
+      const panels = $$('.tb-panel');
+      tabs.forEach(tab=>{
+        tab.addEventListener('click', ()=>{
+          tabs.forEach(t=>t.classList.remove('active'));
+          tab.classList.add('active');
+          const name = tab.dataset.tab;
+          panels.forEach(p=> p.style.display = (p.id === name) ? 'block' : 'none');
+        });
+      });
+    })();
+
+    /* -------------------
+       Drag & drop (rundown & checklist)
+       ------------------- */
+    function enableDrag(listSelector){
+      const list = document.querySelector(listSelector);
+      if(!list) return;
+      // ensure draggable attribute
+      list.querySelectorAll('.list-item, .r-item, .chk-item').forEach(li => li.setAttribute('draggable','true'));
+      let dragging = null;
+      list.addEventListener('dragstart', (e) => {
+        const li = e.target.closest('.r-item, .list-item, .chk-item');
+        if(!li) return;
+        dragging = li;
+        li.classList.add('dragging');
+        try{ e.dataTransfer.setData('text/plain','drag'); }catch(e){}
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      list.addEventListener('dragend', (e) => { if(dragging){ dragging.classList.remove('dragging'); dragging = null; }});
+      list.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        if(!dragging) return;
+        const target = e.target.closest('.r-item, .list-item, .chk-item');
+        if(!target || target === dragging) return;
+        const rect = target.getBoundingClientRect();
+        const after = (e.clientY - rect.top) > rect.height/2;
+        if(after) target.parentNode.insertBefore(dragging, target.nextSibling);
+        else target.parentNode.insertBefore(dragging, target);
+      });
+    }
+
+    // We'll enable drag for rundowns and checklist
+    setTimeout(()=>{ enableDrag('#rundownList'); enableDrag('#checkList'); }, 250);
+
+    /* -------------------
+       Toolbox logic (rundown, budget, checklist, permits)
+       This code is adapted from toolbox.html but kept inside the dashboard file.
+       ------------------- */
+
+    // RUNDOWN
+    let rundown = [];
+    const rvEl = document.getElementById('rv');
+
+    function addRundown(){
+      const time = document.getElementById('rd-time').value;
+      const title = document.getElementById('rd-title').value.trim();
+      const role = document.getElementById('rd-role').value.trim() || 'EO';
+      if(!time || !title){ alert('Isi waktu dan judul rundown.'); return; }
+      rundown.push({time,title,role});
+      renderRundown();
+      document.getElementById('rd-title').value=''; document.getElementById('rd-role').value='';
+      autosave(); incrementVersion();
+    }
+
+    function renderRundown(){
+      const list = document.getElementById('rundownList');
+      if(!list) return;
+      list.innerHTML = '';
+      rundown.forEach((r,i)=>{
+        const item = document.createElement('div'); item.className='r-item';
+        item.innerHTML = `
+          <div class="time">${escapeHtml(r.time)}</div>
+          <div class="meta" style="flex:1">
+            <div style="font-weight:700">${escapeHtml(r.title)}</div>
+            <div style="color:var(--muted);font-size:12px">${escapeHtml(r.role)}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <button class="small-btn" onclick="moveUp(${i})">▲</button>
+            <button class="small-btn" onclick="moveDown(${i})">▼</button>
+          </div>`;
+        list.appendChild(item);
+      });
+    }
+
+    function moveUp(i){ if(i<=0) return; [rundown[i-1],rundown[i]]=[rundown[i],rundown[i-1]]; renderRundown(); autosave(); incrementVersion(); }
+    function moveDown(i){ if(i>=rundown.length-1) return; [rundown[i+1],rundown[i]]=[rundown[i],rundown[i+1]]; renderRundown(); autosave(); incrementVersion(); }
+    function clearRundown(){ if(!confirm('Reset semua rundown?')) return; rundown=[]; renderRundown(); autosave(); incrementVersion(); }
+
+    // CHECKLIST
+    let checklist = [];
+    function addCheck(){
+      const v = document.getElementById('chkText').value.trim();
+      if(!v) return;
+      checklist.push({text:v,done:false});
+      document.getElementById('chkText').value='';
+      renderChecks(); autosave();
+    }
+    function renderChecks(){
+      const el = document.getElementById('checkList'); if(!el) return;
+      el.innerHTML='';
+      checklist.forEach((c,i)=>{
+        const row = document.createElement('div'); row.className='chk-item';
+        row.innerHTML = `<input type="checkbox" ${c.done?'checked':''} onchange="toggleCheck(${i})" aria-label="centang">
+                         <div style="flex:1">${escapeHtml(c.text)}</div>
+                         <button class="small-btn" onclick="removeCheck(${i})">hapus</button>`;
+        el.appendChild(row);
+      });
+    }
+    function toggleCheck(i){ checklist[i].done = !checklist[i].done; renderChecks(); autosave(); }
+    function removeCheck(i){ checklist.splice(i,1); renderChecks(); autosave(); }
+    function markAll(){ checklist = checklist.map(c=>({text:c.text,done:true})); renderChecks(); autosave(); }
+    function clearChecklist(){ checklist = checklist.filter(c=>!c.done); renderChecks(); autosave(); }
+
+    // PERMITS
+    function togglePermit(id){
+      const badge = document.getElementById(id+'-badge');
+      if(!badge) return;
+      const cur = (badge.textContent||'').trim().toLowerCase();
+      let next = 'pending';
+      if(cur==='pending') next='review';
+      else if(cur==='review') next='done';
+      else next='pending';
+      badge.textContent = next;
+      if(next==='pending') badge.style.background = 'var(--accent1)';
+      if(next==='review') badge.style.background = '#f59e0b';
+      if(next==='done') badge.style.background = '#16a34a';
+      autosave();
+    }
+
+    // BUDGET (simple simulator & pie rendering)
+    let categories = [
+      { id: 'catering', name:'Catering', estimate:5000000, actual:4500000, color:'#2f9fff' },
+      { id: 'decor', name:'Dekorasi', estimate:3000000, actual:3200000, color:'#24c7d6' },
+      { id: 'sound', name:'Sound System', estimate:1200000, actual:900000, color:'#7ce2c8' },
+      { id: 'photo', name:'Photography', estimate:1500000, actual:1300000, color:'#f7a84a' },
+      { id: 'unallocated', name:'Unallocated', estimate:0, actual:0, color:'#cbd5e1' }
+    ];
+
+    const pieEl = document.getElementById('pie');
+    const tableBody = document.getElementById('tableBody');
+    const totalEstimateEl = document.getElementById('totalEstimate');
+    const totalActualEl = document.getElementById('totalActual');
+    const percentUsedEl = document.getElementById('percentUsed');
+
+    function calculateBudget(){
+      const guests = Number(document.getElementById('guestCount').value) || 0;
+      const per = Number(document.getElementById('costPerGuest').value) || 0;
+      const venue = Number(document.getElementById('venueCost').value) || 0;
+      const extras = Number(document.getElementById('extras').value) || 0;
+      const total = guests*per + venue + extras;
+      const display = document.getElementById('budgetTotal');
+      if(display) display.textContent = 'Rp ' + numberWithCommas(total);
+      const un = categories.find(c => c.id === 'unallocated');
+      if(un){
+        un.estimate = total;
+        updateAll();
+      }
+    }
+    function resetBudget(){ document.getElementById('guestCount').value=''; document.getElementById('costPerGuest').value=''; document.getElementById('venueCost').value=''; document.getElementById('extras').value=''; const d = document.getElementById('budgetTotal'); if(d) d.textContent='Rp 0'; }
+    function saveBudget(){ alert('Budget disimpan (demo). Integrasikan ke backend untuk simpan nyata.'); autosave(); }
+
+    function renderPie(data){
+      if(!pieEl) return;
+      while(pieEl.firstChild) pieEl.removeChild(pieEl.firstChild);
+      const total = data.reduce((s,x)=>s + Math.max(0,x.estimate),0);
+      if(total <= 0){
+        const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+        txt.setAttribute('x',0); txt.setAttribute('y',4); txt.setAttribute('text-anchor','middle');
+        txt.setAttribute('fill','#9aa7b3'); txt.setAttribute('font-size','12');
+        txt.textContent = 'No data';
+        pieEl.appendChild(txt); return;
+      }
+      let start = -Math.PI/2;
+      data.forEach((d,i)=>{
+        const v = Math.max(0,d.estimate);
+        const angle = (v/total) * Math.PI*2;
+        const x1 = Math.cos(start) * 90, y1 = Math.sin(start) * 90;
+        const x2 = Math.cos(start + angle) * 90, y2 = Math.sin(start + angle) * 90;
+        const large = angle > Math.PI ? 1 : 0;
+        const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+        const dpath = `M 0 0 L ${x1} ${y1} A 90 90 0 ${large} 1 ${x2} ${y2} Z`;
+        path.setAttribute('d', dpath);
+        path.setAttribute('fill', d.color);
+        path.setAttribute('opacity', 0.98);
+        pieEl.appendChild(path);
+        start += angle;
+      });
+    }
+
+    function renderTable(data){
+      if(!tableBody) return;
+      tableBody.innerHTML = '';
+      data.forEach(d=>{
+        const tr = document.createElement('tr');
+        const diff = d.actual - d.estimate;
+        const progressPct = d.estimate > 0 ? Math.min(100, Math.round((d.actual / d.estimate) * 100)) : 0;
+        tr.innerHTML = `
+          <td>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:36px;height:36px;border-radius:10px;background:${d.color};display:flex;align-items:center;justify-content:center;color:white;font-weight:800">${d.name.split(' ').map(w=>w[0]).slice(0,2).join('')}</div>
+              <div style="flex:1">
+                <div style="font-weight:700;color:var(--accent2)">${d.name}</div>
+                <div style="color:var(--muted);font-size:12px">ID: ${d.id}</div>
+              </div>
+            </div>
+          </td>
+          <td><input class="editable" data-id="${d.id}" data-field="estimate" value="${d.estimate}" style="background:transparent;border:0;color:var(--txt);width:100%"/></td>
+          <td><input class="editable" data-id="${d.id}" data-field="actual" value="${d.actual}" style="background:transparent;border:0;color:var(--txt);width:100%"/></td>
+          <td style="color:${diff<=0? '#16a34a':'#ef4444'}">${diff<=0? formatRp(Math.abs(diff)) : formatRp(diff)}</td>
+          <td style="min-width:120px">
+            <div style="height:8px;background:rgba(255,255,255,0.04);border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,0.02)"><i style="display:block;height:100%;background:linear-gradient(90deg,var(--accent1),var(--accent2));width:${progressPct}%"></i></div>
+            <div style="font-size:11px;color:var(--muted);margin-top:6px;text-align:right">${progressPct}%</div>
+          </td>
+        `;
+        tableBody.appendChild(tr);
+      });
+
+      // attach edit handlers
+      document.querySelectorAll('.editable').forEach(inp=>{
+        inp.addEventListener('keydown', (e)=>{
+          if(e.key === 'Enter'){ e.preventDefault(); inp.blur(); }
+        });
+        inp.addEventListener('blur', (e)=>{
+          const id = inp.getAttribute('data-id');
+          const field = inp.getAttribute('data-field');
+          const val = Number(inp.value) || 0;
+          const item = categories.find(c=>c.id===id);
+          if(item && (field==='estimate' || field==='actual')){
+            item[field] = val;
+            updateAll();
+            autosave();
+          }
+        });
+        inp.addEventListener('input', (e)=>{
+          inp.value = inp.value.replace(/[^\d\-]/g,'');
+        });
+      });
+    }
+
+    function computeTotals(data){
+      const totalEstimate = data.reduce((s,x)=>s + Math.max(0,x.estimate),0);
+      const totalActual = data.reduce((s,x)=>s + Math.max(0,x.actual),0);
+      const pct = totalEstimate > 0 ? Math.min(100, (totalActual/totalEstimate)*100) : 0;
+      // There are no dedicated elements for totals on dashboard (kept from toolbox.html), but we can log or show if needed
+    }
+
+    function updateAll(){
+      const filtered = categories;
+      renderPie(filtered);
+      renderTable(filtered);
+      computeTotals(filtered);
+    }
+
+    // helpers & autosave
+    function formatRp(v){ return 'Rp ' + (v||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+    function numberWithCommas(x){ return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+    function escapeHtml(s){ return (s+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    function autosave(){
+      const data = { rundown, checklist, categories };
+      try{ localStorage.setItem('heavently_dashboard_toolbox', JSON.stringify(data)); }catch(e){}
+    }
+    function loadAutosave(){
+      try{
+        const raw = localStorage.getItem('heavently_dashboard_toolbox');
+        if(!raw) return;
+        const obj = JSON.parse(raw);
+        if(obj.rundown) { rundown = obj.rundown; renderRundown(); }
+        if(obj.checklist) { checklist = obj.checklist; renderChecks(); }
+        if(obj.categories) { categories = obj.categories; updateAll(); }
+      }catch(e){}
+    }
+
+    // version
+    let version = 1;
+    function incrementVersion(){ version++; if(rvEl) rvEl.textContent = 'v' + version; }
+
+    // small UI init
+    function saveAll(){ alert('Menyimpan semua data (demo). Integrasikan API untuk persistensi.'); autosave(); }
+    function snapshot(){ alert('Generate snapshot (demo). Gunakan html2canvas / server capture untuk produksi.'); }
+
+    /* -------------------
+       Accessibility toggles
+       ------------------- */
+    $('#toggleContrast')?.addEventListener('click', e => { e.preventDefault(); document.body.classList.toggle('high-contrast'); });
+    $('#toggleLargeText')?.addEventListener('click', e => { e.preventDefault(); document.body.classList.toggle('large-text'); });
+    $('#toggleNotifications')?.addEventListener('click', e => { e.preventDefault(); alert('Notification settings (placeholder)'); });
+
+    /* -------------------
+       Logout modal
+       ------------------- */
+    $('#showLogout')?.addEventListener('click', (e) => { e.preventDefault(); $('#logoutModal').classList.add('show'); $('#logoutModal').setAttribute('aria-hidden','false'); $('#logoutCancel').focus(); });
+    $('#logoutCancel')?.addEventListener('click', () => { closeLogout(); });
+    $('#logoutConfirm')?.addEventListener('click', () => { localStorage.removeItem('authenticated'); location.href='landing.html'; });
+    function closeLogout(){ $('#logoutModal').classList.remove('show'); $('#logoutModal').setAttribute('aria-hidden','true'); }
+
+    /* -------------------
+       Chatbot placeholder & unread
+       ------------------- */
+    function openChatbot(){ const w = alert('Chatbot opened — placeholder'); }
+    window.openChatbot = openChatbot;
+    (function setUnread(){ const el = $('#unreadCount'); if(el) el.textContent = '3'; })();
+
+    /* -------------------
+       Launch: initial demo content + load autosave + budget rendering
+       ------------------- */
+    window.addEventListener('load', () => {
+      // small launch animation for cards
+      const items = $$('.card, .hero-grid > *');
+      items.forEach((el,i) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(8px)';
+        setTimeout(()=>{ el.style.transition = 'opacity 480ms ease, transform 420ms cubic-bezier(.16,.9,.3,1)'; el.style.opacity='1'; el.style.transform='translateY(0)'; }, 80 * i);
+      });
+
+      // init demo toolbox content
+      rundown = [{time:'08:00',title:'Pembukaan & sambutan',role:'MC'},{time:'09:00',title:'Talkshow: Kuliner Lokal',role:'EO'},{time:'11:00',title:'Demo Masak',role:'Vendor Catering'}];
+      checklist = [{text:'Konfirmasi jumlah kursi',done:false},{text:'Sound check panggung',done:false}];
+      renderRundown(); renderChecks();
+      document.getElementById('p1-badge').textContent='pending'; document.getElementById('p1-badge').style.background='var(--accent1)';
+      document.getElementById('p2-badge').textContent='review'; document.getElementById('p2-badge').style.background='#f59e0b';
+      document.getElementById('p3-badge').textContent='done'; document.getElementById('p3-badge').style.background='#16a34a';
+      loadAutosave();
+      updateAll();
+    });
+
+    /* -------------------
+       Icon-image global error logging (from icons file)
+       ------------------- */
+    window.addEventListener('DOMContentLoaded', () => {
+      $$('img').forEach(img => {
+        img.addEventListener('error', (e) => {
+          try{ console.warn('Icon failed to load:', img.src); }catch(err){}
+        });
+      });
+    });
+
+    /* -------------------
+       Small enhancement: close sidebar on Escape etc handled earlier
+       ------------------- */
+  </script>
+</body>
+</html>
